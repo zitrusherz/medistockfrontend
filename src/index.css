@@ -1,0 +1,181 @@
+@import "tailwindcss";
+/* ==========================================================================
+   1. VARIABLES DE TEMA (Reemplazo de tailwind.config.js)
+   ========================================================================== */
+@theme {
+  /* --- Fuentes --- */
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  /* --- Colores: Grape --- */
+  --color-grape-50: #FBF1F8;
+  --color-grape-100:
+          #F6E2F0;
+  --color-grape-200:
+          #ECC4E1;
+  --color-grape-300:
+          #DD9BCC;
+  --color-grape-400:
+          #C961B0;
+  --color-grape-500:
+          #B23A96;
+  --color-grape-600:
+          #9C2A82;
+  --color-grape-700:
+          #7C236A;
+  --color-grape-800:
+          #5E1C50;
+  --color-grape-900:
+          #431239;
+  /* --- Colores: Plum --- */
+  --color-plum-500:
+          #7B2C8F;
+  --color-plum-600:
+          #651F77;
+  --color-plum-700:
+          #4C1D6B;
+  --color-plum-800:
+          #3A1652;
+  /* --- Colores: Azure --- */
+  --color-azure-500:
+          #2F6BE0;
+  --color-azure-600:
+          #1F5AD0;
+  --color-azure-700:
+          #1A49AC;
+  /* --- Colores: Gold --- */
+  --color-gold-200:
+          #F2E2B3;
+  --color-gold-300:
+          #E6CC83;
+  --color-gold-400:
+          #D4AF52;
+  --color-gold-500:
+          #BD9233;
+  --color-gold-600:
+          #9C7522;
+  /* --- Colores: Ink --- */
+  --color-ink:
+          #2A2440;
+  /* --- Sombras --- */
+  --shadow-card: 0 1px 2px rgba(67,18,57,0.04), 0 8px 24px -12px rgba(67,18,57,0.18);
+  --shadow-lift: 0 12px 40px -16px rgba(67,18,57,0.35);
+
+
+  --animate-fade-in: fadeIn 0.2s ease both;
+  --color-background: #F4F1F7;
+
+
+  --color-primary:        var(--color-plum-700);
+  --color-primary-strong: var(--color-plum-800);
+  --color-accent:         var(--color-gold-400);
+  --color-surface:        #ffffff;
+  --color-surface-muted:  var(--color-grape-50);
+  --color-border:         var(--color-grape-100);
+  --color-text:           var(--color-ink);
+  --color-text-muted:     var(--color-grape-500);
+  --color-ring:           var(--color-grape-500);
+
+  /* --- Tokens de ESTADO / feedback --- */
+  /* base = sólido (puntos/acentos) · soft = fondo · strong = texto sobre soft */
+  --color-success:        #059669;
+  --color-success-soft:   #ECFDF5;
+  --color-success-strong: #065F46;
+
+  --color-warning:        #F59E0B;
+  --color-warning-soft:   #FFFBEB;
+  --color-warning-strong: #92400E;
+
+  --color-danger:         #DC2626;
+  --color-danger-soft:    #FEF2F2;
+  --color-danger-strong:  #991B1B;
+
+  --color-info:           var(--color-azure-500);
+  --color-info-soft:      #EFF4FD;
+  --color-info-strong:    var(--color-azure-700);
+
+
+}
+/* ==========================================================================
+   2. ESTILOS BASE (Navegador y etiquetas globales)
+   ========================================================================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background:
+            var(--color-background);
+  }
+  ::selection {
+    background: var(--color-grape-400);
+    color: #fff;
+  }
+}
+/* ==========================================================================
+   3. UTILIDADES (Clases reutilizables)
+   ========================================================================== */
+@layer utilities {
+  .ph-stripes {
+    background-image: repeating-linear-gradient(135deg, rgba(124,35,106,0.07) 0 8px, rgba(124,35,106,0.02) 8px 16px);
+  }
+  .gold-rule {
+    background: linear-gradient(90deg, transparent, var(--color-gold-400) 18%, var(--color-gold-200) 50%, var(--color-gold-400) 82%, transparent);
+  }
+  .text-gold-gradient {
+    background: linear-gradient(90deg, var(--color-gold-600), var(--color-gold-300) 45%, var(--color-gold-200) 55%, var(--color-gold-500));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .ring-gold {
+    box-shadow: inset 0 0 0 1px rgba(212,175,82,0.55);
+  }
+}
+/* ==========================================================================
+   4. COMPONENTES Y ANIMACIONES (Selectores complejos)
+   ========================================================================== */
+@layer components {
+  /* Sliders de rango (filtros admin) */
+  .range-thumb {
+    height: 20px;
+  }
+  .range-thumb::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    background: var(--color-plum-700);
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(67,18,57,0.35);
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  .range-thumb::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    background: var(--color-plum-700);
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(67,18,57,0.35);
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  .range-thumb::-webkit-slider-runnable-track {
+    background: transparent;
+  }
+  .range-thumb::-moz-range-track {
+    background: transparent;
+  }
+}
+/* Las animaciones de Keyframes se definen globalmente de forma nativa */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
