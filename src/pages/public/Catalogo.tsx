@@ -7,7 +7,7 @@ import { catalogService } from '@/features/catalog/services/catalogService';
 import { ProductCardGrid, ProductRow } from '@/features/catalog/components/CatalogItems';
 import { Spinner, Checkbox, Badge, Input, SkeletonCard } from '@/components/ui';
 
-const PAGE_SIZE = 12; // "trozos de N" (DoD)
+const PAGE_SIZE = 12;
 
 // ─── Pager local (cliente) ─────────────────────────────────────────────────────
 // Helper de página, no una primitiva nueva. Si prefieres respetar al 100% la regla
@@ -29,8 +29,6 @@ function Pager({
     for (let i = Math.max(1, page - around); i <= Math.min(totalPages, page + around); i++) {
         nums.push(i);
     }
-    // Con noUncheckedIndexedAccess, nums[i] es number|undefined; tras el return null
-    // de arriba sabemos que no está vacío, pero TS no lo infiere → fallback explícito.
     const first = nums[0] ?? 1;
     const last = nums[nums.length - 1] ?? totalPages;
 
@@ -82,15 +80,18 @@ function Pager({
 export default function Catalogo() {
     const [searchParams, setSearchParams] = useSearchParams();
     const [view, setView] = useState<'grid' | 'list'>('grid');
-    const [page, setPage] = useState(1);
 
-    // Mapeo de URL a Filtros (la URL es la fuente de verdad de los filtros)
+    // ─── Estado leído desde la URL (fuente única de verdad) ───
+    // Filtros + página viven en la query string. Esto permite que al ir a un
+    // producto y volver con el botón "Volver" (navigate(-1) en Producto.tsx),
+    // el usuario aterrice EXACTAMENTE en la página y filtros donde estaba.
     const filtros = {
         search: searchParams.get('search') || '',
         categoria_id: searchParams.get('cat') || undefined,
         marca_id: searchParams.get('man') || undefined,
-        sucursal_id: searchParams.get('suc') || undefined, // ← filtro de servidor
+        sucursal_id: searchParams.get('suc') || undefined,
     };
+    const page = Math.max(1, Number(searchParams.get('page')) || 1);
 
     // T2.2 Hook en acción (servidor: cat/marca/sucursal · cliente: texto)
     const { productos, isLoading, isEmpty, isFetching } = useCatalogo(filtros);
@@ -107,18 +108,29 @@ export default function Catalogo() {
     const visibles = productos.slice(start, start + PAGE_SIZE);
 
     // Handlers de URL. El reset de página vive AQUÍ (evento), no en un useEffect:
-    // todo cambio de filtro pasa por estos dos handlers → sin renders en cascada.
+    // todo cambio de filtro pasa por estos handlers → sin renders en cascada.
     const updateFilter = (key: string, value: string | null) => {
         const next = new URLSearchParams(searchParams);
         if (value) next.set(key, value);
         else next.delete(key);
+        // Cambiar filtro siempre resetea a página 1.
+        next.delete('page');
         setSearchParams(next);
-        setPage(1);
+    };
+
+    const goToPage = (p: number) => {
+        const next = new URLSearchParams(searchParams);
+        // URL más limpia: omitir ?page=1.
+        if (p <= 1) next.delete('page');
+        else next.set('page', String(p));
+        setSearchParams(next);
+        // Subir al inicio cuando el usuario cambia de página (no es un filtro
+        // sino navegación de listado), igual que harías en cualquier paginador.
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const clearFilters = () => {
         setSearchParams(new URLSearchParams());
-        setPage(1);
     };
 
     // Nombres de los filtros activos para los Badges
@@ -158,7 +170,6 @@ export default function Catalogo() {
                                         <option key={s.id} value={String(s.id)}>{s.nombre}</option>
                                     ))}
                                 </select>
-                                {/* Si tu ui/Select ya tiene una API estable, cámbialo por <Select/> aquí. */}
                             </div>
 
                             <div>
@@ -254,7 +265,6 @@ export default function Catalogo() {
                         </div>
                     ) : (
                         <>
-                            {/* M14: Responsive Grid/List — ahora sobre `visibles` (página actual) */}
                             <div className={`
                                 ${view === 'grid' ? 'grid sm:grid-cols-2 xl:grid-cols-3 gap-5' : 'flex flex-col divide-y divide-gray-100 bg-white rounded-2xl shadow-sm border border-gray-100 px-4'}
                                 ${isFetching ? 'opacity-60 pointer-events-none transition-opacity' : 'opacity-100 transition-opacity'}
@@ -266,8 +276,7 @@ export default function Catalogo() {
                                 ))}
                             </div>
 
-                            {/* ─── Paginación en cliente ─── */}
-                            <Pager page={safePage} totalPages={totalPages} onChange={setPage} />
+                            <Pager page={safePage} totalPages={totalPages} onChange={goToPage} />
                         </>
                     )}
                 </section>

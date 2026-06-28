@@ -72,7 +72,7 @@ function toFeatured(p: Raw): FeaturedProduct {
     codigo,
     nombre: firstString(p, ['nombre', 'name', 'titulo']),
     marca: firstString(p, ['marca', 'brand', 'marca_nombre']),
-    imagenUrl: firstUrl(p, ['imagenUrl', 'imagen', 'imagen_url', 'image', 'thumbnail']),
+    imagenUrl: firstUrl(p, ['imageUrl', 'imagenUrl', 'imagen', 'imagen_url', 'image', 'thumbnail']),
   };
 }
 

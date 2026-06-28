@@ -12,6 +12,7 @@ import { QtyStepper } from '@/features/catalog/components/QtyStepper';
 import { useCatalogo } from '@/features/catalog/hooks/useCatalogo';
 import { useCartActions, useCartSucursal } from '@/features/cart/hooks/useCart';
 import { Spinner, Accordion, AccordionItem, Button, Badge } from '@/components/ui';
+import { BackButton } from '@/components/common/BackButton';
 
 const Warn = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BD9233" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="inline-block shrink-0">
@@ -149,12 +150,20 @@ export default function Producto() {
     return (
         <>
             <main className="mx-auto max-w-[1280px] px-5 py-7 pb-28">
-                {/* Breadcrumb */}
-                <nav className="text-[12.5px] text-grape-500 mb-5 flex flex-wrap items-center gap-1.5">
-                    <Link to="/" className="hover:text-plum-700">Inicio</Link><span className="text-grape-300">/</span>
-                    <Link to="/catalogo" className="hover:text-plum-700">Catálogo</Link><span className="text-grape-300">/</span>
-                    <span className="text-plum-700 font-semibold">{p.name}</span>
-                </nav>
+                {/* Barra superior: Volver + Breadcrumb.
+                    BackButton usa el historial del router; si el usuario venia del catalogo
+                    (incluyendo ?page=N en la URL), aterriza exactamente donde estaba. */}
+                <div className="mb-5 flex flex-wrap items-center gap-3">
+                    <BackButton />
+                    <span className="h-4 w-px bg-grape-200" aria-hidden="true" />
+                    <nav className="text-[12.5px] text-grape-500 flex flex-wrap items-center gap-1.5">
+                        <Link to="/" className="hover:text-plum-700">Inicio</Link>
+                        <span className="text-grape-300">/</span>
+                        <Link to="/catalogo" className="hover:text-plum-700">Catálogo</Link>
+                        <span className="text-grape-300">/</span>
+                        <span className="text-plum-700 font-semibold">{p.name}</span>
+                    </nav>
+                </div>
 
                 <div className="grid lg:grid-cols-[1fr_320px] gap-6">
                     {/* Columna Principal */}
@@ -163,9 +172,22 @@ export default function Producto() {
                             <div className="absolute top-4 right-4 z-10"><StockBadge stock={p.stockTotal} /></div>
 
                             <div className="grid md:grid-cols-2 gap-6 p-6">
-                                {/* Imagen Placeholder */}
-                                <div className="aspect-square w-full rounded-xl border border-grape-100 bg-gray-50 flex items-center justify-center">
-                                    <span className="font-mono text-xs text-grape-400">IMAGEN {p.code}</span>
+                                {/* Imagen real (fallback a placeholder si no hay imagen o falla la carga) */}
+                                <div className="aspect-square w-full rounded-xl border border-grape-100 bg-gray-50 flex items-center justify-center overflow-hidden relative">
+                                    {p.imageUrl ? (
+                                        <img
+                                            src={p.imageUrl}
+                                            alt={p.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                e.currentTarget.style.display = 'none';
+                                                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                            }}
+                                        />
+                                    ) : null}
+                                    <span className={`font-mono text-xs text-grape-400 ${p.imageUrl ? 'hidden' : ''}`}>
+                                        IMAGEN {p.code}
+                                    </span>
                                 </div>
 
                                 {/* Info Base */}

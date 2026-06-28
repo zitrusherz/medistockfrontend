@@ -211,6 +211,7 @@ export interface Product {
     priceIva: number;        // CLP entero
     stockBySucursal: StockSucursal[];
     stockTotal: number;      // derivado
+    imageUrl: string | null; // URL absoluta servida por el backend (media/), o null si no tiene
 }
 
 export interface Marca { id: number; nombre: string; activo: boolean; }
@@ -278,4 +279,3 @@ export interface Pago {
     clienteRut?: string;
     clienteEmail?: string;
 }
-

@@ -60,9 +60,24 @@ export const BuyControls = ({ product, block = false }: { product: Product; bloc
 // ─── Tarjetas de Producto (M14 Responsive Grid/List) ─────────────────────────
 export const ProductCardGrid = ({ p }: { p: Product }) => (
     <div className="border border-grape-100 rounded-xl overflow-hidden flex flex-col hover:shadow-card hover:border-gold-300 transition-all bg-white">
-        <div className="aspect-square w-full border-b border-grape-100 grid place-items-center bg-gray-50 relative">
+        <div className="aspect-square w-full border-b border-grape-100 grid place-items-center bg-gray-50 relative overflow-hidden">
             <div className="absolute top-2 right-2"><StockBadge stock={p.stockTotal} /></div>
-            <span className="font-mono text-[11px] uppercase text-grape-400">Imagen 250x250</span>
+            {p.imageUrl ? (
+                <img
+                    src={p.imageUrl}
+                    alt={p.name}
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                        // Si la URL del backend rompe (404, media mal servido), no deja un ícono roto.
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
+                />
+            ) : null}
+            <span className={`font-mono text-[11px] uppercase text-grape-400 ${p.imageUrl ? 'hidden' : ''}`}>
+                Sin imagen
+            </span>
         </div>
         <div className="p-4 flex-1 flex flex-col">
             {/* <-- 2. Aca cambiamos <a> por <Link> --> */}
@@ -80,8 +95,22 @@ export const ProductCardGrid = ({ p }: { p: Product }) => (
 
 export const ProductRow = ({ p }: { p: Product }) => (
     <div className="flex flex-col sm:flex-row sm:items-center gap-4 py-5 bg-white">
-        <div className="w-24 h-24 shrink-0 rounded-lg border border-grape-100 grid place-items-center text-center bg-gray-50 relative">
-            <span className="font-mono text-[9px] uppercase text-grape-400 leading-tight px-1">IMG</span>
+        <div className="w-24 h-24 shrink-0 rounded-lg border border-grape-100 grid place-items-center text-center bg-gray-50 relative overflow-hidden">
+            {p.imageUrl ? (
+                <img
+                    src={p.imageUrl}
+                    alt={p.name}
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
+                />
+            ) : null}
+            <span className={`font-mono text-[9px] uppercase text-grape-400 leading-tight px-1 ${p.imageUrl ? 'hidden' : ''}`}>
+                IMG
+            </span>
         </div>
         <div className="flex-1 min-w-0">
             <div className="mb-1"><StockBadge stock={p.stockTotal} /></div>

@@ -1,10 +1,12 @@
-// features/catalog/services/mappers/productMapper.ts
+// src/features/catalog/services/mappers/productMapper.ts
 // Adapter: traduce el DTO crudo de la API al modelo de dominio que usa la UI.
 // Regla de oro: el frontend elige sus propios nombres; si la API cambia un campo,
 // SOLO cambia este archivo.
 
-import type { Product, StockSucursal, Categoria, Marca } from '@/types/models';import type {
+import type { Product, StockSucursal, Categoria, Marca } from '@/types/models';
+import type {
     CatalogoProductoDTO,
+    CategoriaEnProductoDTO,
     StockPorSucursalDTO,
     MarcaDTO,
     CategoriaDTO,
@@ -16,7 +18,42 @@ const toStockSucursal = (dto: StockPorSucursalDTO): StockSucursal => ({
     stock: dto.stock_neto,
 });
 
+/**
+ * Adapter puntual para las categorías embebidas en un producto.
+ *
+ * El backend serializa `producto.categorias[]` como filas de la TABLA INTERMEDIA
+ * producto-categoría, con la categoría real ANIDADA:
+ *
+ *   { id: 80, categoria: { id: 15, nombre: "Antisépticos...", padre, subcategorias, imagen_url, activo } }
+ *
+ * `Product.categories` en @/types/models es `string[]`, así que aquí extraemos
+ * `c.categoria.nombre`. Defensivo a propósito: si por cualquier razón llega un
+ * string plano o un shape distinto, devolvemos cadena vacía en vez de propagar
+ * el objeto al render (eso era exactamente lo que rompía Producto.tsx:
+ * "Objects are not valid as a React child").
+ */
+const toCategoryName = (
+    c: CategoriaEnProductoDTO | string | null | undefined,
+): string => {
+    if (c == null) return '';
+    if (typeof c === 'string') return c;
+    if (typeof c !== 'object') return '';
 
+    // Shape real: { id, categoria: { id, nombre, ... } }
+    const cat = (c as CategoriaEnProductoDTO).categoria;
+    if (cat && typeof cat === 'object' && typeof cat.nombre === 'string' && cat.nombre.trim()) {
+        return cat.nombre;
+    }
+
+    // Compat 1: { id, nombre } (si en algún momento el backend lo aplana)
+    const flat = c as { nombre?: unknown };
+    if (typeof flat.nombre === 'string' && flat.nombre.trim()) return flat.nombre;
+
+    // Compat 2: { id, categoria: "string" } (shape antiguo)
+    if (typeof cat === 'string' && (cat as string).trim()) return cat as string;
+
+    return '';
+};
 
 export const toProduct = (dto: CatalogoProductoDTO): Product => {
     const stockBySucursal = (dto.stock_por_sucursal ?? []).map(toStockSucursal);
@@ -27,7 +64,10 @@ export const toProduct = (dto: CatalogoProductoDTO): Product => {
         name: dto.nombre,
         brand: dto.marca?.nombre ?? '—',
         brandId: dto.marca?.id ?? null,
-        categories: dto.categorias ?? [],
+        // Filtramos vacíos para no pintar Badges en blanco.
+        categories: (dto.categorias ?? [])
+            .map(toCategoryName)
+            .filter((s): s is string => s.length > 0),
         unit: dto.unidad_medida,
         description: dto.descripcion ?? '',
         registroSanitario: dto.registro_sanitario ?? null,
@@ -39,6 +79,8 @@ export const toProduct = (dto: CatalogoProductoDTO): Product => {
         stockBySucursal,
         // Campo derivado: suma de todo el stock (útil para badge global M3).
         stockTotal: stockBySucursal.reduce((acc, s) => acc + s.stock, 0),
+        // El backend manda null cuando el producto aún no tiene foto cargada.
+        imageUrl: dto.imagen_url ?? null,
     };
 };
 
@@ -55,5 +97,3 @@ export const toCategoria = (dto: CategoriaDTO): Categoria => ({
 });
 
 // --------------------------------------------------------------------------
-
-
