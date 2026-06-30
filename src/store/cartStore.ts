@@ -1,10 +1,15 @@
 // src/store/cartStore.ts
-// T0.8 ⭐ — Carrito. Patrón: Observer + Singleton (Zustand) · persist (M).
-// Reemplaza el objeto `Cart` de la maqueta (store.js): se descarta CATALOG hardcodeado,
-// el producto llega del catálogo de la API, valida stock (M3) y desglosa IVA (M1/M2).
+// T0.8 ⭐ — Carrito. Patrón: Observer + Singleton (Zustand) · persist.
 //
-// Capas: este store NO llama a axios. La página/feature obtiene el Product (catalogService,
-// T2.1) y lo pasa a addItem. El handoff toDetalles() alimenta el checkout (T2.8).
+// DECISIÓN DE NEGOCIO: la sucursal NO es elección del cliente. Se vende contra
+// stockTotal; el reparto entre sucursales y los traslados (EstadoTraslado) son
+// lógica interna (ejecutivo solicita movimiento de inventario, operador lo surte).
+// Por eso este store ya NO guarda sucursalId ni aplica la regla "1 sucursal por
+// carrito": addItem(product, qty) valida solo contra el stock total del producto.
+//
+// Capas: este store NO llama a axios. La página/feature obtiene el Product
+// (catalogService, T2.1) y lo pasa a addItem. El handoff toDetalles() alimenta
+// el checkout (T2.8). El backend asigna sucursal al crear el pedido.
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
@@ -14,22 +19,18 @@ import type { NuevoDetalle } from '@/features/orders/types/index.ts';
 
 interface CartState {
     items: CartItem[];
-    sucursalId: number | null; // un carrito = una sola sucursal
 }
 
 interface CartActions {
-    // Mutaciones (evolución de add/setQty/remove/clear de la maqueta)
-    addItem: (product: Product, qty: number, sucursalId: number) => AddItemResult;
+    addItem: (product: Product, qty: number) => AddItemResult;
     setQty: (code: string, qty: number) => void;
     removeItem: (code: string) => void;
     clear: () => void;
 
-    // Selectores derivados
     count: () => number;
-    subtotalNeto: () => number; // antes `subtotal()`; ahora explícitamente NETO
+    subtotalNeto: () => number;
     totalEstimado: () => CartTotals;
 
-    // Handoff hacia el checkout (T2.8): arma detalles[] de POST /orders/pedidos/
     toDetalles: () => NuevoDetalle[];
 }
 
@@ -39,28 +40,15 @@ export const useCartStore = create<CartStore>()(
     persist(
         (set, get) => ({
             items: [],
-            sucursalId: null,
 
             /* ── AGREGAR ──────────────────────────────────────────────────────── */
-            addItem: (product, qty, sucursalId) => {
+            addItem: (product, qty) => {
                 const cantidad = Math.max(1, Math.trunc(qty) || 1);
-                const { items, sucursalId: actual } = get();
+                const { items } = get();
 
-                // Regla: un carrito sólo puede tener productos de una sucursal.
-                if (actual !== null && actual !== sucursalId) {
-                    return {
-                        ok: false,
-                        error:
-                            'Tu carrito ya tiene productos de otra sucursal. Vacíalo para cambiar de sucursal.',
-                    };
-                }
-
-                // M3: el stock viene del Product que entregó el catálogo (no de un mock).
-                // stockBySucursal es un array, así que buscamos la sucursal correspondiente
-                const stockObj = product.stockBySucursal?.find((s) => s.sucursalId === sucursalId);
-                const stockDisponible = stockObj?.stock ?? 0;
+                const stockDisponible = product.stockTotal ?? 0;
                 if (stockDisponible <= 0) {
-                    return { ok: false, error: 'Producto sin stock en esta sucursal.' };
+                    return { ok: false, error: 'Producto sin stock disponible.' };
                 }
 
                 const existente = items.find((i) => i.code === product.code);
@@ -68,7 +56,7 @@ export const useCartStore = create<CartStore>()(
                 if (cantidadTotal > stockDisponible) {
                     return {
                         ok: false,
-                        error: `Stock insuficiente. Disponible en esta sucursal: ${stockDisponible}.`,
+                        error: `Stock insuficiente. Disponible: ${stockDisponible}.`,
                     };
                 }
 
@@ -91,8 +79,9 @@ export const useCartStore = create<CartStore>()(
                         priceIva: product.priceIva,
                         stockMax: stockDisponible,
                         quantity: cantidad,
+                        imageUrl: product.imageUrl ?? null, // foto para mini-carrito / fila
                     };
-                    return { items: [...state.items, nuevo], sucursalId };
+                    return { items: [...state.items, nuevo] };
                 });
 
                 return { ok: true };
@@ -103,12 +92,10 @@ export const useCartStore = create<CartStore>()(
                 set((state) => {
                     const cantidad = Math.trunc(qty) || 0;
                     if (cantidad <= 0) {
-                        const items = state.items.filter((i) => i.code !== code);
-                        return { items, sucursalId: items.length ? state.sucursalId : null };
+                        return { items: state.items.filter((i) => i.code !== code) };
                     }
                     return {
                         items: state.items.map((i) =>
-                            // nunca supera el stock capturado al agregar
                             i.code === code ? { ...i, quantity: Math.min(cantidad, i.stockMax) } : i,
                         ),
                     };
@@ -116,29 +103,20 @@ export const useCartStore = create<CartStore>()(
 
             /* ── ELIMINAR / VACIAR ────────────────────────────────────────────── */
             removeItem: (code) =>
-                set((state) => {
-                    const items = state.items.filter((i) => i.code !== code);
-                    return { items, sucursalId: items.length ? state.sucursalId : null };
-                }),
+                set((state) => ({ items: state.items.filter((i) => i.code !== code) })),
 
-            clear: () => set({ items: [], sucursalId: null }),
+            clear: () => set({ items: [] }),
 
-            /* ── SELECTORES (devuelven primitivos → seguros como selector) ─────── */
+            /* ── SELECTORES ───────────────────────────────────────────────────── */
             count: () => get().items.reduce((s, i) => s + i.quantity, 0),
 
             subtotalNeto: () => get().items.reduce((s, i) => s + i.priceNeto * i.quantity, 0),
 
-            // Objeto nuevo en cada llamada: consumir vía useCartTotal() (useMemo), no
-            // como selector directo en un componente (rompería la igualdad de Zustand).
             totalEstimado: () => {
                 const items = get().items;
                 const neto = items.reduce((s, i) => s + i.priceNeto * i.quantity, 0);
                 const total = items.reduce((s, i) => s + i.priceIva * i.quantity, 0);
-                return {
-                    neto,
-                    iva: total - neto,
-                    total,
-                };
+                return { neto, iva: total - neto, total };
             },
 
             /* ── HANDOFF CHECKOUT (T2.8) ──────────────────────────────────────── */
@@ -146,11 +124,10 @@ export const useCartStore = create<CartStore>()(
                 get().items.map((i) => ({ producto_id: i.productId, cantidad: i.quantity })),
         }),
         {
-            name: 'medistock-cart-v1',
-            version: 1,
+            name: 'medistock-cart-v2',
+            version: 2,
             storage: createJSONStorage(() => localStorage),
-            // Sólo se persiste el estado serializable (no las funciones).
-            partialize: (state) => ({ items: state.items, sucursalId: state.sucursalId }),
+            partialize: (state) => ({ items: state.items }),
         },
     ),
 );

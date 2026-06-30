@@ -77,7 +77,6 @@ export interface NuevoDetalle {
 }
 
 export interface NuevoPedido {
-  sucursal_origen_id: number;
   direccion_entrega_id: number;
   tipo_venta: TipoVenta;
   tipo_despacho?: TipoDespacho;

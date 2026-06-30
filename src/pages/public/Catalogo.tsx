@@ -172,9 +172,12 @@ export default function Catalogo() {
                                 </select>
                             </div>
 
+                            {/* FIX BUG VISUAL: `flex flex-col gap-2` fuerza a que cada Checkbox
+                                ocupe su propia fila. Con `space-y-2` los checkboxes (inline-flex)
+                                fluían en línea y se mostraban varios por renglón. */}
                             <div>
                                 <label className="text-sm font-semibold mb-2 block">Categorías</label>
-                                <div className="space-y-2 max-h-48 overflow-y-auto">
+                                <div className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">
                                     {categorias.map(c => (
                                         <Checkbox
                                             key={c.id}
@@ -187,7 +190,7 @@ export default function Catalogo() {
                             </div>
                             <div>
                                 <label className="text-sm font-semibold mb-2 block">Marcas</label>
-                                <div className="space-y-2 max-h-48 overflow-y-auto">
+                                <div className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">
                                     {marcas.map(m => (
                                         <Checkbox
                                             key={m.id}

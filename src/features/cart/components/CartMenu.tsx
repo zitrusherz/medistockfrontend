@@ -1,17 +1,17 @@
 // src/features/cart/components/CartMenu.tsx
-// T2.7 — Mini-carrito del navbar (contrato visual: CartMenu de components.jsx).
-// El BADGE refleja `count` en vivo vía useCartCount (Observer): cualquier add/setQty/remove
-// en cualquier pantalla lo actualiza sin props. Pensado para el slot del header.
-//
-// Apertura: HOVER en desktop (onMouseEnter/Leave con un pequeño retardo para poder
-// cruzar el espacio entre el botón y el panel sin que se cierre) + CLICK (táctil)
-// + FOCO de teclado. Cierre: salir del área, click-fuera o Escape (devolviendo el
-// foco al botón). (T5.1 / M13).
+// T2.7 — Mini-carrito del navbar. Badge en vivo (Observer).
+// Controles inline por línea: − / + / X. La validación vive en cartStore:
+//   - setQty(code, q): si q<=0 elimina la línea automáticamente; si q>stockMax la topa.
+//   - removeItem(code): borra la línea de inmediato (botón X).
+// Por eso desde la UI basta con llamar setQty(code, quantity ± 1). El store
+// blinda contra negativos y contra exceder stock (M3) sin lógica duplicada acá.
 
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { formatCLP } from '@/utils/formatCurrency';
-import { useCartItems, useCartCount, useCartTotal } from '../hooks/useCart';
+import { useCartItems, useCartCount, useCartTotal, useCartActions } from '../hooks/useCart';
+import { useAuthStore } from '@/store/authStore';
+import type { CartItem } from '@/features/cart/types';
 
 const cartIcon = (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -20,17 +20,109 @@ const cartIcon = (
     </svg>
 );
 
+const minusIcon = (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+        <path d="M5 12h14" />
+    </svg>
+);
+
+const plusIcon = (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+        <path d="M12 5v14M5 12h14" />
+    </svg>
+);
+
+const xIcon = (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+);
+
+function MiniCartLine({ it }: { it: CartItem }) {
+    const { setQty, removeItem } = useCartActions();
+    const enTope = it.quantity >= it.stockMax;
+
+    return (
+        <div className="flex items-center gap-3 px-4 py-3">
+            {/* Thumb */}
+            {it.imageUrl ? (
+                <img
+                    src={it.imageUrl}
+                    alt={it.name}
+                    className="w-12 h-12 shrink-0 rounded-lg border border-grape-100 object-cover bg-white"
+                    onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
+                />
+            ) : null}
+            <div
+                className={`ph-stripes w-12 h-12 shrink-0 rounded-lg border border-grape-100 ${it.imageUrl ? 'hidden' : ''}`}
+                aria-hidden="true"
+            />
+
+            {/* Info + stepper */}
+            <div className="flex-1 min-w-0">
+                <p className="text-[12.5px] font-semibold text-ink truncate">{it.name}</p>
+                <p className="text-[11.5px] text-grape-500 mb-1.5">
+                    {formatCLP(it.priceIva)} c/u
+                </p>
+
+                <div className="flex items-center gap-1.5">
+                    <button
+                        onClick={() => setQty(it.code, it.quantity - 1)}
+                        aria-label={`Quitar uno de ${it.name}`}
+                        className="grid place-items-center w-6 h-6 rounded-md ring-1 ring-grape-200 text-grape-600 hover:bg-grape-50 hover:text-plum-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-grape-500"
+                    >
+                        {minusIcon}
+                    </button>
+                    <span
+                        className="min-w-[1.75rem] text-center text-[12px] font-bold text-ink tabular-nums"
+                        aria-live="polite"
+                    >
+                        {it.quantity}
+                    </span>
+                    <button
+                        onClick={() => setQty(it.code, it.quantity + 1)}
+                        disabled={enTope}
+                        aria-label={`Agregar uno de ${it.name}`}
+                        title={enTope ? 'Stock máximo alcanzado' : undefined}
+                        className="grid place-items-center w-6 h-6 rounded-md ring-1 ring-grape-200 text-grape-600 hover:bg-grape-50 hover:text-plum-700 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-grape-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-grape-500"
+                    >
+                        {plusIcon}
+                    </button>
+                </div>
+            </div>
+
+            {/* Total línea + X */}
+            <div className="flex flex-col items-end gap-1.5 shrink-0">
+                <button
+                    onClick={() => removeItem(it.code)}
+                    aria-label={`Eliminar ${it.name} del carrito`}
+                    className="grid place-items-center w-5 h-5 rounded-full text-grape-400 hover:bg-rose-50 hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+                >
+                    {xIcon}
+                </button>
+                <span className="text-[13px] font-bold text-plum-700 tabular-nums">
+                    {formatCLP(it.priceIva * it.quantity)}
+                </span>
+            </div>
+        </div>
+    );
+}
+
 export function CartMenu() {
     const items = useCartItems();
     const count = useCartCount();
     const { total } = useCartTotal();
+    const isAuth = useAuthStore((s) => s.status === 'authenticated');
+    const cartHref = isAuth ? '/cliente/carrito' : '/login';
+
     const [open, setOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
     const btnRef = useRef<HTMLButtonElement>(null);
     const closeTimer = useRef<number | null>(null);
 
-    // Hover con retardo: al salir, esperamos un poco antes de cerrar para que se
-    // pueda mover el cursor del botón al panel (cruzando el espacio entre ambos).
     const cancelClose = () => {
         if (closeTimer.current !== null) {
             clearTimeout(closeTimer.current);
@@ -48,11 +140,9 @@ export function CartMenu() {
 
     useEffect(() => {
         const onClick = (e: MouseEvent) => {
-            // click-fuera: cerrar sin tocar el foco.
             if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
         };
         const onKey = (e: KeyboardEvent) => {
-            // Escape: cerrar y DEVOLVER el foco al disparador (M13).
             if (e.key === 'Escape' && open) {
                 setOpen(false);
                 btnRef.current?.focus();
@@ -106,20 +196,9 @@ export function CartMenu() {
                     {items.length === 0 ? (
                         <p className="px-4 py-8 text-center text-[13px] text-grape-500">Tu carrito está vacío.</p>
                     ) : (
-                        <div className="max-h-72 overflow-auto divide-y divide-grape-100">
+                        <div className="max-h-80 overflow-auto divide-y divide-grape-100">
                             {items.map((it) => (
-                                <div key={it.code} className="flex items-center gap-3 px-4 py-3">
-                                    <div className="ph-stripes w-12 h-12 shrink-0 rounded-lg border border-grape-100" aria-hidden="true" />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-[12.5px] font-semibold text-ink truncate">{it.name}</p>
-                                        <p className="text-[11.5px] text-grape-500">
-                                            {it.quantity} × {formatCLP(it.priceIva)}
-                                        </p>
-                                    </div>
-                                    <span className="text-[13px] font-bold text-plum-700">
-                                        {formatCLP(it.priceIva * it.quantity)}
-                                    </span>
-                                </div>
+                                <MiniCartLine key={it.code} it={it} />
                             ))}
                         </div>
                     )}
@@ -130,7 +209,7 @@ export function CartMenu() {
                             <span className="font-display font-bold text-plum-700 text-[20px]">{formatCLP(total)}</span>
                         </div>
                         <Link
-                            to="/cliente/carrito"
+                            to={cartHref}
                             onClick={() => setOpen(false)}
                             className="block text-center bg-plum-700 hover:bg-plum-800 text-white font-bold text-[13.5px] py-2.5 rounded-lg ring-1 ring-gold-400/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-grape-500"
                         >

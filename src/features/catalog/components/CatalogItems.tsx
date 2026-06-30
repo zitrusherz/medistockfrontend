@@ -1,8 +1,10 @@
+// src/features/catalog/components/CatalogItems.tsx
 import { useState } from 'react';
 import { Badge, Button, Input } from '@/components/ui';
 import { formatCLP } from '@/utils/formatCurrency';
 import type { Product } from '@/types/models';
 import { Link } from 'react-router';
+import { useCartActions } from '@/features/cart/hooks/useCart';
 
 // ─── M3: Stock Badge ──────────────────────────────────────────────────────────
 export const StockBadge = ({ stock }: { stock: number }) => {
@@ -12,13 +14,16 @@ export const StockBadge = ({ stock }: { stock: number }) => {
 };
 
 // ─── M1/M2: Price Tag ─────────────────────────────────────────────────────────
+// IVA = precio principal (más grande, plum-800 = morado más fuerte de la paleta).
+// Neto = secundario, más chico y atenuado.
 export const PriceTag = ({ neto, iva, unit }: { neto: number; iva: number; unit: string }) => (
     <div className="text-right leading-none">
-        <span className="block font-display font-bold text-plum-700 text-[18px]">
-            {formatCLP(neto)} <span className="text-[12px] text-grape-500 font-normal">neto</span>
+        <span className="block font-display font-extrabold text-plum-800 text-[22px]">
+            {formatCLP(iva)}{' '}
+            <span className="text-[11px] text-grape-500 font-normal">con IVA · {unit}</span>
         </span>
-        <span className="block text-[11px] font-semibold text-grape-600 mt-1">
-            {formatCLP(iva)} con IVA · {unit}
+        <span className="block text-[12px] font-semibold text-grape-500 mt-1.5">
+            {formatCLP(neto)} neto
         </span>
     </div>
 );
@@ -26,33 +31,52 @@ export const PriceTag = ({ neto, iva, unit }: { neto: number; iva: number; unit:
 // ─── M3: Buy Controls (Límite de Stock) ───────────────────────────────────────
 export const BuyControls = ({ product, block = false }: { product: Product; block?: boolean }) => {
     const [qty, setQty] = useState(1);
+    const [added, setAdded] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const { addItem } = useCartActions();
     const agotado = product.stockTotal === 0;
 
     const handleAdd = () => {
         if (agotado) return;
-        // TODO: Conectar con tu store del carrito cuando implementemos esa feature
-        console.log(`Agregado ${qty} de ${product.code}`);
+        const res = addItem(product, qty);
+        if (!res.ok) {
+            setError(res.error ?? 'No se pudo agregar al carrito.');
+            setAdded(false);
+            return;
+        }
+        setError(null);
+        setAdded(true);
+        window.setTimeout(() => setAdded(false), 1500);
     };
 
     return (
-        <div className={`flex items-center gap-2 ${block ? 'w-full' : ''}`}>
-            <Input
-                type="number"
-                min={1}
-                max={product.stockTotal} // M3: Bloqueo HTML basado en stock
-                value={qty}
-                onChange={(e) => setQty(Math.min(product.stockTotal, Math.max(1, parseInt(e.target.value) || 1)))}
-                disabled={agotado}
-                className="w-16 text-center text-sm"
-            />
-            <Button
-                variant="primary"
-                onClick={handleAdd}
-                disabled={agotado}
-                className="flex-1 whitespace-nowrap"
-            >
-                {agotado ? 'Agotado' : 'Agregar'}
-            </Button>
+        <div className={block ? 'w-full' : ''}>
+            <div className="flex items-center gap-2">
+                <Input
+                    type="number"
+                    min={1}
+                    max={product.stockTotal}
+                    value={qty}
+                    onChange={(e) =>
+                        setQty(Math.min(product.stockTotal, Math.max(1, parseInt(e.target.value) || 1)))
+                    }
+                    disabled={agotado}
+                    className="w-16 text-center text-sm"
+                />
+                <Button
+                    variant="primary"
+                    onClick={handleAdd}
+                    disabled={agotado}
+                    className={`flex-1 whitespace-nowrap ${added ? 'bg-emerald-600 hover:bg-emerald-700' : ''}`}
+                >
+                    {agotado ? 'Agotado' : added ? '\u2713 Agregado' : 'Agregar'}
+                </Button>
+            </div>
+            {error && (
+                <p className="mt-1.5 text-[11.5px] text-rose-600" role="alert">
+                    {error}
+                </p>
+            )}
         </div>
     );
 };
@@ -69,7 +93,6 @@ export const ProductCardGrid = ({ p }: { p: Product }) => (
                     loading="lazy"
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                        // Si la URL del backend rompe (404, media mal servido), no deja un ícono roto.
                         e.currentTarget.style.display = 'none';
                         e.currentTarget.nextElementSibling?.classList.remove('hidden');
                     }}
@@ -80,7 +103,6 @@ export const ProductCardGrid = ({ p }: { p: Product }) => (
             </span>
         </div>
         <div className="p-4 flex-1 flex flex-col">
-            {/* <-- 2. Aca cambiamos <a> por <Link> --> */}
             <Link to={`/producto/${p.code}`} className="text-[13.5px] font-bold text-azure-600 hover:text-plum-700 leading-snug line-clamp-2">
                 {p.name}
             </Link>
@@ -114,7 +136,6 @@ export const ProductRow = ({ p }: { p: Product }) => (
         </div>
         <div className="flex-1 min-w-0">
             <div className="mb-1"><StockBadge stock={p.stockTotal} /></div>
-            {/* <-- 3. Aca también cambiamos <a> por <Link> --> */}
             <Link to={`/producto/${p.code}`} className="text-[14.5px] font-bold text-azure-600 hover:text-plum-700 leading-snug">{p.name}</Link>
             <p className="mt-1 text-[12px] text-grape-600"><span className="font-mono font-semibold text-ink">{p.code}</span> · {p.brand}</p>
         </div>

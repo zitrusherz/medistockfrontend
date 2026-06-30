@@ -1,9 +1,12 @@
 // src/features/orders/components/CheckoutForm.tsx
 // T2.8 ⭐ — Formulario de checkout (evolución de "Finalizar pedido" de OrderPage).
 //
-// Captura: dirección de entrega · sucursal origen (del carrito) · tipo de
-// despacho · prioridad médica · observación. Al confirmar arma el payload (Builder)
-// vía checkoutService (Facade) y crea el pedido.
+// Captura: dirección de entrega · tipo de despacho · prioridad médica ·
+// observación. Al confirmar arma el payload (Builder) vía checkoutService
+// (Facade) y crea el pedido.
+//
+// La sucursal NO se captura: el backend asigna la bodega de origen por stock
+// (y dispara traslados internos si hace falta). Decisión de negocio.
 //
 // Reglas (M12):
 //  - SOLO se vacía el carrito tras 201 (onSuccess). 400/409 dejan el carrito intacto.
@@ -32,9 +35,7 @@ import {
     useCartItems,
     useCartCount,
     useCartTotal,
-    useCartSucursal,
 } from '@/features/cart/hooks/useCart';
-import { useSucursal } from '@/features/locations/hooks/useSucursal';
 import { useMisDirecciones } from '@/features/accounts/hooks/useMisDirecciones';
 
 import { checkoutService } from '../services/checkoutService';
@@ -66,10 +67,6 @@ const PRIORIDADES: { value: PrioridadMedica; label: string }[] = [
     { value: 'CRITICA', label: 'Crítica' },
 ];
 
-/** Sucursal se lee de @/types/models; solo necesitamos mostrar texto. Acceso laxo
- *  para no acoplarnos a los nombres exactos de campo del modelo. */
-type SucursalLite = { nombre?: string; direccion?: string; comuna?: string };
-
 /** Extrae el id de producto de un mensaje del backend ("Producto id=5: ..."). */
 const extractProductId = (msg: string): number | null => {
     const m = msg.match(/id=(\d+)/i);
@@ -87,10 +84,6 @@ export function CheckoutForm() {
     const items = useCartItems();
     const count = useCartCount();
     const { neto, iva, total } = useCartTotal();
-    const sucursalId = useCartSucursal();
-
-    const { data: sucursalData } = useSucursal(sucursalId);
-    const suc = sucursalData as unknown as SucursalLite | undefined;
 
     const {
         data: direcciones = [],
@@ -156,7 +149,7 @@ export function CheckoutForm() {
             if (e.status === 403) {
                 setBlockError(
                     e.message ||
-                        'Tu cuenta no tiene un perfil de cliente, por lo que no puede crear pedidos.',
+                    'Tu cuenta no tiene un perfil de cliente, por lo que no puede crear pedidos.',
                 );
                 return;
             }
@@ -249,8 +242,7 @@ export function CheckoutForm() {
 
     /* ── Formulario ────────────────────────────────────────────────────────── */
     const sinDirecciones = !cargandoDirecciones && !errorDirecciones && direcciones.length === 0;
-    const puedeEnviar =
-        !mutation.isPending && items.length > 0 && sucursalId != null && !sinDirecciones;
+    const puedeEnviar = !mutation.isPending && items.length > 0 && !sinDirecciones;
 
     return (
         <form onSubmit={onSubmit} className="grid lg:grid-cols-[1fr_360px] gap-6 items-start">
@@ -311,15 +303,6 @@ export function CheckoutForm() {
                             )}
                         </div>
                     )}
-                </section>
-
-                {/* Sucursal origen (informativa, viene del carrito) */}
-                <section className="bg-white rounded-2xl shadow-card p-6">
-                    <h2 className="font-display font-bold text-plum-700 text-[20px]">Despacho desde</h2>
-                    <p className="mt-2 text-[14px] text-grape-700">
-                        {suc?.nombre ?? (sucursalId != null ? `Sucursal #${sucursalId}` : '—')}
-                        {suc?.direccion ? ` · ${suc.direccion}` : ''}
-                    </p>
                 </section>
 
                 {/* Tipo de despacho */}

@@ -1,4 +1,4 @@
-// features/catalog/services/catalogService.ts
+// src/features/catalog/services/catalogService.ts
 // Repository: expone métodos de dominio tipados. Ningún consumidor sabe qué URL existe.
 // Layered: este es el único punto del feature que toca lib/axios.
 
@@ -8,15 +8,34 @@ import type {
     CatalogoFiltros,
     CatalogoProductoDTO,
     CategoriaDTO,
+    CategoriaAnidadaDTO,   // ← usado por el árbol de categorías
+    CategoriaArbol,        // ← modelo de dominio (ver types/index.ts)
     MarcaDTO,
-    SucursalDTO,   // ← NUEVO (añadir en features/catalog/types/index.ts, ver más abajo)
-    Sucursal,      // ← NUEVO
+    SucursalDTO,
+    Sucursal,
 } from '../types';
 import { toProduct, toCategoria, toMarca } from './mappers/productMapper';
 
 /** Desenvuelve respuestas paginadas DRF ({results}) o arrays planos. */
 const unwrap = <T>(data: { results?: T[] } | T[]): T[] =>
     Array.isArray(data) ? data : (data.results ?? []);
+
+/**
+ * Categorías de USO INTERNO que NO deben aparecer en ninguna UI pública
+ * (filtros, menú, navegador, landing). Caso: "Cajas de envío" es logística pura.
+ *
+ * Criterio: normalizamos (sin acentos, minúsculas) y ocultamos cualquier nombre
+ * que contenga "caja" → cubre "Cajas", "Cajas de envío", etc. en un solo punto.
+ * Si el día de mañana hay una categoría legítima con esa palabra, ajusta aquí.
+ */
+const esCategoriaOculta = (nombre: string): boolean => {
+    const n = (nombre ?? '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // quita acentos
+        .toLowerCase()
+        .trim();
+    return n.includes('caja');
+};
 
 /**
  * Elimina parámetros vacíos antes de mandarlos como query string.
@@ -45,12 +64,27 @@ const toQueryParams = (f: CatalogoFiltros): Record<string, string | number> =>
 
 /**
  * Adapter de respuesta para sucursal. Convención: el service devuelve modelos,
- * nunca el DTO crudo. (Si prefieres, mueve esto a mappers/sucursalMapper.ts y el
- * modelo `Sucursal` a @/types/models para alinear 100% con el resto del feature.)
+ * nunca el DTO crudo.
  */
 const toSucursal = (dto: SucursalDTO): Sucursal => ({
     id: dto.id,
     nombre: dto.nombre,
+});
+
+/**
+ * Adapter de respuesta para el ÁRBOL de categorías (recursivo).
+ * snake_case → camelCase, normaliza `subcategorias` a [] cuando viene ausente y
+ * PODA las subcategorías ocultas (cajas) en cada nivel.
+ */
+const toCategoriaArbol = (dto: CategoriaAnidadaDTO): CategoriaArbol => ({
+    id: dto.id,
+    nombre: dto.nombre,
+    activo: dto.activo,
+    padre: dto.padre,
+    imagenUrl: dto.imagen_url ?? null,
+    subcategorias: (dto.subcategorias ?? [])
+        .filter((s) => !esCategoriaOculta(s.nombre))
+        .map(toCategoriaArbol),
 });
 
 export const catalogService = {
@@ -78,10 +112,28 @@ export const catalogService = {
         return toProduct(data);
     },
 
-    /** GET /api/inventory/public/categorias/  (público) */
+    /**
+     * GET /api/inventory/public/categorias/  (público) — lista plana para filtros.
+     * Oculta las categorías internas (cajas).
+     */
     getCategorias: async (): Promise<Categoria[]> => {
         const { data } = await api.get('/inventory/public/categorias/');
-        return unwrap<CategoriaDTO>(data).map(toCategoria);
+        return unwrap<CategoriaDTO>(data)
+            .map(toCategoria)
+            .filter((c) => !esCategoriaOculta(c.nombre));
+    },
+
+    /**
+     * GET /api/inventory/public/categorias/arbol/  (público)
+     * Devuelve la jerarquía (raíces + subcategorias) con `imagen_url`.
+     * La consumen el mega-menú del navbar, el navegador de categorías y la landing.
+     * Oculta las categorías internas (cajas) en TODOS los niveles.
+     */
+    getCategoriasArbol: async (): Promise<CategoriaArbol[]> => {
+        const { data } = await api.get('/inventory/public/categorias/arbol/');
+        return unwrap<CategoriaAnidadaDTO>(data)
+            .filter((d) => !esCategoriaOculta(d.nombre))
+            .map(toCategoriaArbol);
     },
 
     /** GET /api/inventory/public/marcas/  (público) */
@@ -91,10 +143,9 @@ export const catalogService = {
     },
 
     /**
-     * GET /api/locations/sucursales/  (público)  ← NUEVO
+     * GET /api/locations/sucursales/  (público)
      * SUPUESTO: la lista de sucursales cuelga de /locations/sucursales/.
-     * Si en tu API el path es otro (p. ej. /inventory/sucursales/), cámbialo aquí
-     * y nada más: el resto del feature no se entera.
+     * Si en tu API el path es otro (p. ej. /inventory/sucursales/), cámbialo aquí.
      */
     getSucursales: async (): Promise<Sucursal[]> => {
         const { data } = await api.get('/locations/sucursales/');

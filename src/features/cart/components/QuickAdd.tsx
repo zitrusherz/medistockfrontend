@@ -1,18 +1,14 @@
 // src/features/cart/components/QuickAdd.tsx
 // T2.7 — Alta rápida por código (evolución de QuickAdd de la maqueta pedido.jsx).
-// Maqueta usaba Cart.add(code) sobre un CATALOG hardcodeado; aquí resolvemos el Product
-// real (useCatalogLookup) y delegamos en cartStore.addItem, que valida stock/sucursal (M3).
-//
-// Regla del store: un carrito = una sola sucursal. Por eso:
-//  - carrito con items  → se agrega a la sucursal ya fijada (solo lectura).
-//  - carrito vacío      → el usuario elige sucursal aquí (selector); el primer add la fija.
+// Maqueta usaba Cart.add(code) sobre un CATALOG hardcodeado; aquí resolvemos el
+// Product real (useCatalogLookup) y delegamos en cartStore.addItem, que valida
+// stock total (M3). La sucursal la asigna el backend al crear el pedido, por eso
+// ya no hay selector de sucursal aquí.
 
 import { useState, type FormEvent } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui';
-import { catalogService } from '@/features/catalog/services/catalogService';
 import { useCatalogLookup } from '../hooks/useCatalogLookup';
-import { useCartActions, useCartSucursal } from '../hooks/useCart';
+import { useCartActions } from '../hooks/useCart';
 
 const minus = (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14" /></svg>
@@ -27,20 +23,10 @@ const cartIcon = (
 export function QuickAdd() {
     const [code, setCode] = useState('');
     const [qty, setQty] = useState(1);
-    const [sucursalSel, setSucursalSel] = useState('');
     const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
     const { addItem } = useCartActions();
-    const sucursalActual = useCartSucursal();
     const { findByCode, productos, isLoading } = useCatalogLookup();
-
-    const { data: sucursales = [] } = useQuery({
-        queryKey: ['sucursales'],
-        queryFn: catalogService.getSucursales,
-    });
-
-    const sucursalLock =
-        sucursalActual != null ? sucursales.find((s) => s.id === sucursalActual)?.nombre : undefined;
 
     const ejemplos = productos.slice(0, 4).map((p) => p.code);
 
@@ -54,12 +40,7 @@ export function QuickAdd() {
             });
             return;
         }
-        const target = sucursalActual ?? (sucursalSel ? Number(sucursalSel) : null);
-        if (target == null) {
-            setMsg({ ok: false, text: 'Selecciona una sucursal antes de agregar.' });
-            return;
-        }
-        const r = addItem(product, qty, target);
+        const r = addItem(product, qty);
         if (r.ok) {
             setMsg({ ok: true, text: `Agregado: ${product.name}` });
             setCode('');
@@ -77,29 +58,6 @@ export function QuickAdd() {
             </div>
 
             <form onSubmit={submit} className="p-4">
-                {/* Sucursal: editable si el carrito está vacío; bloqueada si ya tiene items */}
-                {sucursalActual == null ? (
-                    <div className="mb-3">
-                        <label className="block text-[11.5px] font-bold text-grape-700 mb-1">Sucursal</label>
-                        <select
-                            value={sucursalSel}
-                            onChange={(e) => setSucursalSel(e.target.value)}
-                            className="w-full px-3 py-2 rounded-lg ring-1 ring-grape-200 focus:ring-2 focus:ring-grape-500 outline-none text-[14px] text-ink bg-white"
-                        >
-                            <option value="">Selecciona una sucursal…</option>
-                            {sucursales.map((s) => (
-                                <option key={s.id} value={String(s.id)}>{s.nombre}</option>
-                            ))}
-                        </select>
-                    </div>
-                ) : (
-                    <p className="mb-3 text-[11.5px] text-grape-600">
-                        Sucursal del carrito:{' '}
-                        <span className="font-bold text-plum-700">{sucursalLock ?? `#${sucursalActual}`}</span>
-                        <span className="block text-grape-400">Vacía el carrito para cambiar de sucursal.</span>
-                    </p>
-                )}
-
                 <div className="flex items-end gap-2">
                     <div className="flex-1">
                         <label className="block text-[11.5px] font-bold text-grape-700 mb-1">Código del producto</label>

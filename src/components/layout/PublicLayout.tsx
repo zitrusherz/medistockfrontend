@@ -1,3 +1,4 @@
+// src/components/layout/PublicLayout.tsx
 import { useState, useEffect, useRef, type FormEvent } from "react"
 import { Link, Outlet, useNavigate } from "react-router"
 import { Search, Store, User, Phone, HelpCircle } from "lucide-react"
@@ -16,9 +17,9 @@ import { formatCLP } from "@/utils/formatCurrency"
  *   · <CartMenu/>  → mini-carrito con apertura por HOVER (ver CartMenu.tsx).
  *   · <LoginForm/> → form real de login dentro de un popover (AccountMenu).
  *
- * Se monta como LAYOUT ROUTE en router/index.tsx envolviendo /, /catalogo y
- * /producto/:codigo. El header es `sticky`, así que las páginas no necesitan
- * padding-top.
+ * Se monta como LAYOUT ROUTE en router/index.tsx envolviendo /, /categorias,
+ * /catalogo y /producto/:codigo. El header es `sticky`, así que las páginas no
+ * necesitan padding-top.
  */
 export function PublicLayout() {
     return (
@@ -201,7 +202,8 @@ function StoreHeader() {
 
                     <nav className="ml-auto flex items-center gap-5 text-grape-700 sm:gap-7">
                         <MainMenu />
-                        <Link to="/catalogo" className="flex flex-col items-center gap-0.5 transition-colors hover:text-plum-700">
+                        {/* Tienda ahora entra por el NAVEGADOR DE CATEGORÍAS, no directo a productos. */}
+                        <Link to="/categorias" className="flex flex-col items-center gap-0.5 transition-colors hover:text-plum-700">
                             <Store className="h-5 w-5" />
                             <span className="text-[11px] font-semibold">Tienda</span>
                         </Link>

@@ -6,7 +6,11 @@
 // Facade: una sola cara para "convertir el carrito en pedido". La página/form no
 // conoce el cartStore ni el orderService; sólo pasa los datos de entrega.
 // Builder: buildPedido() arma el payload NuevoPedido (snake_case de la API) a
-// partir del estado del carrito (sucursal + detalles) y los datos del checkout.
+// partir de los detalles del carrito y los datos del checkout.
+//
+// DECISIÓN DE NEGOCIO: la sucursal NO se manda. El backend asigna la bodega de
+// origen según stock (y dispara traslados internos si una sucursal no cubre).
+// Por eso buildPedido ya no incluye sucursal_origen_id.
 //
 // Capas: page → CheckoutForm → checkoutService → orderService → lib/axios.
 // El form NUNCA llama a axios ni al store directamente para crear el pedido.
@@ -35,26 +39,22 @@ export interface CheckoutInput {
 
 /**
  * Arma POST /orders/pedidos/.
- *  - sucursal_origen_id y detalles[] salen del carrito (Singleton del store).
+ *  - detalles[] salen del carrito (Singleton del store).
  *  - tipo_venta fijo 'WEBPAY' (flujo B2C de paciente particular).
  *  - observacion vacía → undefined (no ensuciar el payload).
+ *  - SIN sucursal: el backend la asigna por stock.
  *
- * Lanza si el carrito no tiene sucursal o está vacío: el form debe impedir
- * llegar aquí, pero validamos por contrato.
+ * Lanza si el carrito está vacío: el form debe impedir llegar aquí, pero
+ * validamos por contrato.
  */
 export const buildPedido = (input: CheckoutInput): NuevoPedido => {
-    const sucursalId = cartImperative.getSucursalId();
     const detalles = cartImperative.toDetalles();
 
-    if (sucursalId == null) {
-        throw new Error('El carrito no tiene una sucursal asociada.');
-    }
     if (detalles.length === 0) {
         throw new Error('El carrito está vacío.');
     }
 
     return {
-        sucursal_origen_id: sucursalId,
         direccion_entrega_id: input.direccionId,
         tipo_venta: 'WEBPAY',
         tipo_despacho: input.despacho,

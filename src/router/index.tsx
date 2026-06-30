@@ -1,3 +1,4 @@
+// src/router/index.tsx
 import { lazy } from "react"
 import { createBrowserRouter } from "react-router"
 import { PrivateRoute } from "./PrivateRouter"
@@ -6,12 +7,16 @@ import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Roles } from "@/types/roles"
 import { S } from "./withSuspense"
 
+// Login EAGER (no lazy): es el destino de redirección más frecuente para
+// invitados (mini-carrito → /login). Sin chunk lazy = sin spinner de carga.
+import Login from "@/pages/public/Login"
+
 export { homeByRole } from "./homeByRole"
 
 // ─── Lazy-load por zona: cada rol = su propio chunk en el build ───────────────
 const Home        = lazy(() => import("@/pages/public/Home"))
-const Login       = lazy(() => import("@/pages/public/Login"))
 const Catalogo    = lazy(() => import("@/pages/public/Catalogo"))
+const Categorias  = lazy(() => import("@/pages/public/Categorias"))
 const Producto    = lazy(() => import("@/pages/public/Producto"))
 const CrearCuenta = lazy(() => import("@/pages/public/CrearCuenta"))
 const NotFound    = lazy(() => import("@/pages/public/NotFound"))
@@ -41,19 +46,21 @@ const AdminApiKeys      = lazy(() => import("@/pages/admin/ApiKeys"))
 
 export const router = createBrowserRouter([
     // ── Tienda pública (con header de tienda) ─────────────────────────────────
-    // PublicLayout aporta el chrome (TopBar/Header/sub-barra) + <Outlet/>.
-    // Va eager (no lazy): el header debe aparecer al instante, sin spinner.
     {
         element: <PublicLayout />,
         children: [
             { path: "/",                 element: S(<Home />) },
+            // Navegador de categorías (drill-down). "Tienda" entra por aquí.
+            { path: "/categorias",       element: S(<Categorias />) },
+            { path: "/categorias/:id",   element: S(<Categorias />) },
             { path: "/catalogo",         element: S(<Catalogo />) },
             { path: "/producto/:codigo", element: S(<Producto />) },
         ],
     },
 
     // ── Auth (sin el header de tienda; usan su propio AuthLayout) ─────────────
-    { path: "/login",    element: S(<Login />) },
+    // /login eager (sin S): redirección instantánea para invitados.
+    { path: "/login",    element: <Login /> },
     { path: "/registro", element: S(<CrearCuenta />) },
 
     // ── Privadas (requieren sesión) ──────────────────────────────────────────
@@ -107,8 +114,7 @@ export const router = createBrowserRouter([
             {
                 element: <RoleRoute roles={[Roles.ADMINISTRADOR]} />,
                 children: [
-                    // T4.1 — "Inicio" (operativo) reemplaza al antiguo Dashboard; se
-                    // añade "Estadísticas" (analítica). Ambas rutas ya declaradas en navItems.
+                    // T4.1 — "Inicio" (operativo) reemplaza al antiguo Dashboard.
                     { path: "/admin",              element: S(<AdminInicio />) },
                     { path: "/admin/estadisticas", element: S(<AdminEstadisticas />) },
                     { path: "/admin/productos",    element: S(<AdminProductos />) },

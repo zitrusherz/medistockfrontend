@@ -87,3 +87,6 @@ export { GoldRuleIcon } from "./icons.tsx"
 
 export { RangeSlider } from "./RangeSlider"
 export type { RangeSliderProps } from "./RangeSlider"
+
+export { Combobox } from "./Combobox"
+export type { ComboboxProps, ComboboxOption } from "./Combobox"

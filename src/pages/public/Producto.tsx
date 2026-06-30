@@ -1,5 +1,5 @@
 // src/pages/public/Producto.tsx
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useParams, Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { catalogService } from '@/features/catalog/services/catalogService';
@@ -10,7 +10,7 @@ import {
 } from '@/features/catalog/components/CatalogItems';
 import { QtyStepper } from '@/features/catalog/components/QtyStepper';
 import { useCatalogo } from '@/features/catalog/hooks/useCatalogo';
-import { useCartActions, useCartSucursal } from '@/features/cart/hooks/useCart';
+import { useCartActions } from '@/features/cart/hooks/useCart';
 import { Spinner, Accordion, AccordionItem, Button, Badge } from '@/components/ui';
 import { BackButton } from '@/components/common/BackButton';
 
@@ -27,7 +27,6 @@ const Warn = () => (
    Para quitarlo: borra este componente y su uso en el JSX (1 linea).
    ────────────────────────────────────────────────────────────────────────── */
 function RelatedProducts({ categoryName, excludeCode }: { categoryName?: string; excludeCode: string }) {
-    // name -> id: el producto trae nombres de categoria; el filtro necesita el id.
     const { data: categorias = [] } = useQuery({
         queryKey: ['cats'],
         queryFn: catalogService.getCategorias,
@@ -63,10 +62,8 @@ export default function Producto() {
     // Ruta confirmada en router/index.tsx: /producto/:codigo
     const { codigo } = useParams<{ codigo: string }>();
     const { addItem } = useCartActions();
-    const cartSucursalId = useCartSucursal();
 
     const [qty, setQty] = useState(1);
-    const [chosenSucursalId, setChosenSucursalId] = useState<number | null>(null);
     const [added, setAdded] = useState(false);
     const [cartError, setCartError] = useState<string | null>(null);
 
@@ -75,20 +72,6 @@ export default function Producto() {
         queryFn: () => catalogService.getProducto(codigo as string),
         enabled: !!codigo,
     });
-
-    // Sucursal por defecto:
-    //  1) si el carrito ya tiene sucursal y el producto tiene stock ahi -> esa (continuidad)
-    //  2) la primera CON stock
-    //  3) la primera disponible
-    const defaultSucursalId = useMemo(() => {
-        if (!p) return null;
-        if (cartSucursalId != null) {
-            const enCarrito = p.stockBySucursal.find((s) => s.sucursalId === cartSucursalId);
-            if (enCarrito && enCarrito.stock > 0) return cartSucursalId;
-        }
-        const conStock = p.stockBySucursal.find((s) => s.stock > 0);
-        return (conStock ?? p.stockBySucursal[0])?.sucursalId ?? null;
-    }, [p, cartSucursalId]);
 
     if (isLoading) {
         return <div className="min-h-screen flex items-center justify-center"><Spinner size="xl" /></div>;
@@ -104,31 +87,14 @@ export default function Producto() {
         );
     }
 
-    // ── Estado derivado de la sucursal seleccionada (nucleo de M3) ──
-    const sucursalId = chosenSucursalId ?? defaultSucursalId;
-    const sucursalSel = p.stockBySucursal.find((s) => s.sucursalId === sucursalId) ?? null;
-    const maxStock = sucursalSel?.stock ?? 0;
-
-    const globalmenteAgotado = p.stockTotal === 0;
-    const sinStockEnSucursal = !globalmenteAgotado && maxStock === 0;
-    const puedeAgregar = !globalmenteAgotado && maxStock > 0 && qty >= 1 && qty <= maxStock;
-
-    // "Una sola sucursal por carrito": el carrito ya tiene items de OTRA sucursal.
-    const conflictoSucursal = cartSucursalId != null && cartSucursalId !== sucursalId;
-
-    // El reset/clamp de cantidad vive en el EVENTO (como en Catalogo.tsx), no en un effect.
-    const elegirSucursal = (id: number) => {
-        setChosenSucursalId(id);
-        setCartError(null);
-        const stock = p.stockBySucursal.find((s) => s.sucursalId === id)?.stock ?? 0;
-        setQty((q) => Math.min(Math.max(1, q), Math.max(1, stock)));
-    };
+    // ── Estado derivado del stock total (M3) ──
+    const maxStock = p.stockTotal;
+    const agotado = maxStock === 0;
+    const puedeAgregar = !agotado && qty >= 1 && qty <= maxStock;
 
     const handleAdd = () => {
-        if (!sucursalId || !puedeAgregar) return;
-        // Firma real del store: addItem(product, qty, sucursalId) -> AddItemResult.
-        // El store es la autoridad: valida stock acumulado y "una sola sucursal por carrito".
-        const res = addItem(p, qty, sucursalId);
+        if (!puedeAgregar) return;
+        const res = addItem(p, qty);
         if (!res.ok) {
             setCartError(res.error ?? 'No se pudo agregar al carrito.');
             setAdded(false);
@@ -141,18 +107,14 @@ export default function Producto() {
 
     const labelBoton = added
         ? '\u2713 Agregado'
-        : globalmenteAgotado
+        : agotado
             ? 'Agotado'
-            : sinStockEnSucursal
-                ? 'Sin stock en esta sucursal'
-                : 'Agregar al carrito';
+            : 'Agregar al carrito';
 
     return (
         <>
             <main className="mx-auto max-w-[1280px] px-5 py-7 pb-28">
-                {/* Barra superior: Volver + Breadcrumb.
-                    BackButton usa el historial del router; si el usuario venia del catalogo
-                    (incluyendo ?page=N en la URL), aterriza exactamente donde estaba. */}
+                {/* Barra superior: Volver + Breadcrumb. */}
                 <div className="mb-5 flex flex-wrap items-center gap-3">
                     <BackButton />
                     <span className="h-4 w-px bg-grape-200" aria-hidden="true" />
@@ -192,7 +154,8 @@ export default function Producto() {
 
                                 {/* Info Base */}
                                 <div>
-                                    <h1 className="font-display font-bold text-plum-700 text-[28px] leading-tight">{p.name}</h1>
+                                    {/* pr-24: deja aire para la StockBadge flotante (top-right) → no se superponen */}
+                                    <h1 className="font-display font-bold text-plum-700 text-[28px] leading-tight pr-24">{p.name}</h1>
                                     <p className="mt-1 text-[13px] text-grape-600">
                                         <span className="font-mono font-bold text-ink">{p.code}</span> {' '} {p.brand}
                                     </p>
@@ -200,61 +163,31 @@ export default function Producto() {
                                     <p className="mt-4 text-[12px] font-bold tracking-wide text-grape-700">DESCRIPCIÓN</p>
                                     <p className="text-[14px] text-ink/90 mt-1 line-clamp-4">{p.description || 'Sin descripción detallada.'}</p>
 
+                                    {/* Precio + compra: precio arriba (IVA grande, neto chico), controles compactos debajo */}
                                     <div className="mt-6 bg-grape-50/50 p-4 rounded-xl border border-grape-100">
-                                        {/* ── Selector de sucursal (siempre visible, tambien en movil) ── */}
-                                        {p.stockBySucursal.length > 0 && (
-                                            <div className="mb-4">
-                                                <label htmlFor="sucursal" className="block text-[12px] font-bold tracking-wide text-grape-700 mb-1">
-                                                    DESPACHA DESDE
-                                                </label>
-                                                <select
-                                                    id="sucursal"
-                                                    value={sucursalId ?? ''}
-                                                    onChange={(e) => elegirSucursal(Number(e.target.value))}
-                                                    className="w-full rounded-lg ring-1 ring-grape-200 px-3 py-2 text-[14px] text-ink bg-white outline-none focus:ring-2 focus:ring-grape-500"
-                                                >
-                                                    {p.stockBySucursal.map((s) => (
-                                                        <option key={s.sucursalId} value={s.sucursalId}>
-                                                            {s.sucursalNombre} {' \u2014 '} {s.stock > 0 ? `${s.stock} disp.` : 'sin stock'}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        )}
-
-                                        <div className="flex flex-wrap items-end gap-4">
-                                            <div className="flex-1 min-w-[200px]">
-                                                <PriceTag neto={p.priceNeto} iva={p.priceIva} unit={p.unit} />
-                                            </div>
-                                            <div className="flex flex-col gap-2">
-                                                {/* M3: el maximo es el stock de la SUCURSAL seleccionada */}
-                                                <QtyStepper
-                                                    value={qty}
-                                                    onChange={setQty}
-                                                    min={1}
-                                                    max={maxStock}
-                                                    disabled={maxStock === 0}
-                                                    unit={p.unit}
-                                                />
-                                                <Button
-                                                    variant="primary"
-                                                    onClick={handleAdd}
-                                                    disabled={!puedeAgregar}
-                                                    className={`w-full ${added ? 'bg-emerald-600 hover:bg-emerald-700' : ''}`}
-                                                >
-                                                    {labelBoton}
-                                                </Button>
-                                            </div>
+                                        <PriceTag neto={p.priceNeto} iva={p.priceIva} unit={p.unit} />
+                                        <div className="mt-3 flex items-center gap-2">
+                                            <QtyStepper
+                                                value={qty}
+                                                onChange={setQty}
+                                                min={1}
+                                                max={maxStock}
+                                                disabled={agotado}
+                                                unit={p.unit}
+                                            />
+                                            <Button
+                                                variant="primary"
+                                                onClick={handleAdd}
+                                                disabled={!puedeAgregar}
+                                                className={`flex-1 ${added ? 'bg-emerald-600 hover:bg-emerald-700' : ''}`}
+                                            >
+                                                {labelBoton}
+                                            </Button>
                                         </div>
 
-                                        {sinStockEnSucursal && (
+                                        {agotado && (
                                             <p className="text-[12px] text-gold-700 mt-2 flex items-start gap-1.5">
-                                                <Warn /> Sin stock en esta sucursal. Elige otra con disponibilidad.
-                                            </p>
-                                        )}
-                                        {conflictoSucursal && !sinStockEnSucursal && !cartError && (
-                                            <p className="text-[12px] text-gold-700 mt-2 flex items-start gap-1.5">
-                                                <Warn /> Tu carrito ya tiene productos de otra sucursal.
+                                                <Warn /> Producto sin stock disponible por el momento.
                                             </p>
                                         )}
                                         {cartError && (
@@ -319,36 +252,32 @@ export default function Producto() {
                         <RelatedProducts categoryName={p.categories?.[0]} excludeCode={p.code} />
                     </div>
 
-                    {/* Columna Secundaria - Stock por bodega (clic = seleccionar sucursal) */}
+                    {/* Columna Secundaria - Stock por bodega (SOLO INFORMATIVO). */}
                     <aside className="hidden lg:block">
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
                             <div className="bg-plum-700 px-4 py-3 text-white font-bold">Disponibilidad por bodega</div>
                             <div className="p-3 space-y-1">
                                 {p.stockBySucursal.length > 0 ? (
-                                    p.stockBySucursal.map((suc) => {
-                                        const activa = suc.sucursalId === sucursalId;
-                                        return (
-                                            <button
-                                                key={suc.sucursalId}
-                                                onClick={() => elegirSucursal(suc.sucursalId)}
-                                                aria-pressed={activa}
-                                                className={`w-full flex justify-between items-center text-sm rounded-lg px-3 py-2.5 transition-colors text-left ${
-                                                    activa ? 'bg-grape-50 ring-1 ring-grape-300' : 'hover:bg-gray-50'
-                                                }`}
-                                            >
-                                                <span className="text-grape-700 flex items-center gap-2">
-                                                    <span className={`w-2 h-2 rounded-full ${activa ? 'bg-plum-700' : 'bg-grape-200'}`} />
-                                                    {suc.sucursalNombre}
-                                                </span>
-                                                <span className={`font-bold ${suc.stock === 0 ? 'text-gray-400' : 'text-plum-700'}`}>
-                                                    {suc.stock} u.
-                                                </span>
-                                            </button>
-                                        );
-                                    })
+                                    p.stockBySucursal.map((suc) => (
+                                        <div
+                                            key={suc.sucursalId}
+                                            className="w-full flex justify-between items-center text-sm rounded-lg px-3 py-2.5"
+                                        >
+                                            <span className="text-grape-700 flex items-center gap-2">
+                                                <span className={`w-2 h-2 rounded-full ${suc.stock > 0 ? 'bg-emerald-500' : 'bg-grape-200'}`} />
+                                                {suc.sucursalNombre}
+                                            </span>
+                                            <span className={`font-bold ${suc.stock === 0 ? 'text-gray-400' : 'text-plum-700'}`}>
+                                                {suc.stock} u.
+                                            </span>
+                                        </div>
+                                    ))
                                 ) : (
                                     <p className="text-sm text-gray-500 px-3 py-2">Sin stock registrado en sucursales.</p>
                                 )}
+                            </div>
+                            <div className="px-4 py-3 border-t border-grape-100 text-[11.5px] text-grape-500">
+                                El despacho se asigna automáticamente desde la bodega óptima.
                             </div>
                         </div>
                     </aside>
@@ -362,7 +291,7 @@ export default function Producto() {
                         <p className="text-[14px] font-bold text-plum-700 truncate">{p.name}</p>
                         <p className="text-[12px] text-grape-600">
                             <span className="font-mono font-semibold text-ink">{p.code}</span>
-                            {sucursalSel && <> {' \u00b7 '} {sucursalSel.sucursalNombre}: {maxStock} u.</>}
+                            {' \u00b7 '} {maxStock} u. disponibles
                         </p>
                     </div>
                     <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
@@ -373,10 +302,10 @@ export default function Producto() {
                                 onChange={setQty}
                                 min={1}
                                 max={maxStock}
-                                disabled={maxStock === 0}
+                                disabled={agotado}
                             />
                             <Button variant="primary" onClick={handleAdd} disabled={!puedeAgregar}>
-                                {globalmenteAgotado ? 'Agotado' : sinStockEnSucursal ? 'Sin stock' : 'Agregar'}
+                                {agotado ? 'Agotado' : 'Agregar'}
                             </Button>
                         </div>
                     </div>

@@ -106,3 +106,21 @@ export interface Sucursal {
   id: number;
   nombre: string;
 }
+
+/**
+ * Modelo de dominio del ÁRBOL de categorías.
+ * Fuente: GET /api/inventory/public/categorias/arbol/  (CategoriaArbolPublicoView).
+ *
+ * Es la versión camelCase + recursiva de `CategoriaAnidadaDTO`. Lo consume el
+ * mega-menú del navbar (cards tipo "Browse Supplies") y cualquier vista que
+ * necesite la jerarquía con imagen. `Categoria` (en @/types/models) sigue siendo
+ * la forma plana para filtros; este modelo añade `padre`, `imagenUrl` y `subcategorias`.
+ */
+export interface CategoriaArbol {
+  id: number;
+  nombre: string;
+  activo: boolean;
+  padre: number | null;
+  imagenUrl: string | null;
+  subcategorias: CategoriaArbol[];
+}

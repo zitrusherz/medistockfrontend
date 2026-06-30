@@ -1,4 +1,4 @@
-
+// src/features/cart/types/index.ts
 /** Línea del carrito. `code` = SKU (display/lookup); `productId` = id del backend (handoff). */
 export interface CartItem {
     productId: number; // Product.id del backend → va en detalles[] del pedido
@@ -9,6 +9,7 @@ export interface CartItem {
     priceIva: number; // precio_con_iva (CLP entero)
     stockMax: number; // stock_neto en la sucursal elegida al momento de agregar
     quantity: number;
+    imageUrl?: string | null; // foto del producto (mini-carrito / fila de carrito). null si no hay.
 }
 
 /** Resultado de addItem: permite mostrar el error de stock/sucursal sin lanzar excepción. */

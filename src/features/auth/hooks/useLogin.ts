@@ -4,6 +4,7 @@ import { authService } from '../services/authService';
 import { useAuthStore } from '@/store/authStore';
 import type { Rol } from '@/types/roles';
 import type { LoginRequest } from '@/types/auth';
+import {prefetchHome} from "@/router/prefetch.ts";
 
 // Aterrizaje por rol (M5). Ajusta las claves a los literales reales de
 // types/roles.ts si difieren de los nombres del caso.
@@ -46,6 +47,7 @@ export function useLogin() {
             if (status !== 'authenticated') return;
 
             // 4. Redirección por rol.
+            prefetchHome(rol)
             navigate(homeByRole(rol), { replace: true });
         },
 

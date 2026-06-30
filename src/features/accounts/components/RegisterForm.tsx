@@ -1,5 +1,6 @@
+// src/features/accounts/components/RegisterForm.tsx
 import { forwardRef, useState, type ReactNode } from 'react';
-import { Input, Select, Button, Alert } from '@/components/ui';
+import { Input, Combobox, Button, Alert } from '@/components/ui';
 import type { InputProps } from '@/components/ui';
 import { useRegisterForm } from '../hooks/useRegisterForm';
 
@@ -81,20 +82,23 @@ export function RegisterForm() {
     const {
         register,
         setValue,
+        watch,
         formState: { errors },
     } = form;
 
-    // Al cambiar de región, limpiamos la comuna previa (queda fuera de la nueva lista).
-    const regionField = register('region');
+    // Región y comuna ahora son combobox controlados: leemos su valor del form
+    // y lo escribimos con setValue (en vez de register, que es para <input>/<select>).
+    const regionValue = watch('region');
+    const comunaValue = watch('comuna');
 
     const regionPlaceholder = loadingRegiones
         ? 'Cargando regiones…'
         : errorRegiones
             ? 'No se pudieron cargar las regiones'
-            : 'Selecciona una región';
+            : 'Busca o selecciona una región';
 
     const comunaPlaceholder = regionSelected
-        ? 'Selecciona una comuna'
+        ? 'Busca o selecciona una comuna'
         : 'Primero selecciona una región';
 
     return (
@@ -161,27 +165,31 @@ export function RegisterForm() {
                 {/* ── Dirección de entrega ─────────────────────────────────── */}
                 <SectionTitle>Dirección de entrega</SectionTitle>
                 <div className="grid gap-4 sm:grid-cols-2">
-                    <Select
+                    <Combobox
                         label="Región"
                         required
                         placeholder={regionPlaceholder}
+                        emptyMessage="Sin regiones que coincidan"
                         disabled={loadingRegiones || errorRegiones}
                         options={regiones.map((r) => ({ value: String(r.id), label: r.nombre }))}
+                        value={regionValue}
                         error={errors.region?.message}
-                        {...regionField}
-                        onChange={(e) => {
-                            regionField.onChange(e);
+                        onChange={(val) => {
+                            setValue('region', val, { shouldValidate: true, shouldDirty: true });
+                            // Cambió la región → la comuna previa ya no pertenece a la lista.
                             setValue('comuna', '', { shouldValidate: false, shouldDirty: true });
                         }}
                     />
-                    <Select
+                    <Combobox
                         label="Comuna"
                         required
                         placeholder={comunaPlaceholder}
+                        emptyMessage="Sin comunas que coincidan"
                         disabled={!regionSelected}
                         options={comunas.map((c) => ({ value: String(c.id), label: c.nombre }))}
+                        value={comunaValue}
                         error={errors.comuna?.message}
-                        {...register('comuna')}
+                        onChange={(val) => setValue('comuna', val, { shouldValidate: true, shouldDirty: true })}
                     />
                     <Input
                         label="Dirección"

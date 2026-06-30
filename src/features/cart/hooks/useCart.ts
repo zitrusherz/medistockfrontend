@@ -1,6 +1,10 @@
 // src/features/cart/hooks/useCart.ts
 // T0.8 — Hooks de consumo del carrito (Observer vía Zustand).
 // Cada hook selecciona el mínimo slice posible para evitar re-renders innecesarios.
+//
+// NOTA: el carrito ya no maneja sucursal (decisión de negocio: el backend reparte
+// stock entre sucursales y dispara traslados). Por eso se quitaron useCartSucursal
+// y cartImperative.getSucursalId.
 
 import { useMemo } from 'react';
 import { calcTotales } from '@/utils/iva';
@@ -13,13 +17,10 @@ export const useCartItems = (): CartItem[] => useCartStore((s) => s.items);
 /** Cantidad total de unidades (badge del navbar). Primitivo → selector seguro. */
 export const useCartCount = (): number => useCartStore((s) => s.count());
 
-/** Sucursal activa del carrito (null si está vacío). */
-export const useCartSucursal = (): number | null => useCartStore((s) => s.sucursalId);
-
 /**
  * Desglose neto/IVA/total. `totalEstimado()` crea un objeto nuevo cada vez, lo que
  * rompería la comparación de igualdad de Zustand si se usara como selector directo.
- * Lo derivamos con useMemo a partir de un primitivo estable (subtotalNeto).
+ * Lo derivamos con useMemo a partir de items (ref. estable).
  */
 export const useCartTotal = (): CartTotals => {
     const items = useCartStore((s) => s.items);
@@ -44,6 +45,5 @@ export const useCartActions = () => {
  */
 export const cartImperative = {
     toDetalles: () => useCartStore.getState().toDetalles(),
-    getSucursalId: () => useCartStore.getState().sucursalId,
     clear: () => useCartStore.getState().clear(),
 };

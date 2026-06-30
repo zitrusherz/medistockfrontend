@@ -1,13 +1,17 @@
+// src/pages/public/home/components/Categories.tsx
 import { Link } from 'react-router';
 import { MediaThumb } from './MediaThumb';
 import type { CategoryCard } from '../types';
 
 /**
- * Categories — categorías populares. Portado de la maqueta (`Categories`),
- * pero las categorías ahora llegan por props desde `Home.tsx`
- * (`getCategorias()`), no hardcodeadas.
+ * Categories — categorías populares. Las categorías llegan por props desde
+ * `Home.tsx` (`getCategoriasArbol()`), no hardcodeadas.
  *
- * Cada tarjeta lleva a /catalogo?categoria=<slug>.
+ * Cada tarjeta entra al NAVEGADOR de categorías en `/categorias/<id>`:
+ *   · si la categoría tiene subcategorías → muestra ese nivel;
+ *   · si es hoja → el navegador redirige a /catalogo?cat=<id>.
+ * (Antes enlazaba a `?categoria=<slug>`, clave que el catálogo ignora.)
+ *
  * Estados (M12): loading → skeletons; vacío → no renderiza la sección.
  */
 interface CategoriesProps {
@@ -41,7 +45,7 @@ export function Categories({ items, loading = false, skeletonCount = 5 }: Catego
             : items.map((cat) => (
                 <Link
                   key={cat.id}
-                  to={`/catalogo?categoria=${encodeURIComponent(cat.slug)}`}
+                  to={`/categorias/${cat.id}`}
                   className="group cursor-pointer text-center"
                 >
                   <MediaThumb
