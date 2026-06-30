@@ -324,7 +324,7 @@ export function RegisterForm() {
                         label="Contraseña"
                         required
                         autoComplete="new-password"
-                        placeholder="Mínimo 6 caracteres"
+                        placeholder="Mínimo 8 caracteres, con letra y número"
                         error={errors.pass?.message}
                         {...register('pass')}
                     />

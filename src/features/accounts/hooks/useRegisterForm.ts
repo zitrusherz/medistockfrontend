@@ -25,7 +25,7 @@ import { useRegionesConComunas } from '@/features/locations/hooks/useRegionesCon
 import { authService } from '@/features/auth/services/authService';
 import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/components/ui';
-import { isPhoneCL, isValidRut, isEmail, cleanRut } from '@/utils/validators';
+import { isPhoneCL, isValidRut, isEmail, formatRut, isStrongPassword } from '@/utils/validators';
 import type { ApiError } from '@/lib/axios';
 import type { RegistroClienteRequest } from '../types';
 
@@ -58,8 +58,8 @@ const NETWORK_SUBMIT_ERROR =
  * base porque su obligatoriedad depende de `tipo_cliente`/`tipo_documento`. Las
  * reglas cruzadas viven en el `superRefine`.
  *
- * `pass` usa mínimo 6 (criterio del caso/maqueta). Si el backend exige más,
- * ajusta el `.min()` aquí y el placeholder del campo en RegisterForm.
+ * `pass` usa mínimo 8 + letra/número para quedar más cerca de los validadores
+ * típicos de Django y evitar 400 por claves demasiado débiles.
  */
 export const registerSchema = z
     .object({
@@ -105,7 +105,13 @@ export const registerSchema = z
         referencia: z.string().trim().optional(),
 
         // Credenciales
-        pass: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+        pass: z
+            .string()
+            .min(8, 'La contraseña debe tener al menos 8 caracteres')
+            .refine(
+                isStrongPassword,
+                'La contraseña debe incluir al menos una letra y un número',
+            ),
         pass2: z.string().min(1, 'Repite tu contraseña'),
     })
     .superRefine((d, ctx) => {
@@ -203,13 +209,11 @@ export type RegisterFormValues = z.infer<typeof registerSchema>;
  *  - `username = correo`: el form no pide username y la API lo exige (EmailField).
  *    Por eso el correo viaja dos veces (username y email), con el mismo valor.
  *  - `comuna` viaja como ID (number); la región NO se envía (derivable).
- *  - rut/rut_empresa se envían NORMALIZADOS con `cleanRut` ("245832249"), NO con
- *    formato de visualización. Motivo: el backend valida con algoritmo (acepta
- *    cualquier formato), pero la unicidad y la detección de duplicados comparan
- *    el string EXACTO almacenado; mandar el valor canónico evita que el mismo
- *    RUT entrado con/sin puntos se trate como dos registros distintos.
- *    ⚠️ Si tu BD ya guarda RUTs en otro canónico (p. ej. "245832249-9" con
- *    guión), alinea aquí el formato a ese mismo canónico.
+ *  - rut/rut_empresa se envían con formato estándar (`formatRut`), no como
+ *    string limpio. El backend actual compara duplicados por string exacto y tu
+ *    BD ya tiene RUTs con separadores; enviar el valor visual evita varios
+ *    falsos negativos de unicidad desde el front. La solución definitiva sería
+ *    normalizar también en backend antes de guardar/comparar.
  *  - INSTITUCIONAL → siempre `datos_institucion` (sin institucion_id). El backend
  *    hace get_or_create por rut_empresa, así que reusar una institución existente
  *    funciona sin endpoint de listado.
@@ -244,10 +248,10 @@ function buildRegistroCliente(v: RegisterFormValues): RegistroClienteRequest {
     if (v.tipo_cliente === 'INSTITUCIONAL') {
         return {
             ...base,
-            rut: cleanRut(v.rut!.trim()),
+            rut: formatRut(v.rut!.trim()),
             datos_institucion: {
                 razon_social: v.razon_social!.trim(),
-                rut_empresa: cleanRut(v.rut_empresa!.trim()),
+                rut_empresa: formatRut(v.rut_empresa!.trim()),
                 giro: v.giro?.trim() || undefined,
                 email_contacto: v.email_contacto?.trim() || undefined,
             },
@@ -260,7 +264,7 @@ function buildRegistroCliente(v: RegisterFormValues): RegistroClienteRequest {
     }
 
     // PARTICULAR con RUT (caso por defecto).
-    return { ...base, rut: cleanRut(v.rut!.trim()) };
+    return { ...base, rut: formatRut(v.rut!.trim()) };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -268,29 +272,68 @@ function buildRegistroCliente(v: RegisterFormValues): RegistroClienteRequest {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Traduce claves de error PLANAS del backend hacia los campos del form. Los
- * errores ANIDADOS (p. ej. `{ usuario: { email: [...] } }`) no los aplana
- * `toApiError`, así que caen al aviso global (ver onError).
+ * Traduce claves de error del backend hacia campos visibles del formulario.
+ * `axios.ts` ahora aplana errores anidados de DRF con notación de punto:
+ *   { usuario: { username: [...] } } → "usuario.username"
  */
 const SERVER_TO_FORM: Record<string, Path<RegisterFormValues>> = {
+    // Usuario anidado
+    'usuario.email': 'correo',
+    'usuario.username': 'correo',
+    'usuario.password': 'pass',
+    'usuario.password2': 'pass2',
+    'usuario.first_name': 'nombre',
+    'usuario.last_name': 'apellido',
+
+    // Fallback por si algún endpoint devuelve errores planos
     email: 'correo',
     username: 'correo',
-    rut: 'rut',
-    pasaporte: 'pasaporte',
-    telefono: 'telefono',
     password: 'pass',
     password2: 'pass2',
     first_name: 'nombre',
     last_name: 'apellido',
-    comuna: 'comuna',
+
+    // Cliente
+    rut: 'rut',
+    pasaporte: 'pasaporte',
+    telefono: 'telefono',
+    tipo_cliente: 'tipo_cliente',
+
+    // Dirección anidada
+    'direccion_entrega.direccion': 'calle',
+    'direccion_entrega.num_direccion': 'numero',
+    'direccion_entrega.detalle_direccion': 'detalle',
+    'direccion_entrega.comuna': 'comuna',
+    'direccion_entrega.referencia': 'referencia',
     direccion: 'calle',
     num_direccion: 'numero',
+    comuna: 'comuna',
+
+    // Institución anidada
+    'datos_institucion.razon_social': 'razon_social',
+    'datos_institucion.rut_empresa': 'rut_empresa',
+    'datos_institucion.giro': 'giro',
+    'datos_institucion.email_contacto': 'email_contacto',
     razon_social: 'razon_social',
     rut_empresa: 'rut_empresa',
-    // El backend a veces agrupa el error de institución:
+
+    // Errores agrupados de institución
     datos_institucion: 'rut_empresa',
     institucion: 'razon_social',
 };
+
+function submitMessageFromApiError(error: ApiError): string {
+    if (error.isNetworkError) return NETWORK_SUBMIT_ERROR;
+
+    // Si el backend trae un mensaje global real, úsalo. Si solo dice
+    // "Datos inválidos.", mantenemos el copy amable del formulario.
+    if (error.message && error.message !== 'Datos inválidos.') {
+        return error.message;
+    }
+
+    return GENERIC_SUBMIT_ERROR;
+}
+
 
 /* -------------------------------------------------------------------------- */
 /*  Hook                                                                      */
@@ -381,6 +424,17 @@ export function useRegisterForm() {
         onError: (err) => {
             const apiErr = err as ApiError;
 
+            if (import.meta.env.DEV) {
+                // Esto es intencional: mientras depuramos el 400 necesitamos ver
+                // el cuerpo real de DRF, no solo "Bad Request" en la terminal.
+                console.group('[registro cliente] error');
+                console.log('status:', apiErr.status);
+                console.log('message:', apiErr.message);
+                console.log('fieldErrors:', apiErr.fieldErrors);
+                console.log('raw:', apiErr.raw);
+                console.groupEnd();
+            }
+
             // 400 con errores por campo → pintarlos junto al input correspondiente.
             if (apiErr.hasFieldErrors && apiErr.fieldErrors) {
                 let firstField: Path<RegisterFormValues> | null = null;
@@ -389,32 +443,31 @@ export function useRegisterForm() {
                 Object.entries(apiErr.fieldErrors).forEach(([serverKey, msgs]) => {
                     const formField = SERVER_TO_FORM[serverKey];
                     const message = msgs?.[0] ?? 'Dato inválido';
+
                     if (formField) {
                         form.setError(formField, { type: 'server', message });
                         if (!firstField) firstField = formField;
                     } else {
                         hadUnmapped = true;
+                        if (import.meta.env.DEV) {
+                            console.warn('[registro cliente] error sin mapear:', serverKey, msgs);
+                        }
                     }
                 });
 
                 if (firstField) {
                     form.setFocus(firstField);
-                    // Si además hubo errores que no mapean a un campo visible,
-                    // mostramos también el aviso global para no esconder nada.
-                    if (hadUnmapped) setSubmitError(GENERIC_SUBMIT_ERROR);
+                    setSubmitError(hadUnmapped ? submitMessageFromApiError(apiErr) : null);
                 } else {
-                    // Ningún error pudo asociarse a un campo del formulario → aviso global.
-                    setSubmitError(GENERIC_SUBMIT_ERROR);
+                    // Ningún error pudo asociarse a un campo visible → aviso global.
+                    setSubmitError(submitMessageFromApiError(apiErr));
                 }
+
                 return;
             }
 
-            // Resto (red, 409, 5xx, 400 global con `detail`/`non_field_errors`,
-            // errores anidados bajo `usuario`, etc.). El usuario solo necesita
-            // saber que falló, no el detalle técnico.
-            setSubmitError(
-                apiErr.isNetworkError ? NETWORK_SUBMIT_ERROR : GENERIC_SUBMIT_ERROR,
-            );
+            // Resto: red, 409, 5xx, 400 global con `detail`/`non_field_errors`, etc.
+            setSubmitError(submitMessageFromApiError(apiErr));
         },
     });
 

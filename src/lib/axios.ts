@@ -153,24 +153,68 @@ function extractUserMessage(data: unknown): string | undefined {
 }
 
 /**
- * Normaliza el cuerpo de un 400 a FieldErrors { campo: string[] }.
- * DRF puede devolver arrays por campo o, a veces, un string suelto.
+ * Convierte cualquier valor simple de DRF en una lista de mensajes.
+ * DRF suele mandar strings dentro de arrays, pero también puede devolver
+ * números, booleans o ErrorDetail; por eso normalizamos con String().
+ */
+function toMessageList(value: unknown): string[] | null {
+    if (typeof value === "string") return [value];
+
+    if (Array.isArray(value)) {
+        const messages = value
+            .filter((item) => item !== null && item !== undefined)
+            .map(String)
+            .filter(Boolean);
+
+        return messages.length > 0 ? messages : null;
+    }
+
+    return null;
+}
+
+/**
+ * Aplana errores anidados de DRF.
  *
- * Ignora las claves GLOBALES (detail / non_field_errors): esas no son campos
- * del formulario y deben viajar como mensaje global, no como fieldError.
+ * Ejemplos reales del backend:
+ *   { usuario: { username: ["Ya existe..."] } }
+ *   { direccion_entrega: { comuna: ["Pk inválida..."] } }
+ *
+ * Resultado:
+ *   { "usuario.username": ["Ya existe..."] }
+ *   { "direccion_entrega.comuna": ["Pk inválida..."] }
+ */
+function flattenFieldErrors(
+    data: unknown,
+    result: FieldErrors,
+    prefix = "",
+): void {
+    if (!data || typeof data !== "object") return;
+
+    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
+        // detail / non_field_errors en raíz son errores globales, no de campo.
+        if (!prefix && GLOBAL_ERROR_KEYS.has(key)) continue;
+
+        const path = prefix ? `${prefix}.${key}` : key;
+        const messages = toMessageList(value);
+
+        if (messages) {
+            result[path] = messages;
+            continue;
+        }
+
+        if (value && typeof value === "object" && !Array.isArray(value)) {
+            flattenFieldErrors(value, result, path);
+        }
+    }
+}
+
+/**
+ * Normaliza el cuerpo de un 400 a FieldErrors { campo: string[] }.
+ * Soporta errores planos y anidados de DRF.
  */
 function extractFieldErrors(data: unknown): FieldErrors {
     const result: FieldErrors = {};
-    if (!data || typeof data !== "object") return result;
-
-    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
-        if (GLOBAL_ERROR_KEYS.has(key)) continue; // global → no es un campo
-        if (Array.isArray(value)) {
-            result[key] = value.map(String);
-        } else if (typeof value === "string") {
-            result[key] = [value];
-        }
-    }
+    flattenFieldErrors(data, result);
     return result;
 }
 
