@@ -1,6 +1,6 @@
 // src/features/accounts/components/RegisterForm.tsx
 import { forwardRef, useState, type ReactNode } from 'react';
-import { Input, Combobox, Button, Alert } from '@/components/ui';
+import { Input, Combobox, Select, Button, Alert } from '@/components/ui';
 import type { InputProps } from '@/components/ui';
 import { useRegisterForm } from '../hooks/useRegisterForm';
 
@@ -72,6 +72,7 @@ export function RegisterForm() {
         form,
         onSubmit,
         isSubmitting,
+        submitError,
         regiones,
         comunas,
         regionSelected,
@@ -86,10 +87,17 @@ export function RegisterForm() {
         formState: { errors },
     } = form;
 
-    // Región y comuna ahora son combobox controlados: leemos su valor del form
-    // y lo escribimos con setValue (en vez de register, que es para <input>/<select>).
+    // Región y comuna son combobox controlados: leemos su valor del form y lo
+    // escribimos con setValue (en vez de register, que es para <input>/<select>).
     const regionValue = watch('region');
     const comunaValue = watch('comuna');
+
+    // Tipo de cuenta y documento controlan qué campos se muestran.
+    const tipoCliente = watch('tipo_cliente');
+    const tipoDocumento = watch('tipo_documento');
+    const esInstitucional = tipoCliente === 'INSTITUCIONAL';
+    // Institucional siempre va con RUT; particular respeta el documento elegido.
+    const usaRut = esInstitucional || tipoDocumento === 'RUT';
 
     const regionPlaceholder = loadingRegiones
         ? 'Cargando regiones…'
@@ -115,8 +123,28 @@ export function RegisterForm() {
                     </Alert>
                 )}
 
+                {/* ── Tipo de cuenta ───────────────────────────────────────── */}
+                <SectionTitle>Tipo de cuenta</SectionTitle>
+                <div className="grid gap-4 sm:grid-cols-2">
+                    <Select
+                        label="Tipo de cliente"
+                        required
+                        options={[
+                            { value: 'PARTICULAR', label: 'Particular' },
+                            { value: 'INSTITUCIONAL', label: 'Institucional' },
+                        ]}
+                        error={errors.tipo_cliente?.message}
+                        {...register('tipo_cliente')}
+                    />
+                    {esInstitucional && (
+                        <p className="self-end pb-2.5 text-sm text-text-muted">
+                            Crearemos (o vincularemos) la institución con los datos que ingreses abajo.
+                        </p>
+                    )}
+                </div>
+
                 {/* ── Datos personales ─────────────────────────────────────── */}
-                <SectionTitle>Datos personales</SectionTitle>
+                <SectionTitle>{esInstitucional ? 'Datos del responsable' : 'Datos personales'}</SectionTitle>
                 <div className="grid gap-4 sm:grid-cols-2">
                     <Input
                         label="Nombre"
@@ -152,15 +180,79 @@ export function RegisterForm() {
                         error={errors.telefono?.message}
                         {...register('telefono')}
                     />
-                    <Input
-                        label="RUT"
-                        required
-                        inputMode="text"
-                        placeholder="Ej: 12.345.678-9"
-                        error={errors.rut?.message}
-                        {...register('rut')}
-                    />
+
+                    {/* Documento: el particular elige RUT o Pasaporte; el
+                        institucional siempre usa RUT (lo exige el backend). */}
+                    {!esInstitucional && (
+                        <Select
+                            label="Tipo de documento"
+                            required
+                            options={[
+                                { value: 'RUT', label: 'RUT' },
+                                { value: 'PASAPORTE', label: 'Pasaporte' },
+                            ]}
+                            error={errors.tipo_documento?.message}
+                            {...register('tipo_documento')}
+                        />
+                    )}
+
+                    {usaRut ? (
+                        <Input
+                            label="RUT"
+                            required
+                            inputMode="text"
+                            placeholder="Ej: 12.345.678-9"
+                            error={errors.rut?.message}
+                            {...register('rut')}
+                        />
+                    ) : (
+                        <Input
+                            label="Pasaporte"
+                            required
+                            placeholder="Ej: AB1234567"
+                            error={errors.pasaporte?.message}
+                            {...register('pasaporte')}
+                        />
+                    )}
                 </div>
+
+                {/* ── Datos de la institución (solo INSTITUCIONAL) ─────────── */}
+                {esInstitucional && (
+                    <>
+                        <SectionTitle>Datos de la institución</SectionTitle>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <Input
+                                label="Razón social"
+                                required
+                                placeholder="Ej: Clínica Los Andes SpA"
+                                error={errors.razon_social?.message}
+                                {...register('razon_social')}
+                            />
+                            <Input
+                                label="RUT de la empresa"
+                                required
+                                inputMode="text"
+                                placeholder="Ej: 76.123.456-7"
+                                error={errors.rut_empresa?.message}
+                                {...register('rut_empresa')}
+                            />
+                            <Input
+                                label="Giro"
+                                placeholder="Opcional · Ej: Servicios de salud"
+                                error={errors.giro?.message}
+                                {...register('giro')}
+                            />
+                            <Input
+                                label="Correo de contacto"
+                                type="email"
+                                autoComplete="off"
+                                placeholder="Opcional · contacto@institucion.cl"
+                                error={errors.email_contacto?.message}
+                                {...register('email_contacto')}
+                            />
+                        </div>
+                    </>
+                )}
 
                 {/* ── Dirección de entrega ─────────────────────────────────── */}
                 <SectionTitle>Dirección de entrega</SectionTitle>
@@ -246,7 +338,25 @@ export function RegisterForm() {
                     />
                 </div>
 
-                <Button type="submit" fullWidth loading={isSubmitting} disabled={isSubmitting} className="mt-8">
+                {/* ── Aviso global de error de envío ───────────────────────── */}
+                {/* El usuario solo necesita saber que falló (correo/RUT ya
+                    existentes, conflicto, error de servidor, etc.). Se renderiza
+                    aquí, junto al botón, donde está su foco al enviar. */}
+                {submitError && (
+                    <div className="mt-8">
+                        <Alert variant="error" role="alert" aria-live="assertive">
+                            {submitError}
+                        </Alert>
+                    </div>
+                )}
+
+                <Button
+                    type="submit"
+                    fullWidth
+                    loading={isSubmitting}
+                    disabled={isSubmitting}
+                    className={submitError ? 'mt-4' : 'mt-8'}
+                >
                     {isSubmitting ? 'Creando cuenta…' : 'Crear cuenta'}
                 </Button>
 

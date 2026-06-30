@@ -1,24 +1,23 @@
+// src/features/inventory/hooks/useCategorias.ts
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { catalogService } from 'src/features/catalog/services/catalogService';
+import { inventoryService } from '../services/inventoryService';
 
 /**
- * useCategorias — categorías públicas para filtros del catálogo y la landing.
- * Capa: hook → service → axios (nunca llama axios directo). *(Layered + Observer)*
+ * useCategorias (inventory) — categorías para los <select> del alta de producto (T4.2).
+ * Capa: hook → service → axios (nunca llama axios directo). (Layered + Observer)
  *
- * Requiere que `catalogService` exponga `getCategorias()` apuntando a
- * `GET /inventory/public/categorias/` (ya lo tiene).
+ * OJO: este NO es el de catalog. Aquí usamos el endpoint ADMIN
+ * `GET /inventory/categorias/` vía inventoryService.getCategorias(), que devuelve
+ * TODAS las categorías (incluidas las internas tipo "cajas"). El de
+ * `features/catalog/hooks/useCategorias` es el público y oculta cajas.
  *
- * `placeholderData: keepPreviousData` — durante cualquier refetch en segundo
- * plano mantiene la última lista de categorías en lugar de volver a `undefined`.
- * Sin esto, en cada refetch `categorias.data` quedaba vacío por un instante y la
- * sección "Categorías populares" se ocultaba sola (igual que pasaba con focus).
- *
- * Las categorías cambian poco: staleTime alto evita refetch innecesario.
+ * queryKey ['inventory','categorias'] — distinto del público (['categorias','public'])
+ * para que las dos cachés no se pisen.
  */
 export function useCategorias() {
   return useQuery({
-    queryKey: ['categorias', 'public'],
-    queryFn: () => catalogService.getCategorias(),
+    queryKey: ['inventory', 'categorias'],
+    queryFn: () => inventoryService.getCategorias(),
     staleTime: 1000 * 60 * 30, // 30 min
     placeholderData: keepPreviousData,
   });

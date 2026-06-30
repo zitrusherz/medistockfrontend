@@ -1,3 +1,4 @@
+// src/lib/axios.ts
 import axios from "axios";
 import type { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 
@@ -86,6 +87,19 @@ function defaultMessageForStatus(status: number): string {
     }
 }
 
+/* -------------------------------------------------------------------------- */
+/*  Claves de error GLOBALES de DRF                                           */
+/*                                                                            */
+/*  `detail` y `non_field_errors` NO son campos del formulario: representan   */
+/*  errores a nivel de request/serializer. Si se tratan como fieldErrors, el  */
+/*  formulario intenta setError() sobre un campo inexistente Y notifyApiError */
+/*  se silencia (porque hasFieldErrors pasa a true). Esa era la causa del     */
+/*  registro que fallaba sin ningún aviso en pantalla. Las excluimos de los   */
+/*  fieldErrors y las exponemos como mensaje global vía extractUserMessage.   */
+/* -------------------------------------------------------------------------- */
+
+const GLOBAL_ERROR_KEYS = new Set(["detail", "non_field_errors"]);
+
 /**
  * Lee `data.detail` — presente en errores DRF estándar (401/403/404/etc.).
  * Solo para el campo `detail`.
@@ -94,6 +108,19 @@ function extractDetail(data: unknown): string | undefined {
     if (data && typeof data === "object" && "detail" in data) {
         const d = (data as { detail: unknown }).detail;
         if (typeof d === "string") return d;
+    }
+    return undefined;
+}
+
+/**
+ * Lee `non_field_errors` — validación a nivel de serializer (DRF), no asociada
+ * a un campo concreto. Puede venir como arreglo de strings o como string.
+ */
+function extractNonFieldError(data: unknown): string | undefined {
+    if (data && typeof data === "object" && "non_field_errors" in data) {
+        const v = (data as { non_field_errors: unknown }).non_field_errors;
+        if (Array.isArray(v) && typeof v[0] === "string") return v[0];
+        if (typeof v === "string") return v;
     }
     return undefined;
 }
@@ -114,22 +141,30 @@ function extractErrorKey(data: unknown): string | undefined {
 }
 
 /**
- * Mensaje legible del backend: prueba `detail` primero, luego `error`.
- * Úsalo en todos los paths que NO son 400-con-campos.
+ * Mensaje legible del backend: prueba `detail`, luego `non_field_errors`,
+ * luego `error`. Úsalo en todos los paths que NO son 400-con-campos.
  */
 function extractUserMessage(data: unknown): string | undefined {
-    return extractDetail(data) ?? extractErrorKey(data);
+    return (
+        extractDetail(data) ??
+        extractNonFieldError(data) ??
+        extractErrorKey(data)
+    );
 }
 
 /**
  * Normaliza el cuerpo de un 400 a FieldErrors { campo: string[] }.
  * DRF puede devolver arrays por campo o, a veces, un string suelto.
+ *
+ * Ignora las claves GLOBALES (detail / non_field_errors): esas no son campos
+ * del formulario y deben viajar como mensaje global, no como fieldError.
  */
 function extractFieldErrors(data: unknown): FieldErrors {
     const result: FieldErrors = {};
     if (!data || typeof data !== "object") return result;
 
     for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
+        if (GLOBAL_ERROR_KEYS.has(key)) continue; // global → no es un campo
         if (Array.isArray(value)) {
             result[key] = value.map(String);
         } else if (typeof value === "string") {
@@ -170,7 +205,7 @@ export function toApiError(error: unknown): ApiError {
             const hasFields = Object.keys(fieldErrors).length > 0;
 
             // Si hay campos, el mensaje de referencia es el primer error de campo.
-            // Si no (400 con solo `detail`), usar extractUserMessage.
+            // Si no (400 con solo `detail` / `non_field_errors`), usar el mensaje global.
             const message =
                 (hasFields && firstFieldMessage(fieldErrors)) ||
                 extractUserMessage(data) ||

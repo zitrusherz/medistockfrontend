@@ -1,5 +1,4 @@
 // src/router/index.tsx
-import { lazy } from "react"
 import { createBrowserRouter } from "react-router"
 import { PrivateRoute } from "./PrivateRouter"
 import { RoleRoute } from "./RoleRoute"
@@ -11,38 +10,21 @@ import { S } from "./withSuspense"
 // invitados (mini-carrito → /login). Sin chunk lazy = sin spinner de carga.
 import Login from "@/pages/public/Login"
 
-export { homeByRole } from "./homeByRole"
+// Páginas lazy extraídas a su propio módulo: así este archivo de config solo
+// exporta no-componentes (router, homeByRole) y no rompe react-refresh.
+import {
+    Home, Catalogo, Producto, CrearCuenta, NotFound,
+    ClienteDashboard, Carrito, Checkout, Pago, PagoRetorno,
+    MisPedidos, PedidoDetalle, MisPagos,
+    EjecutivoDashboard, EjecutivoPedidos,
+    LogisticaDashboard, LogisticaOrdenes, LogisticaPreparacion,
+    LogisticaEnvio, LogisticaAlertas,
+    AnalistaDashboard, AnalistaPagos,
+    AdminInicio, AdminEstadisticas, AdminProductos,
+    AdminTrabajadores, AdminClientes, AdminApiKeys,
+} from "./lazyPages"
 
-// ─── Lazy-load por zona: cada rol = su propio chunk en el build ───────────────
-const Home        = lazy(() => import("@/pages/public/Home"))
-const Catalogo    = lazy(() => import("@/pages/public/Catalogo"))
-const Categorias  = lazy(() => import("@/pages/public/Categorias"))
-const Producto    = lazy(() => import("@/pages/public/Producto"))
-const CrearCuenta = lazy(() => import("@/pages/public/CrearCuenta"))
-const NotFound    = lazy(() => import("@/pages/public/NotFound"))
-const ClienteDashboard = lazy(() => import("@/pages/cliente/Dashboard"))
-const Carrito          = lazy(() => import("@/pages/cliente/Carrito"))
-const Checkout         = lazy(() => import("@/pages/cliente/Checkout"))
-const Pago             = lazy(() => import("@/pages/cliente/Pago"))
-const PagoRetorno      = lazy(() => import("@/pages/cliente/PagoRetorno"))
-const MisPedidos       = lazy(() => import("@/pages/cliente/MisPedidos"))
-const PedidoDetalle    = lazy(() => import("@/pages/cliente/PedidoDetalle"))
-const MisPagos         = lazy(() => import("@/pages/cliente/MisPagos"))
-const EjecutivoDashboard = lazy(() => import("@/pages/ejecutivo/Dashboard"))
-const EjecutivoPedidos   = lazy(() => import("@/pages/ejecutivo/Pedidos"))
-const LogisticaDashboard    = lazy(() => import("@/pages/logistica/Dashboard"))
-const LogisticaOrdenes      = lazy(() => import("@/pages/logistica/Ordenes"))
-const LogisticaPreparacion  = lazy(() => import("@/pages/logistica/Preparacion"))
-const LogisticaEnvio        = lazy(() => import("@/pages/logistica/Envio"))
-const LogisticaAlertas      = lazy(() => import("@/pages/logistica/Alertas"))
-const AnalistaDashboard = lazy(() => import("@/pages/analista/Dashboard"))
-const AnalistaPagos     = lazy(() => import("@/pages/analista/Pagos"))
-const AdminInicio       = lazy(() => import("@/pages/admin/Inicio"))
-const AdminEstadisticas = lazy(() => import("@/pages/admin/Estadisticas"))
-const AdminProductos    = lazy(() => import("@/pages/admin/Productos"))
-const AdminTrabajadores = lazy(() => import("@/pages/admin/Trabajadores"))
-const AdminClientes     = lazy(() => import("@/pages/admin/Clientes"))
-const AdminApiKeys      = lazy(() => import("@/pages/admin/ApiKeys"))
+export { homeByRole } from "./homeByRole"
 
 export const router = createBrowserRouter([
     // ── Tienda pública (con header de tienda) ─────────────────────────────────
@@ -50,9 +32,6 @@ export const router = createBrowserRouter([
         element: <PublicLayout />,
         children: [
             { path: "/",                 element: S(<Home />) },
-            // Navegador de categorías (drill-down). "Tienda" entra por aquí.
-            { path: "/categorias",       element: S(<Categorias />) },
-            { path: "/categorias/:id",   element: S(<Categorias />) },
             { path: "/catalogo",         element: S(<Catalogo />) },
             { path: "/producto/:codigo", element: S(<Producto />) },
         ],
