@@ -268,10 +268,21 @@ export function CheckoutForm() {
 
     // Preseleccionar el servicio más barato (y fijar el despacho del pedido).
     useEffect(() => {
-        if (!opciones.length) return;
-        const valid = servicioSel != null && opciones.some((o) => o.serviceTypeCode === servicioSel);
-        const pick = valid ? opciones.find((o) => o.serviceTypeCode === servicioSel)! : opciones[0];
-        if (!valid) setServicioSel(pick.serviceTypeCode);
+        if (opciones.length === 0) return;
+
+        const pick =
+            servicioSel == null
+                ? opciones[0]
+                : opciones.find((o) => o.serviceTypeCode === servicioSel) ?? opciones[0];
+
+        if (!pick) return;
+
+        const valid = pick.serviceTypeCode === servicioSel;
+
+        if (!valid) {
+            setServicioSel(pick.serviceTypeCode);
+        }
+
         form.setValue('despacho', mapDespacho(pick));
     }, [opciones, servicioSel, form]);
 
@@ -282,8 +293,8 @@ export function CheckoutForm() {
     const cotizando = hasCounty && !sinCobertura && cotizandoRaw;
     const showServices = opciones.length > 0;
     // county resuelto pero sin tarifas (sin cobertura / error / vacío) → se paga después.
-    const pendiente = hasCounty && !showServices && !cotizando;
-    const showManual = !hasCounty || pendiente;
+    //const pendiente = hasCounty && !showServices && !cotizando;
+    //const showManual = !hasCounty || pendiente;
 
     const mutation = useMutation({
         mutationFn: async (vars: SubmitVars): Promise<Pedido> => {
