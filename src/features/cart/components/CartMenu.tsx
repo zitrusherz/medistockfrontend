@@ -208,12 +208,13 @@ export function CartMenu() {
                             <span className="text-[13px] font-semibold text-grape-700">Total estimado</span>
                             <span className="font-display font-bold text-plum-700 text-[20px]">{formatCLP(total)}</span>
                         </div>
+                        {/* CAMBIO 1: antes decía "Ver carrito y pedido" → ahora "Ver carrito". */}
                         <Link
                             to={cartHref}
                             onClick={() => setOpen(false)}
                             className="block text-center bg-plum-700 hover:bg-plum-800 text-white font-bold text-[13.5px] py-2.5 rounded-lg ring-1 ring-gold-400/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-grape-500"
                         >
-                            Ver carrito y pedido
+                            Ver carrito
                         </Link>
                     </div>
                 </div>

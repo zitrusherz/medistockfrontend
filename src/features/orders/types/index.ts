@@ -1,4 +1,4 @@
-// features/orders/types/index.ts
+// src/features/orders/types/index.ts
 // DTOs (forma cruda de la API) + enums + payloads del feature pedidos.
 // Los modelos de dominio (Pedido, DetallePedido) viven en @/types/models.
 
@@ -78,6 +78,13 @@ export interface NuevoDetalle {
 
 export interface NuevoPedido {
   direccion_entrega_id: number;
+  /**
+   * Sucursal de ORIGEN del despacho. El backend lo exige como obligatorio
+   * (400 { sucursal_origen_id: ["This field is required."] } si falta).
+   * En el checkout se envía la sucursal de la opción de envío elegida (el origen
+   * que se cotizó); si no hubo cotización, la sucursal con mayor cobertura de stock.
+   */
+  sucursal_origen_id: number;
   tipo_venta: TipoVenta;
   tipo_despacho?: TipoDespacho;
   prioridad_medica?: PrioridadMedica;

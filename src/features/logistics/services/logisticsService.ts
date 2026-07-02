@@ -8,14 +8,17 @@
 // ApiError. Se dejan propagar a React Query (404 = sin despacho, 502 = courier
 // caído los distingue useTracking por `status`).
 
+import api from '@/lib/axios';
 import type {
     ActualizarEstadoDespachoRequest,
     CotizacionResponse,
     CotizarEnvioRequest,
+    CotizarProductosRequest,
     CrearEnvioRequest,
     Despacho,
 } from '../types';
 import type { EnvioTracking } from './mappers/trackingMapper';
+import { toCotizacion } from './mappers/despachoMapper';
 import { getCourierStrategy } from './strategies';
 
 // Estrategia fija por entorno (VITE_USE_MOCKS). No cambia en runtime.
@@ -25,6 +28,21 @@ export const logisticsService = {
     /** POST /api/logistics/cotizar/ — costo + servicios disponibles para el destino. */
     cotizar: (req: CotizarEnvioRequest): Promise<CotizacionResponse> =>
         courier.cotizar(req),
+
+    /**
+     * POST /api/logistics/cotizar/ (variante CHECKOUT).
+     * Cotiza pasando SOLO productos (producto_id + cantidad) + sucursal + destino;
+     * el backend arma la caja óptima y calcula medidas/peso. Va DIRECTO al backend
+     * real (sin strategy: en este flujo no hay nada que mockear).
+     * ⚠️ Ruta asumida; contrato en docs/COTIZACION_ENVIO_CHECKOUT.md. Si tu API la
+     * expone en otro path, cámbiala SOLO aquí.
+     */
+    cotizarProductos: async (
+        req: CotizarProductosRequest,
+    ): Promise<CotizacionResponse> => {
+        const { data } = await api.post('/logistics/cotizar/', req);
+        return toCotizacion(data);
+    },
 
     /** POST /api/logistics/envios/ — crea el envío y su nº de seguimiento. */
     crearEnvio: (req: CrearEnvioRequest): Promise<Despacho> =>

@@ -1,13 +1,14 @@
 // src/components/layout/PublicLayout.tsx
 import { useState, useEffect, useRef, type FormEvent } from "react"
 import { Link, Outlet, useNavigate } from "react-router"
-import { Search, Store, User, Phone, HelpCircle } from "lucide-react"
+import { Search, Store, User, Phone, HelpCircle, LogOut } from "lucide-react"
 import { CartMenu } from "@/features/cart/components/CartMenu"
 import { MainMenu } from "@/components/layout/MainMenu"
 import { LoginForm } from "@/features/auth/components/LoginForm"
 import { useCartTotal } from "@/features/cart/hooks/useCart"
 import { useAuthStore } from "@/store/authStore"
 import { homeByRole } from "@/router/homeByRole"
+import { queryClient } from "@/lib/queryClient"
 import { formatCLP } from "@/utils/formatCurrency"
 
 /**
@@ -18,8 +19,8 @@ import { formatCLP } from "@/utils/formatCurrency"
  *   · <LoginForm/> → form real de login dentro de un popover (AccountMenu).
  *
  * Se monta como LAYOUT ROUTE en router/index.tsx envolviendo /, /categorias,
- * /catalogo y /producto/:codigo. El header es `sticky`, así que las páginas no
- * necesitan padding-top.
+ * /catalogo, /producto/:codigo y el 404. El header es `sticky`, así que las
+ * páginas no necesitan padding-top.
  */
 export function PublicLayout() {
     return (
@@ -151,10 +152,34 @@ function StoreHeader() {
     const [term, setTerm] = useState("")
     const { total } = useCartTotal()
 
+    // ── Sesión: la sub-barra cambia según haya o no cliente autenticado ───────
+    const status = useAuthStore((s) => s.status)
+    const rol = useAuthStore((s) => s.rol)
+    const user = useAuthStore((s) => s.user)
+    const logout = useAuthStore((s) => s.logout)
+
+    // FIX Bug 3: nombre con apellido abreviado a la inicial (ej. "Salvador P.").
+    // `user` es PerfilMe (cliente o trabajador); ambos exponen `datos.first_name`
+    // y `datos.last_name`.
+    const first = user?.datos?.first_name?.trim() ?? ""
+    const last = user?.datos?.last_name?.trim() ?? ""
+    const displayName =
+        (last ? `${first} ${last[0]?.toUpperCase() ?? ""}.` : first) ||
+        user?.datos?.email ||
+        "Mi cuenta"
+
     const onSearch = (e: FormEvent) => {
         e.preventDefault()
         const q = term.trim()
         navigate(q ? `/catalogo?search=${encodeURIComponent(q)}` : "/catalogo")
+    }
+
+    const handleLogout = () => {
+        // Igual que en AppShell: se limpia la caché de React Query ANTES de
+        // limpiar la sesión, para no arrastrar datos de la sesión anterior.
+        queryClient.clear()
+        logout()
+        navigate("/", { replace: true })
     }
 
     return (
@@ -215,16 +240,39 @@ function StoreHeader() {
             {/* ── Sub-barra: sesión + pedido (con mini-carrito en hover) ───── */}
             <div className="border-b border-border bg-surface">
                 <div className="mx-auto flex h-11 max-w-[1280px] items-center justify-between px-5 text-[13px]">
+                    {/* FIX Bug 3: con sesión → saludo con nombre + inicial y logout.
+                        Sin sesión → accesos de Ingresar / Crear cuenta. */}
                     <div className="flex items-center gap-4">
-                        <Link
-                            to="/login"
-                            className="flex items-center gap-2 rounded-md bg-plum-700 px-3.5 py-1.5 font-semibold text-white transition-colors hover:bg-plum-800"
-                        >
-                            <User className="h-4 w-4" /> Ingresar
-                        </Link>
-                        <Link to="/registro" className="font-medium text-plum-700 transition-colors hover:text-gold-600">
-                            Crear una cuenta en línea
-                        </Link>
+                        {status === "authenticated" ? (
+                            <>
+                                <Link
+                                    to={homeByRole(rol)}
+                                    className="flex items-center gap-2 font-semibold text-plum-700 transition-colors hover:text-gold-600"
+                                >
+                                    <User className="h-4 w-4" />
+                                    Hola, {displayName}
+                                </Link>
+                                <button
+                                    type="button"
+                                    onClick={handleLogout}
+                                    className="flex items-center gap-1.5 font-medium text-grape-600 transition-colors hover:text-plum-700"
+                                >
+                                    <LogOut className="h-4 w-4" /> Cerrar sesión
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link
+                                    to="/login"
+                                    className="flex items-center gap-2 rounded-md bg-plum-700 px-3.5 py-1.5 font-semibold text-white transition-colors hover:bg-plum-800"
+                                >
+                                    <User className="h-4 w-4" /> Ingresar
+                                </Link>
+                                <Link to="/registro" className="font-medium text-plum-700 transition-colors hover:text-gold-600">
+                                    Crear una cuenta en línea
+                                </Link>
+                            </>
+                        )}
                     </div>
                     <div className="flex items-center gap-3">
                         <span className="text-grape-600">

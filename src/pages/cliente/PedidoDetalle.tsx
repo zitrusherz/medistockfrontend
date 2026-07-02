@@ -20,7 +20,7 @@ import { formatCLP } from '@/utils/formatCurrency';
 import { formatDateTime } from '@/utils/formatDate';
 import type { Pedido, EstadoPedido } from '@/types/models';
 
-import { orderService } from '@/features/orders/services/orderService';
+import { orderService, puedePagarPedido } from '@/features/orders/services/orderService';
 import { useTracking } from '@/features/logistics/hooks/useTracking';
 import { Timeline } from '@/features/logistics/components/Timeline';
 
@@ -156,6 +156,23 @@ export default function PedidoDetalle() {
                                 fuerte
                             />
                         </div>
+
+                        {/* Pago: si el pedido sigue impago (PENDIENTE + WEBPAY),
+                            se ofrece iniciar/reintentar el cobro Webpay. */}
+                        {puedePagarPedido(pedido) && (
+                            <div className="mt-6 border-t border-grape-100 pt-5">
+                                <Link
+                                    to={`/cliente/pago/${pedido.id}`}
+                                    className="block w-full rounded-lg bg-gradient-to-r from-gold-300 to-gold-500 hover:from-gold-200 hover:to-gold-400 px-7 py-3 text-center text-[15px] font-extrabold text-plum-800 shadow-lift transition-colors"
+                                >
+                                    Pagar con Webpay
+                                </Link>
+                                <p className="mt-2 text-center text-[12.5px] text-grape-500">
+                                    Tu pedido está pendiente de pago. Te llevaremos al
+                                    portal seguro de Transbank.
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </section>
 

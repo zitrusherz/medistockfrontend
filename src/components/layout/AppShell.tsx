@@ -1,5 +1,7 @@
+// src/components/layout/AppShell.tsx
 import { useState } from 'react';
-import { Outlet, useNavigate } from 'react-router';
+import { Outlet, useNavigate, Link } from 'react-router';
+import { Store } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore.ts';
 import { queryClient } from '@/lib/queryClient.ts';
 import { Navbar } from './Navbar';
@@ -20,10 +22,6 @@ import { MenuIcon, SearchIcon, BellIcon } from '../ui/icons';
  * Patrón Composite (composición de chrome) + Proxy a nivel ruta lo aplica
  * RoleRoute aguas arriba (este shell asume que ya hay sesión y rol válidos).
  *
- * NOTA de layout: no se usa el `marginLeft` inline del DashboardLayout del kit
- * porque no es responsive (empujaría el contenido en móvil). Aquí el offset es
- * por clases `lg:` para M14.
- *
  * Se usa como elemento de ruta-layout: las páginas hijas entran por <Outlet/>.
  */
 interface AppShellProps {
@@ -42,13 +40,14 @@ export function AppShell({ badges = {} }: AppShellProps) {
 
   const items = itemsForRole(rol);
 
-  // Nombre a mostrar — defensivo: confirmar campos reales de PerfilMe (types/auth.ts).
-  const u = user as unknown as { nombre?: string; apellido?: string; email?: string } | null;
-  const displayName =
-    [u?.nombre, u?.apellido].filter(Boolean).join(' ').trim() || u?.email || 'Usuario';
+  // Nombre a mostrar — se leen los campos reales de PerfilMe (types/auth.ts):
+  // `datos.first_name` / `datos.last_name`, comunes a cliente y trabajador.
+  const first = user?.datos?.first_name?.trim() ?? '';
+  const last = user?.datos?.last_name?.trim() ?? '';
+  const email = user?.datos?.email ?? '';
+  const displayName = [first, last].filter(Boolean).join(' ').trim() || email || 'Usuario';
   const initials =
-    ((u?.nombre?.[0] ?? '') + (u?.apellido?.[0] ?? '')).toUpperCase() ||
-    displayName.slice(0, 2).toUpperCase();
+    ((first[0] ?? '') + (last[0] ?? '')).toUpperCase() || displayName.slice(0, 2).toUpperCase();
 
   function handleLogout() {
     // DoD: el logout invalida la caché de React Query (datos de otro rol no deben
@@ -74,12 +73,13 @@ export function AppShell({ badges = {} }: AppShellProps) {
             >
               <MenuIcon size={22} />
             </button>
-            {/* Marca compacta en móvil (en desktop el logo vive en el sidebar) */}
-            <div className="lg:hidden">
+            {/* Marca compacta en móvil (en desktop el logo vive en el sidebar).
+                Enlaza a la tienda pública para tener siempre una vuelta a "/". */}
+            <Link to="/" className="lg:hidden" aria-label="Ir a la tienda">
               <div className="rounded-md bg-plum-800 px-2 py-1">
                 <LogoMark collapsed caption="" />
               </div>
-            </div>
+            </Link>
           </div>
         }
         center={
@@ -96,6 +96,16 @@ export function AppShell({ badges = {} }: AppShellProps) {
         }
         end={
           <>
+            {/* FIX Bug 2: acceso persistente de vuelta a la tienda desde cualquier
+                página interna (evita el "no hay forma de volver atrás"). */}
+            <Link
+              to="/"
+              className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-semibold text-grape-600 hover:text-plum-700"
+              aria-label="Ir a la tienda"
+            >
+              <Store size={18} />
+              <span className="hidden sm:inline">Tienda</span>
+            </Link>
             <button
               type="button"
               className="relative text-grape-500 hover:text-plum-700"

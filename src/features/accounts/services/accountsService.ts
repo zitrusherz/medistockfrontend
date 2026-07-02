@@ -2,12 +2,19 @@
 // Drop-in: reemplaza tu accountsService.ts. Mantiene registrarCliente/
 // getMisDirecciones/clientes/cliente y AÑADE trabajadores()/registrarTrabajador()/
 // actualizarTrabajador() para T4.3. Repository del dominio `accounts`.
+//
+// CAMBIO 6: se añade crearMiDireccion() — el checkout lo usa para persistir una
+//           dirección tecleada al momento y obtener su id (el pedido exige
+//           direccion_entrega_id). ⚠️ Ruta asumida: POST /accounts/mis-direcciones/
+//           (mismo recurso que el GET; DRF ListCreate). Si tu API la expone en otra
+//           URL, cámbiala SOLO aquí.
 
 import api from '@/lib/axios';
 import type {
     RegistroClienteRequest,
     RegistroClienteResponse,
     DireccionEntrega,
+    DireccionEntregaInput,
     RegistroTrabajadorRequest,
     RegistroTrabajadorResponse,
     ActualizarTrabajadorRequest,
@@ -51,6 +58,22 @@ export const accountsService = {
             DireccionEntrega[] | { results?: DireccionEntrega[] }
         >('/accounts/mis-direcciones/');
         return unwrapList(data);
+    },
+
+    /**
+     * POST /accounts/mis-direcciones/ — crea una dirección de entrega del cliente
+     * autenticado y devuelve la dirección creada (con su `id`).
+     * Usado por el checkout cuando el cliente ingresa una dirección nueva al momento.
+     * ⚠️ SUPUESTO de ruta (ver cabecera). Si difiere, cámbiala aquí.
+     */
+    async crearMiDireccion(
+        body: DireccionEntregaInput,
+    ): Promise<DireccionEntrega> {
+        const { data } = await api.post<DireccionEntrega>(
+            '/accounts/mis-direcciones/',
+            body,
+        );
+        return data;
     },
 
     /**

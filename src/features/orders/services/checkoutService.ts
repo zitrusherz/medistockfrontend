@@ -8,9 +8,9 @@
 // Builder: buildPedido() arma el payload NuevoPedido (snake_case de la API) a
 // partir de los detalles del carrito y los datos del checkout.
 //
-// DECISIÓN DE NEGOCIO: la sucursal NO se manda. El backend asigna la bodega de
-// origen según stock (y dispara traslados internos si una sucursal no cubre).
-// Por eso buildPedido ya no incluye sucursal_origen_id.
+// CAMBIO: el backend ahora EXIGE `sucursal_origen_id`. Se recibe desde el form
+//         (la sucursal de la opción de envío elegida, o la de mayor cobertura de
+//         stock si no hubo cotización) y se incluye en el payload.
 //
 // Capas: page → CheckoutForm → checkoutService → orderService → lib/axios.
 // El form NUNCA llama a axios ni al store directamente para crear el pedido.
@@ -28,6 +28,8 @@ import type {
 /** Datos que el formulario de checkout aporta (lo que NO está en el carrito). */
 export interface CheckoutInput {
     direccionId: number;
+    /** Sucursal de origen del despacho (requerida por el backend). */
+    sucursalId: number;
     despacho: TipoDespacho;
     prioridad: PrioridadMedica;
     observacion?: string;
@@ -42,7 +44,7 @@ export interface CheckoutInput {
  *  - detalles[] salen del carrito (Singleton del store).
  *  - tipo_venta fijo 'WEBPAY' (flujo B2C de paciente particular).
  *  - observacion vacía → undefined (no ensuciar el payload).
- *  - SIN sucursal: el backend la asigna por stock.
+ *  - sucursal_origen_id requerido por el backend (origen del despacho).
  *
  * Lanza si el carrito está vacío: el form debe impedir llegar aquí, pero
  * validamos por contrato.
@@ -56,6 +58,7 @@ export const buildPedido = (input: CheckoutInput): NuevoPedido => {
 
     return {
         direccion_entrega_id: input.direccionId,
+        sucursal_origen_id: input.sucursalId,
         tipo_venta: 'WEBPAY',
         tipo_despacho: input.despacho,
         prioridad_medica: input.prioridad,

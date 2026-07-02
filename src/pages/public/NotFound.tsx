@@ -1,5 +1,8 @@
 // src/pages/public/NotFound.tsx — ruta: * (catch-all 404)
-// Apéndice D #2 — Pantalla 404 del catch-all. Sin chrome interno (no DashboardLayout).
+// FIX Bug 2: ahora se monta DENTRO de PublicLayout (ver router/index.tsx), por lo
+// que la pantalla 404 conserva el header/navbar de la tienda. Se usa <section>
+// (no <main>) para no anidar dos <main> dentro del layout, y min-h-[70vh] en
+// lugar de min-h-screen porque ya hay header sticky arriba.
 // El botón vuelve a un home válido según sesión: home del rol si hay sesión, o "/".
 
 import { useNavigate } from "react-router"
@@ -14,7 +17,7 @@ export default function NotFound() {
     const destino = homeByRole(rol) // null → "/"
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-surface-muted px-4">
+        <section className="flex min-h-[70vh] items-center justify-center px-4 py-16">
             <div className="w-full max-w-md text-center">
                 <p
                     className="font-display text-7xl font-bold text-gold-gradient"
@@ -34,6 +37,6 @@ export default function NotFound() {
                     />
                 </div>
             </div>
-        </main>
+        </section>
     )
 }

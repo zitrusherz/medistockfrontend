@@ -1,8 +1,14 @@
 // src/pages/cliente/Carrito.tsx
 // T2.7 — Página del carrito (evolución de OrderPage de pedido.jsx).
-// Compone: QuickAdd (aside) + líneas (CartRow) + resumen (CartSummary, M2).
+// Compone: QuickAdd (aside izq) + líneas (CartRow) + resumen (CartSummary, aside der).
 // Nota: el SideNav de la maqueta era navegación de marketing → es responsabilidad del
 // layout, no del carrito; se omite a propósito para no duplicar navegación.
+//
+// CAMBIO 3/4 (revisado): el breadcrumb Y el título "Mi pedido" salen de la grilla y
+//           van a lo ancho, arriba. Así las TRES tarjetas (Suministros · pedido ·
+//           Resumen) arrancan a la misma altura (al nivel del pedido) en lugar de que
+//           las laterales queden por sobre el título.
+// Nota: raíz en <div> (no <main>) porque el PublicLayout ya renderiza el <main>.
 
 import { Link } from 'react-router';
 import { useCartItems, useCartCount } from '@/features/cart/hooks/useCart';
@@ -13,47 +19,63 @@ export default function Carrito() {
     const count = useCartCount();
     const vacio = items.length === 0;
 
+    // Con pedido → 3 columnas (Suministros · Pedido · Resumen).
+    // Vacío → 2 columnas (Suministros · mensaje), sin resumen.
+    const cols = vacio
+        ? 'lg:grid-cols-[280px_minmax(0,1fr)]'
+        : 'lg:grid-cols-[280px_minmax(0,1fr)_300px]';
+
     return (
-        <main className="mx-auto max-w-[1280px] px-5 py-8 grid lg:grid-cols-[300px_1fr] gap-6">
-            <aside>
-                <QuickAdd />
-            </aside>
+        <div className="mx-auto max-w-[1280px] px-5 py-8">
+            {/* Breadcrumb a lo ancho (fuera de la grilla) */}
+            <nav className="text-[12.5px] text-grape-500 mb-4 flex items-center gap-1.5">
+                <Link to="/" className="hover:text-plum-700">Inicio</Link>
+                <span className="text-grape-300">/</span>
+                <span className="text-plum-700 font-semibold">Mi pedido</span>
+            </nav>
 
-            <section>
-                <nav className="text-[12.5px] text-grape-500 mb-4 flex items-center gap-1.5">
-                    <Link to="/" className="hover:text-plum-700">Inicio</Link>
-                    <span className="text-grape-300">/</span>
-                    <span className="text-plum-700 font-semibold">Mi pedido</span>
-                </nav>
+            {/* Título a lo ancho (fuera de la grilla): así las tarjetas laterales
+                quedan alineadas por el tope con la tarjeta del pedido. */}
+            <div className="flex items-center gap-3 mb-5">
+                <h1 className="font-display font-bold text-plum-700 text-[30px]">Mi pedido</h1>
+                <span className="text-[13px] font-sans font-bold bg-grape-50 text-grape-700 px-2.5 py-1 rounded-full">
+                    {count} artículos
+                </span>
+            </div>
 
-                <div className="flex items-center justify-between mb-5">
-                    <h1 className="font-display font-bold text-plum-700 text-[30px] flex items-center gap-3">
-                        Mi pedido
-                        <span className="text-[13px] font-sans font-bold bg-grape-50 text-grape-700 px-2.5 py-1 rounded-full">
-                            {count} artículos
-                        </span>
-                    </h1>
-                </div>
+            <div className={`grid gap-6 items-start ${cols}`}>
+                {/* Columna 1: alta rápida de suministros */}
+                <aside>
+                    <QuickAdd />
+                </aside>
 
-                <div className="bg-white rounded-2xl shadow-card ring-gold overflow-hidden">
-                    <div className="h-1.5 gold-rule" />
-                    {vacio ? (
-                        <div className="px-6 py-20 text-center">
-                            <p className="font-display font-bold text-plum-700 text-[24px]">Tu pedido está vacío</p>
-                            <p className="mt-2 text-[14px] text-grape-600">
-                                Agrega productos con su código desde el panel de la izquierda, o explora el{' '}
-                                <Link to="/catalogo" className="text-azure-600 hover:text-plum-700 font-semibold">catálogo</Link>.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="px-6 divide-y divide-grape-100">
-                            {items.map((it) => <CartRow key={it.code} item={it} />)}
-                        </div>
-                    )}
-                </div>
+                {/* Columna 2: pedido */}
+                <section>
+                    <div className="bg-white rounded-2xl shadow-card ring-gold overflow-hidden">
+                        <div className="h-1.5 gold-rule" />
+                        {vacio ? (
+                            <div className="px-6 py-20 text-center">
+                                <p className="font-display font-bold text-plum-700 text-[24px]">Tu pedido está vacío</p>
+                                <p className="mt-2 text-[14px] text-grape-600">
+                                    Agrega productos con su código desde el panel de la izquierda, o explora el{' '}
+                                    <Link to="/catalogo" className="text-azure-600 hover:text-plum-700 font-semibold">catálogo</Link>.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="px-6 divide-y divide-grape-100">
+                                {items.map((it) => <CartRow key={it.code} item={it} />)}
+                            </div>
+                        )}
+                    </div>
+                </section>
 
-                {!vacio && <CartSummary />}
-            </section>
-        </main>
+                {/* Columna 3: resumen (solo si hay pedido) */}
+                {!vacio && (
+                    <aside>
+                        <CartSummary />
+                    </aside>
+                )}
+            </div>
+        </div>
     );
 }

@@ -8,6 +8,7 @@ import { lazy } from "react"
 // Públicas
 export const Home        = lazy(() => import("@/pages/public/Home"))
 export const Catalogo    = lazy(() => import("@/pages/public/Catalogo"))
+export const Categorias  = lazy(() => import("@/pages/public/Categorias"))
 export const Producto    = lazy(() => import("@/pages/public/Producto"))
 export const CrearCuenta = lazy(() => import("@/pages/public/CrearCuenta"))
 export const NotFound    = lazy(() => import("@/pages/public/NotFound"))
