@@ -15,5 +15,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, 'src'),
     }
-  }
+  },
+    test: {
+        environment: 'node', // no se toca el DOM en ningún test
+    },
 })
