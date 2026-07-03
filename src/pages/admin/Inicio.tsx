@@ -1,17 +1,30 @@
-// pages/admin/Inicio.tsx
+// src/pages/admin/Inicio.tsx
 // T4.1 — Tablero operativo del día del Administrador. Banner con saludo +
 // SantiagoClock, fila de KPIs operativos y resúmenes de solo lectura (stock,
 // vencimientos, por cobrar) que reusan los hooks de Logística/Analista.
 // Protegida por RoleRoute (Proxy) en el router.
+//
+// EDICIÓN VISUAL — calcado de la maqueta (admin-home.jsx / captura Inicio):
+//  · Se agregó InicioBanner (saludo + reloj) que antes no existía.
+//  · Las 4 StatCard genéricas se reemplazaron por PendingActionCard (icono
+//    degradado + tarjeta clickeable → navega a la sección relacionada).
+//  · La tarjeta "Cotizaciones pendientes" se mantiene igual que antes
+//    (kpis.cotizacionesDisponible ? … : '—'): sigue sin dato real de backend,
+//    por eso NO tiene onClick. No se agregó "Cotizaciones" al sidebar (así se
+//    definió), pero este KPI ya existía en el código original y se conserva.
+//  · Stock + Vencimientos ahora van lado a lado (2 columnas) y Morosos pasa a
+//    fila completa abajo, igual que la maqueta. Antes las 3 iban en una sola
+//    fila de 3 columnas.
 
+import { useNavigate } from 'react-router';
 import { ClipboardList, Users, Wallet, FileText } from 'lucide-react';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { StatCard } from '@/components/ui';
-import { SantiagoClock } from '@/components/common/SantiagoClock';
 import { formatCLP } from '@/utils/formatCurrency';
 import { useAdminKpis } from '@/features/admin/hooks/useAdminKpis';
 import { ErrorRecarga } from '@/features/admin/components/ErrorRecarga';
+import { InicioBanner } from '@/features/admin/components/InicioBanner';
+import { PendingActionCard } from '@/features/admin/components/PendingActionCard';
 import {
     ResumenStock,
     ResumenVencimientos,
@@ -20,6 +33,7 @@ import {
 
 export default function AdminInicio() {
     const kpis = useAdminKpis();
+    const navigate = useNavigate();
 
     return (
         <PageWrapper size="xl">
@@ -27,7 +41,6 @@ export default function AdminInicio() {
                 title="Panel de administración"
                 description="Resumen operativo del día. La gestión detallada vive en cada panel de rol."
                 breadcrumb={[{ label: 'Inicio' }]}
-                actions={<SantiagoClock />}
             />
 
             <div className="mt-6 space-y-6">
@@ -38,45 +51,48 @@ export default function AdminInicio() {
                     />
                 )}
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <StatCard
-                        label="Pedidos pendientes"
-                        value={String(kpis.pedidosPendientes)}
-                        sub="por aprobar"
-                        tone="warning"
-                        loading={kpis.isLoading}
+                <InicioBanner pedidosPendientes={kpis.isLoading ? 0 : kpis.pedidosPendientes} />
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                    <PendingActionCard
+                        tone="gold"
                         icon={<ClipboardList className="h-5 w-5" aria-hidden="true" />}
+                        value={kpis.isLoading ? '—' : kpis.pedidosPendientes}
+                        label="Pedidos pendientes"
+                        hint="Requieren aprobación"
+                        onClick={() => navigate('/admin/pedidos')}
                     />
-                    <StatCard
-                        label="Clientes activos"
-                        value={String(kpis.clientesActivos)}
-                        sub="con cuenta habilitada"
-                        tone="info"
-                        loading={kpis.isLoading}
+                    <PendingActionCard
+                        tone="azure"
                         icon={<Users className="h-5 w-5" aria-hidden="true" />}
+                        value={kpis.isLoading ? '—' : kpis.clientesActivos}
+                        label="Clientes activos"
+                        hint="Con cuenta habilitada"
+                        onClick={() => navigate('/admin/clientes')}
                     />
-                    <StatCard
-                        label="Por cobrar"
-                        value={formatCLP(kpis.porCobrar)}
-                        sub={`${kpis.clientesMorosos} clientes`}
-                        tone="danger"
-                        loading={kpis.isLoading}
+                    <PendingActionCard
+                        tone="rose"
                         icon={<Wallet className="h-5 w-5" aria-hidden="true" />}
+                        value={kpis.isLoading ? '—' : formatCLP(kpis.porCobrar)}
+                        label="Clientes morosos"
+                        hint={`${kpis.isLoading ? '—' : kpis.clientesMorosos} por cobrar`}
+                        onClick={() => navigate('/admin/clientes')}
                     />
-                    <StatCard
-                        label="Cotizaciones pendientes"
-                        value={kpis.cotizacionesDisponible ? String(kpis.cotizacionesPendientes ?? 0) : '—'}
-                        sub={kpis.cotizacionesDisponible ? 'por revisar' : 'pendiente backend'}
+                    <PendingActionCard
                         tone="neutral"
                         icon={<FileText className="h-5 w-5" aria-hidden="true" />}
+                        value={kpis.cotizacionesDisponible ? String(kpis.cotizacionesPendientes ?? 0) : '—'}
+                        label="Cotizaciones pendientes"
+                        hint={kpis.cotizacionesDisponible ? 'Por revisar' : 'Pendiente backend'}
                     />
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <ResumenStock />
                     <ResumenVencimientos />
-                    <ResumenMorosos />
                 </div>
+
+                <ResumenMorosos />
             </div>
         </PageWrapper>
     );

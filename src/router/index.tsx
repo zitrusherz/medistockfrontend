@@ -21,7 +21,7 @@ import {
     LogisticaDashboard, LogisticaOrdenes, LogisticaPreparacion,
     LogisticaEnvio, LogisticaAlertas,
     AnalistaDashboard, AnalistaPagos,
-    AdminInicio, AdminEstadisticas, AdminProductos,
+    AdminInicio, AdminEstadisticas, AdminPedidos, AdminProductos,
     AdminTrabajadores, AdminClientes, AdminApiKeys,
 } from "./lazyPages"
 
@@ -142,6 +142,7 @@ export const router = createBrowserRouter([
                             // T4.1 — "Inicio" (operativo) reemplaza al antiguo Dashboard.
                             { path: "/admin",              element: S(<AdminInicio />) },
                             { path: "/admin/estadisticas", element: S(<AdminEstadisticas />) },
+                            { path: "/admin/pedidos",      element: S(<AdminPedidos />) },
                             { path: "/admin/productos",    element: S(<AdminProductos />) },
                             { path: "/admin/trabajadores", element: S(<AdminTrabajadores />) },
                             { path: "/admin/clientes",     element: S(<AdminClientes />) },

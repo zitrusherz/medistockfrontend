@@ -1,3 +1,4 @@
+// src/components/layout/index.ts
 export { Stack } from "./Stack"
 export type { StackProps, StackDirection, StackAlign, StackJustify, StackGap } from "./Stack"
 
@@ -25,6 +26,8 @@ export { useSidebar } from "./useSidebar"
 
 export { AuthLayout } from "./AuthLayout"
 export type { AuthLayoutProps } from "./AuthLayout"
+
+export { AuthTopbar } from "./AuthTopbar"
 
 export { DashboardLayout } from "./DashboardLayout"
 export type { DashboardLayoutProps } from "./DashboardLayout"

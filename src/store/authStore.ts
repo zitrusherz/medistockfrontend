@@ -1,6 +1,7 @@
+// src/store/authStore.ts
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware'; // <-- 1. Agregado createJSONStorage
-import type { Rol } from '../types/roles';
+import { Roles, rolDesdeGrupos, type Rol } from '../types/roles';
 import type { PerfilMe } from '../types/auth';
 
 export type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'guest';
@@ -47,7 +48,30 @@ export const useAuthStore = create<AuthState & AuthActions>()(
                 try {
                     const { authService } = await import('../features/auth/services/authService');
                     const user = await authService.getMe();
-                    set({ user, rol: user.rol, status: 'authenticated' });
+
+                    // FIX: la API NO manda el rol específico en `user.rol` — ese
+                    // campo de la API solo distingue 'CLIENTE' vs 'TRABAJADOR'.
+                    // El Rol interno de la app (el que usan RoleRoute, homeByRole
+                    // y navItems) se deriva de `user.datos.usuario.grupos[]`
+                    // cuando es trabajador. Ver types/roles.ts::rolDesdeGrupos.
+                    const rol: Rol | null =
+                        user.rol === 'CLIENTE'
+                            ? Roles.CLIENTE
+                            : rolDesdeGrupos(user.datos.usuario.grupos);
+
+                    if (!rol) {
+                        // Cuenta staff autenticada pero sin ningún grupo de rol
+                        // reconocido en usuario.grupos[]. No la mandamos a
+                        // 'guest' (la sesión SÍ es válida), pero no hay panel
+                        // al que enrutarla — RoleRoute/homeByRole la dejarán en
+                        // "/". Se deja este warning para detectarlo en QA.
+                        console.warn(
+                            '[authStore] Perfil TRABAJADOR sin grupo de rol reconocido:',
+                            user.datos.usuario.grupos,
+                        );
+                    }
+
+                    set({ user, rol, status: 'authenticated' });
                 } catch {
                     set({
                         accessToken: null,

@@ -1,43 +1,86 @@
 // features/accounts/types/cliente.ts
-// T3.3 — Tipos del directorio de clientes. SE DECLARAN AQUÍ (no en @/types/models)
-// para no tocar el archivo central y mantener el dominio `accounts` autocontenido.
+// T3.3 — Tipos del directorio de clientes.
 //
-// ⚠️ SUPUESTO (confirmar contra la doc de la API): la forma del DTO. No tuve a la
-// vista la respuesta real de GET /accounts/clientes/. Si los campos difieren,
-// AJUSTA SOLO clienteMapper.ts + estas interfaces; el resto del feature no se entera.
+// FIX nombre "Cliente N": el DTO real anida nombre/email bajo `usuario` y la
+// razón social bajo `institucion` (no en la raíz).
+//
+// FIX comuna (a partir de la respuesta real de GET /accounts/clientes/):
+// NO hay un campo `comuna` plano en la raíz. El backend devuelve
+// `direcciones: DireccionEntrega[]` (mismo shape que el de mis-direcciones/,
+// ya tipado en ./index) y cada una trae `comuna_detalle` + `es_principal`.
+// Se reusa `DireccionEntrega` en vez de redefinir el shape acá.
+//
+// institucion.tipo_institucion: confirmado que la API SÍ manda la clave,
+// pero en null cuando no está asignado (ver data real, cliente id:3). El
+// mapper ya lo trata como "no viene" en ese caso.
+//
+// Si el DTO vuelve a cambiar, AJUSTA SOLO este archivo + clienteMapper.ts.
 
-import type { TipoCliente } from '@/types/models';
+import type { InstitucionRef, TipoCliente, UsuarioDetalle } from '@/types/models';
+import type { DireccionEntrega } from './index';
 
-/** Forma cruda esperada de la API (snake_case). Ajustar si difiere. */
+/** Subtipos de institución que la UI sabe etiquetar. Whitelist cerrada. */
+export type TipoInstitucion =
+    | 'HOSPITAL'
+    | 'CLINICA'
+    | 'LABORATORIO'
+    | 'CENTRO_MEDICO'
+    | 'FARMACIA';
+
+export const TIPO_INSTITUCION_LABEL: Record<TipoInstitucion, string> = {
+    HOSPITAL: 'Hospital',
+    CLINICA: 'Clínica',
+    LABORATORIO: 'Laboratorio',
+    CENTRO_MEDICO: 'Centro médico',
+    FARMACIA: 'Farmacia',
+};
+
+/**
+ * InstitucionRef + tipo opcional. Se extiende AQUÍ (local a este DTO) para no
+ * tocar el InstitucionRef central de @/types/models, que otras features usan
+ * sin este campo.
+ */
+export interface InstitucionClienteDTO extends InstitucionRef {
+    /** Puede venir null (confirmado en data real) o un string fuera de la
+     * whitelist; el mapper valida antes de usarlo. */
+    tipo_institucion?: string | null;
+}
+
+/** Forma cruda real de GET /accounts/clientes/ (confirmada contra la API). */
 export interface ClienteDTO {
     id: number;
+    usuario: UsuarioDetalle; // first_name, last_name, email, username...
     tipo_cliente: TipoCliente; // PARTICULAR | INSTITUCIONAL
     rut: string;
-    email: string;
+    pasaporte?: string | null;
     telefono: string;
-    // Particular
-    nombre?: string;
-    apellido?: string;
-    // Institucional
-    razon_social?: string;
-    rut_empresa?: string;
-    // Crédito (solo institucional, opcional)
+    /** Solo si tipo_cliente === 'INSTITUCIONAL'; null en particulares. */
+    institucion: InstitucionClienteDTO | null;
+    /**
+     * Direcciones del cliente. Se lee la marcada `es_principal`; si ninguna
+     * lo está, la primera. Puede venir vacío en data de prueba, aunque el
+     * negocio espera que siempre haya al menos una — no se asume.
+     */
+    direcciones: DireccionEntrega[];
+    activo: boolean;
+    // Crédito: no confirmado contra la API real; el mapper lo tolera con `??`.
     cupo_credito?: number;
     credito_utilizado?: number;
-    // Meta
-    activo: boolean;
     fecha_registro?: string;
-    date_joined?: string;
 }
 
 /** Modelo de dominio que consume la UI (camelCase, ya normalizado). */
 export interface Cliente {
     id: number;
-    tipo: TipoCliente;
+    tipo: TipoCliente; // enum crudo — se usa para filtrar (select Institución/Particular)
     nombre: string; // razón social (institucional) o nombre+apellido (particular)
+    /** Texto a mostrar en el badge de Tipo: "Particular", "Institución" o subtipo. */
+    tipoLabel: string;
     rut: string;
     email: string;
     telefono: string;
+    /** Comuna de la dirección principal; "—" si el cliente no tiene ninguna. */
+    comuna: string;
     cupoCredito: number | null;
     creditoUsado: number | null;
     activo: boolean;

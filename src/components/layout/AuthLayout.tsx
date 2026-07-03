@@ -1,3 +1,4 @@
+// src/components/layout/AuthLayout.tsx
 import { forwardRef, type HTMLAttributes, type ReactNode } from "react"
 import { cn } from "@/utils/cn.ts"
 
@@ -12,6 +13,13 @@ interface AuthLayoutProps extends HTMLAttributes<HTMLElement> {
     children: ReactNode
     /** Decoración/ilustración lateral (solo desktop). */
     aside?: ReactNode
+    /**
+     * Barra superior opcional (ej. `<AuthTopbar />`) para "continuar" el
+     * navbar público en pantallas de autenticación. Opcional y hacia atrás
+     * compatible: si no se pasa, el layout se ve exactamente igual que antes
+     * (login/registro sin cambios).
+     */
+    topbar?: ReactNode
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -23,41 +31,49 @@ export const AuthLayout = forwardRef<HTMLElement, AuthLayoutProps>(
             brand,
             children,
             aside,
+            topbar,
             className,
             ...rest
         },
         ref
     ) => {
         return (
-            <main
-                ref={ref as React.Ref<HTMLElement>}
-                className={cn("min-h-screen bg-surface-muted flex", className)}
-                {...rest}
-            >
-                {/* Columna del formulario */}
-                <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
-                    {brand && <div className="mb-8 flex justify-center">{brand}</div>}
+            // `min-h-screen` + `bg-surface-muted` viven ahora en el wrapper para que
+            // el topbar (si existe) quede fuera de la fila con `flex-1` de abajo y
+            // no se descuadre el alto disponible para el card + aside.
+            <div className="min-h-screen bg-surface-muted flex flex-col">
+                {topbar}
 
-                    <div
-                        className={cn(
-                            cardWidth,
-                            "rounded-xl border border-border bg-surface p-8 shadow-card"
-                        )}
-                    >
-                        {children}
-                    </div>
-                </div>
+                <main
+                    ref={ref as React.Ref<HTMLElement>}
+                    className={cn("flex flex-1", className)}
+                    {...rest}
+                >
+                    {/* Columna del formulario */}
+                    <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
+                        {brand && <div className="mb-8 flex justify-center">{brand}</div>}
 
-                {/* Columna decorativa — oculta en móvil */}
-                {aside && (
-                    <div
-                        className="hidden lg:flex flex-1 items-center justify-center bg-primary p-12"
-                        aria-hidden="true"
-                    >
-                        {aside}
+                        <div
+                            className={cn(
+                                cardWidth,
+                                "rounded-xl border border-border bg-surface p-8 shadow-card"
+                            )}
+                        >
+                            {children}
+                        </div>
                     </div>
-                )}
-            </main>
+
+                    {/* Columna decorativa — oculta en móvil */}
+                    {aside && (
+                        <div
+                            className="hidden lg:flex flex-1 items-center justify-center bg-primary p-12"
+                            aria-hidden="true"
+                        >
+                            {aside}
+                        </div>
+                    )}
+                </main>
+            </div>
         )
     }
 )

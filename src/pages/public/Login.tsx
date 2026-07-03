@@ -5,7 +5,7 @@
 // PrivateRouter guardó `state.from`; volvemos ahí tras autenticar.
 
 import { Navigate, useLocation } from "react-router"
-import { AuthLayout, LogoMark } from "@/components/layout"
+import { AuthLayout, AuthTopbar, LogoMark } from "@/components/layout"
 import { LoginForm } from "@/features/auth/components/LoginForm"
 import { useAuthStore } from "@/store/authStore"
 import { homeByRole } from "@/router/homeByRole"
@@ -24,12 +24,10 @@ export default function Login() {
 
     return (
         <AuthLayout
-            // Marca visible sobre fondo claro (LogoMark es texto blanco → solo en el aside oscuro).
-            brand={
-                <span className="font-display text-2xl font-bold text-plum-700">
-                    Medi<span className="text-gold-gradient">Stock</span>
-                </span>
-            }
+            // El logo ya viaja en <AuthTopbar/>, así que aquí no repetimos el
+            // `brand` centrado sobre el card (quedaba duplicado: uno arriba
+            // en la barra y otro sobre el formulario).
+            topbar={<AuthTopbar homePath="/" />}
             aside={
                 <div className="text-center">
                     <LogoMark caption="PLATAFORMA CLÍNICA" />

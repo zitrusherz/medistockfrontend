@@ -1,12 +1,12 @@
 // src/pages/admin/Clientes.tsx
-// T4.4 — Página Admin · Clientes. Directorio de clientes (B2B/B2C) con búsqueda,
-// filtro por tipo y paginación; abrir una fila muestra la ficha (CustomerDetail)
-// con tabs Datos / Pedidos / Pagos. Protegida por RoleRoute (Proxy) para el rol
-// Administrador en el router. Ruta: /admin/clientes. Export default → lazy().
+// T4.4 — Página Admin · Clientes. Directorio con búsqueda, filtro por tipo,
+// paginación y ficha de detalle.
 //
-// Reúsa SIN tocar: CustomersTable (presentacional, render-prop de acciones) y
-// CustomerDetail (showPagos=true habilita el 3er tab). El filtro de texto lo hace
-// useClientes en cliente; el filtro de tipo y la paginación se aplican aquí.
+// NUEVO: columnas Comuna y Pedidos/Total comprado (mockup admin-customers.jsx).
+// Pedidos/Total NO salen de accountsService — se reusa useTopCompradores
+// (ya construido para T4.4, misma regla de negocio: RECHAZADO/CANCELADO no
+// cuentan como compra) y se arma un Map clienteId -> {pedidos,total} para
+// pasárselo a CustomersTable. Cero llamadas nuevas a la API.
 
 import { useMemo, useState } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';
@@ -15,6 +15,7 @@ import { Button, Pagination } from '@/components/ui';
 import { CustomersTable } from '@/features/accounts/components/CustomersTable';
 import { CustomerDetail } from '@/features/accounts/components/CustomerDetail';
 import { useClientes } from '@/features/accounts/hooks/useClientes';
+import { useTopCompradores } from '@/features/accounts/hooks/useTopCompradores';
 import type { Cliente } from '@/features/accounts/types/cliente';
 import type { TipoCliente } from '@/types/models';
 
@@ -31,6 +32,17 @@ export default function AdminClientes() {
     const [abierto, setAbierto] = useState(false);
 
     const { clientes, isLoading, isError } = useClientes(search);
+
+    // Reuso del ranking de T4.4 (Top compradores) para no duplicar lógica de
+    // agregación ni pedirle un campo nuevo al backend.
+    const { ranking } = useTopCompradores();
+    const comprasPorCliente = useMemo(() => {
+        const map = new Map<number, { pedidos: number; total: number }>();
+        for (const r of ranking) {
+            map.set(r.clienteId, { pedidos: r.pedidos, total: r.total });
+        }
+        return map;
+    }, [ranking]);
 
     // Filtro de tipo en cliente (el de texto ya lo aplica useClientes).
     const filtrados = useMemo(
@@ -100,6 +112,8 @@ export default function AdminClientes() {
                         clientes={visibles}
                         loading={isLoading}
                         emptyText="No hay clientes que coincidan con el filtro."
+                        showComuna
+                        comprasPorCliente={comprasPorCliente}
                         renderAcciones={(c) => (
                             <Button variant="secondary" onClick={() => verCliente(c)}>
                                 Ver

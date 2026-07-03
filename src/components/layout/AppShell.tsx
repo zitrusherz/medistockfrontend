@@ -4,6 +4,7 @@ import { Outlet, useNavigate, Link } from 'react-router';
 import { Store } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore.ts';
 import { queryClient } from '@/lib/queryClient.ts';
+import { datosBasicosPerfil } from '@/types/auth.ts';
 import { Navbar } from './Navbar';
 import { RoleSidebar } from './RoleSidebar';
 import { LogoMark } from './LogoMark';
@@ -40,11 +41,15 @@ export function AppShell({ badges = {} }: AppShellProps) {
 
   const items = itemsForRole(rol);
 
-  // Nombre a mostrar — se leen los campos reales de PerfilMe (types/auth.ts):
-  // `datos.first_name` / `datos.last_name`, comunes a cliente y trabajador.
-  const first = user?.datos?.first_name?.trim() ?? '';
-  const last = user?.datos?.last_name?.trim() ?? '';
-  const email = user?.datos?.email ?? '';
+  // Nombre a mostrar — FIX: se usa `datosBasicosPerfil(user)` en vez de
+  // `user.datos.first_name` directo. Ese acceso plano solo es válido para
+  // CLIENTE: para TRABAJADOR el nombre/email vienen anidados en
+  // `user.datos.usuario` (types/auth.ts), así que daba siempre `undefined`.
+  const { first_name, last_name, email } = user
+    ? datosBasicosPerfil(user)
+    : { first_name: '', last_name: '', email: '' };
+  const first = first_name.trim();
+  const last = last_name.trim();
   const displayName = [first, last].filter(Boolean).join(' ').trim() || email || 'Usuario';
   const initials =
     ((first[0] ?? '') + (last[0] ?? '')).toUpperCase() || displayName.slice(0, 2).toUpperCase();

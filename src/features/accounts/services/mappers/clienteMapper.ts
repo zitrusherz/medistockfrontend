@@ -1,25 +1,61 @@
 // features/accounts/services/mappers/clienteMapper.ts
 // Adapter: DTO crudo de /accounts/clientes/ -> modelo de dominio Cliente.
-// ESTE es el único archivo que hay que tocar si la API cambia nombres de campo.
+// ESTE archivo (junto con types/cliente.ts) es el único que hay que tocar si
+// la API cambia nombres de campo.
+//
+// FIX comuna: la API no manda un campo `comuna` plano — hay que sacarla de la
+// dirección marcada `es_principal` dentro de `direcciones[]` (fallback a la
+// primera si ninguna es principal). Si el array viene vacío (visto en data
+// real de prueba), se muestra "—" en vez de romper.
 
-import type { Cliente, ClienteDTO } from '../../types/cliente';
+import type { Cliente, ClienteDTO, TipoInstitucion } from '../../types/cliente';
+import { TIPO_INSTITUCION_LABEL } from '../../types/cliente';
+
+const TIPOS_INSTITUCION_VALIDOS = new Set(Object.keys(TIPO_INSTITUCION_LABEL));
 
 /** Construye un nombre legible según el tipo de cliente. */
 const nombreDeDTO = (dto: ClienteDTO): string => {
-    if (dto.razon_social) return dto.razon_social;
-    const full = `${dto.nombre ?? ''} ${dto.apellido ?? ''}`.trim();
-    return full || dto.email || `Cliente ${dto.id}`;
+    if (dto.institucion?.razon_social) return dto.institucion.razon_social;
+    const full = `${dto.usuario?.first_name ?? ''} ${dto.usuario?.last_name ?? ''}`.trim();
+    return full || dto.usuario?.email || dto.usuario?.username || `Cliente ${dto.id}`;
+};
+
+/**
+ * "Particular" para clientes B2C. Para institucionales: el subtipo (Hospital,
+ * Clínica...) SOLO si el backend lo envía Y es uno de los valores conocidos;
+ * si viene null (caso real confirmado) o algo fuera de la whitelist, cae al
+ * genérico "Institución".
+ */
+const tipoLabelDeDTO = (dto: ClienteDTO): string => {
+    if (dto.tipo_cliente !== 'INSTITUCIONAL') return 'Particular';
+    const tipo = dto.institucion?.tipo_institucion;
+    if (tipo && TIPOS_INSTITUCION_VALIDOS.has(tipo)) {
+        return TIPO_INSTITUCION_LABEL[tipo as TipoInstitucion];
+    }
+    return 'Institución';
+};
+
+/**
+ * Comuna de la dirección principal del cliente. Si ninguna dirección está
+ * marcada `es_principal`, usa la primera. "—" si no tiene direcciones.
+ */
+const comunaDeDTO = (dto: ClienteDTO): string => {
+    const direcciones = dto.direcciones ?? [];
+    const principal = direcciones.find((d) => d.es_principal) ?? direcciones[0];
+    return principal?.comuna_detalle?.nombre ?? '—';
 };
 
 export const toCliente = (dto: ClienteDTO): Cliente => ({
     id: dto.id,
     tipo: dto.tipo_cliente,
     nombre: nombreDeDTO(dto),
-    rut: dto.rut_empresa ?? dto.rut ?? '',
-    email: dto.email ?? '',
+    tipoLabel: tipoLabelDeDTO(dto),
+    rut: dto.rut ?? dto.institucion?.rut_empresa ?? '',
+    email: dto.usuario?.email ?? '',
     telefono: dto.telefono ?? '',
+    comuna: comunaDeDTO(dto),
     cupoCredito: dto.cupo_credito ?? null,
     creditoUsado: dto.credito_utilizado ?? null,
     activo: dto.activo ?? true,
-    fechaRegistro: dto.fecha_registro ?? dto.date_joined ?? null,
+    fechaRegistro: dto.fecha_registro ?? dto.usuario?.date_joined ?? null,
 });

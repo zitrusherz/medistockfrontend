@@ -41,6 +41,7 @@ export const AnalistaPagos     = lazy(() => import("@/pages/analista/Pagos"))
 // Admin
 export const AdminInicio       = lazy(() => import("@/pages/admin/Inicio"))
 export const AdminEstadisticas = lazy(() => import("@/pages/admin/Estadisticas"))
+export const AdminPedidos      = lazy(() => import("@/pages/admin/Pedidos"))
 export const AdminProductos    = lazy(() => import("@/pages/admin/Productos"))
 export const AdminTrabajadores = lazy(() => import("@/pages/admin/Trabajadores"))
 export const AdminClientes     = lazy(() => import("@/pages/admin/Clientes"))

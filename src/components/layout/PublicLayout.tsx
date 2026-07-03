@@ -10,6 +10,7 @@ import { useAuthStore } from "@/store/authStore"
 import { homeByRole } from "@/router/homeByRole"
 import { queryClient } from "@/lib/queryClient"
 import { formatCLP } from "@/utils/formatCurrency"
+import { datosBasicosPerfil } from "@/types/auth"
 
 /**
  * PublicLayout — chrome de la TIENDA pública (TopBar + Header + Outlet).
@@ -159,13 +160,18 @@ function StoreHeader() {
     const logout = useAuthStore((s) => s.logout)
 
     // FIX Bug 3: nombre con apellido abreviado a la inicial (ej. "Salvador P.").
-    // `user` es PerfilMe (cliente o trabajador); ambos exponen `datos.first_name`
-    // y `datos.last_name`.
-    const first = user?.datos?.first_name?.trim() ?? ""
-    const last = user?.datos?.last_name?.trim() ?? ""
+    // FIX: se usa `datosBasicosPerfil(user)` en vez de `user.datos.first_name`
+    // directo. Ese acceso plano solo es válido para CLIENTE: para TRABAJADOR
+    // el nombre/email vienen anidados en `user.datos.usuario`, así que daba
+    // siempre `undefined` y el saludo caía al fallback "Mi cuenta".
+    const { first_name, last_name, email } = user
+        ? datosBasicosPerfil(user)
+        : { first_name: "", last_name: "", email: "" }
+    const first = first_name.trim()
+    const last = last_name.trim()
     const displayName =
         (last ? `${first} ${last[0]?.toUpperCase() ?? ""}.` : first) ||
-        user?.datos?.email ||
+        email ||
         "Mi cuenta"
 
     const onSearch = (e: FormEvent) => {

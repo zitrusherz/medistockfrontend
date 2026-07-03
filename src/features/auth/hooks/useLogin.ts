@@ -1,24 +1,11 @@
+// src/features/auth/hooks/useLogin.ts
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { authService } from '../services/authService';
 import { useAuthStore } from '@/store/authStore';
-import type { Rol } from '@/types/roles';
 import type { LoginRequest } from '@/types/auth';
-import {prefetchHome} from "@/router/prefetch.ts";
-
-// Aterrizaje por rol (M5). Ajusta las claves a los literales reales de
-// types/roles.ts si difieren de los nombres del caso.
-const HOME_BY_ROL: Record<string, string> = {
-    Administrador: '/admin',
-    'Ejecutivo de Cuentas': '/ejecutivo',
-    'Operador Logístico': '/logistica',
-    'Analista de Finanzas': '/analista',
-    Cliente: '/catalogo',
-};
-
-function homeByRole(rol: Rol | null): string {
-    return (rol && HOME_BY_ROL[rol]) ?? '/catalogo';
-}
+import { homeByRole } from '@/router/homeByRole';
+import { prefetchHome } from '@/router/prefetch.ts';
 
 // useMutation: hook de React Query para operaciones que modifican estado
 // (login = POST). Para GET se usa useQuery.
@@ -47,7 +34,14 @@ export function useLogin() {
             if (status !== 'authenticated') return;
 
             // 4. Redirección por rol.
-            prefetchHome(rol)
+            //    FIX: antes había un homeByRole LOCAL con claves de nombre de
+            //    negocio ('Administrador', 'Ejecutivo de Cuentas'...) que no
+            //    calzaban con el enum real de types/roles.ts ('ADMINISTRADOR',
+            //    'EJECUTIVO'...). Eso hacía que HOME_BY_ROL[rol] diera undefined
+            //    y todo el mundo cayera al fallback '/catalogo', sin importar
+            //    su rol real. Se usa ahora la MISMA fuente de verdad que
+            //    RoleRoute (src/router/homeByRole.ts) para no duplicar el mapeo.
+            prefetchHome(rol);
             navigate(homeByRole(rol), { replace: true });
         },
 

@@ -1,9 +1,17 @@
-// features/admin/components/Resumenes.tsx
+// src/features/admin/components/Resumenes.tsx
 // T4.1 — Resúmenes de solo lectura para el Inicio del Admin. NO reimplementan
 // lógica: reusan los mismos hooks/selectores que Logística y Analista
 // (useAlertasStock, useAlertasVencimiento, calcularCobranza). React Query
 // deduplica, así que aparecer aquí no cuesta una red extra. Muestran el top-N
 // más urgente; la gestión completa vive en los paneles de cada rol.
+//
+// EDICIÓN VISUAL (sin tocar datos): encabezado con título display en
+// text-primary + separador inferior, y badge de conteo urgente a la derecha,
+// para alinear con los "Panel" de la maqueta (admin-ui.jsx / admin-home.jsx).
+// Se usa `Card noPadding` + tabla full-bleed en vez del padding uniforme
+// anterior. Nota: `Table` trae su propio borde/rounded interno, así que puede
+// verse un doble borde muy sutil contra el borde del Card — no se tocó el
+// componente Table compartido para evitar romper otras vistas que lo usan.
 
 import type { ReactNode } from 'react';
 import {
@@ -26,21 +34,26 @@ import { calcularCobranza } from '@/features/payments/services/cobranza';
 
 const TOP = 6;
 
-/** Tarjeta con título + contenido (encabezado consistente para los 3 paneles). */
+/** Tarjeta con título + acción + contenido (encabezado de marca, estilo maqueta). */
 function PanelResumen({
     title,
     sub,
+    action,
     children,
 }: {
     title: string;
     sub?: string;
+    action?: ReactNode;
     children: ReactNode;
 }) {
     return (
-        <Card>
-            <div className="mb-3">
-                <h3 className="font-display text-base font-bold text-text">{title}</h3>
-                {sub && <p className="text-xs text-text-muted">{sub}</p>}
+        <Card noPadding>
+            <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3.5">
+                <div>
+                    <h3 className="font-display text-[19px] font-bold text-primary">{title}</h3>
+                    {sub && <p className="text-xs text-text-muted">{sub}</p>}
+                </div>
+                {action}
             </div>
             {children}
         </Card>
@@ -54,15 +67,26 @@ export function ResumenStock() {
         .filter((a) => a.critico || a.agotado)
         .sort((a, b) => b.faltante - a.faltante)
         .slice(0, TOP);
+    const agotados = filas.filter((a) => a.agotado).length;
 
     return (
-        <PanelResumen title="Stock crítico" sub="Productos bajo el mínimo por sucursal">
+        <PanelResumen
+            title="Productos sin stock"
+            sub="Inventario bajo el mínimo, por sucursal"
+            action={
+                agotados > 0 ? (
+                    <Badge variant="danger" size="sm">
+                        {agotados} agotado{agotados === 1 ? '' : 's'}
+                    </Badge>
+                ) : undefined
+            }
+        >
             <Table loading={isLoading}>
                 <TableHead>
                     <TableRow>
                         <TableColumn>Producto</TableColumn>
                         <TableColumn>Sucursal</TableColumn>
-                        <TableColumn className="text-center">Faltante</TableColumn>
+                        <TableColumn className="text-center">Stock</TableColumn>
                     </TableRow>
                 </TableHead>
                 <TableBody isEmpty={!isLoading && filas.length === 0} emptyText="Sin stock crítico.">
@@ -97,9 +121,20 @@ export function ResumenVencimientos() {
         .filter((a) => a.vencido || a.critico)
         .sort((a, b) => a.diasParaVencer - b.diasParaVencer)
         .slice(0, TOP);
+    const vencidos = filas.filter((a) => a.vencido).length;
 
     return (
-        <PanelResumen title="Vencimientos próximos" sub="Lotes vencidos o a ≤ 10 días">
+        <PanelResumen
+            title="Productos por vencer"
+            sub="Lotes vencidos o a ≤ 10 días"
+            action={
+                vencidos > 0 ? (
+                    <Badge variant="danger" size="sm">
+                        {vencidos} vencido{vencidos === 1 ? '' : 's'}
+                    </Badge>
+                ) : undefined
+            }
+        >
             <Table loading={isLoading}>
                 <TableHead>
                     <TableRow>
@@ -144,7 +179,10 @@ export function ResumenMorosos() {
     const cuentas = calcularCobranza(pagos, pedidos).slice(0, TOP);
 
     return (
-        <PanelResumen title="Por cobrar" sub="Clientes con pedidos exigibles sin pago confirmado">
+        <PanelResumen
+            title="Clientes con pagos pendientes"
+            sub="Cuentas exigibles sin pago confirmado"
+        >
             <Table loading={isLoading}>
                 <TableHead>
                     <TableRow>
@@ -155,7 +193,7 @@ export function ResumenMorosos() {
                 </TableHead>
                 <TableBody
                     isEmpty={!isLoading && cuentas.length === 0}
-                    emptyText="Sin cuentas por cobrar."
+                    emptyText="Todos los clientes están al día."
                 >
                     {cuentas.map((c) => (
                         <TableRow key={c.clienteId}>

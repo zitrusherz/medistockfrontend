@@ -4,21 +4,7 @@ import type { NavItem } from './navItems';
 import { LogoMark } from './LogoMark';
 import { LogoutIcon, ChevronLeftIcon, XIcon } from '../ui/icons';
 
-/**
- * RoleSidebar (T1.6) — barra lateral con la identidad visual de la maqueta
- * (plum/gold), que renderiza la navegación YA filtrada por rol.
- *
- * Decisión: no se reescribe el `Sidebar` genérico del kit (slate/sky,
- * presentacional). Este es un componente de aplicación con los tokens de la
- * maqueta = contrato visual del panel. Patrón Composite: compone ítems
- * intercambiables de igual forma.
- *
- * Responsive (M14):
- *  - lg+  : fijo a la izquierda; `collapsed` alterna 244px ↔ rail de iconos.
- *  - <lg  : off-canvas; `mobileOpen` lo desliza; el backdrop lo cierra (vive en AppShell).
- *
- * El `top-14` y la altura asumen un Navbar de h-14 (igual que el kit).
- */
+
 interface RoleSidebarProps {
   items: NavItem[];
   rol: Rol | null;
