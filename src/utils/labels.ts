@@ -1,11 +1,4 @@
-// src/utils/labels.ts
-// T5.1 / M15 — Microcopy canónico (es-CL). FUENTE ÚNICA de los textos de dominio:
-// un mismo estado/concepto se nombra IGUAL en todas las pantallas. En vez de
-// repetir `estado === 'EN_PICKING' ? 'En preparación' : …` por la app, se usa
-// el mapa de aquí. Nada de inglés en la UI salvo códigos técnicos / marcas.
-//
-//   import { ESTADO_PEDIDO_LABEL } from "@/utils/labels"
-//   <Badge>{ESTADO_PEDIDO_LABEL[pedido.estado]}</Badge>
+
 
 import type {
     EstadoPedido,

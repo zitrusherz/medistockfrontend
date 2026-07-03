@@ -1,7 +1,4 @@
-// src/features/integrations/components/ConfirmRevocarModal.tsx
-// T4.5 — Confirmación de acción destructiva: revocar una API Key. Revocar
-// desactiva la key de inmediato; cualquier ERP que la use dejará de poder
-// consumir la API (401/403). Por eso se pide confirmación explícita.
+
 
 import {
     Modal,

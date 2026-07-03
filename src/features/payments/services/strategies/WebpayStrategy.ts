@@ -1,5 +1,4 @@
-// features/payments/services/strategies/WebpayStrategy.ts
-// Implementacion real. Pega a endpoints Transbank del backend.
+
 
 import  api  from '@/lib/axios';
 import type { PaymentStrategy, IniciarResult, CommitResult } from './PaymentStrategy';

@@ -1,5 +1,4 @@
-// features/inventory/components/BranchTag.tsx
-// Etiqueta compacta de sucursal: punto dorado + nombre. Portada de la maqueta.
+
 
 interface BranchTagProps {
     branch: string;

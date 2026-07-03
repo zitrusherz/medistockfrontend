@@ -1,7 +1,4 @@
-// features/inventory/components/StockTable.tsx
-// T3.3 — Vista de SOLO LECTURA del stock por bodega (consulta previa a aprobar).
-// Presentacional: recibe productos ya filtrados por sucursal + la sucursal activa
-// para resaltar la cantidad de ESA bodega. Reusa el Product del catálogo (M3).
+
 
 import {
     Table,

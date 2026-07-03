@@ -1,12 +1,4 @@
-/**
- * Iconos decorativos de la landing (trazos simples, portados de la maqueta).
- * Son `aria-hidden` por ser puramente ornamentales.
- *
- * Nota de convención (M10): el proyecto unifica iconos en `components/ui/icons`.
- * Si esos exports cubren estos glifos, puedes reemplazar este módulo por imports
- * desde `@/components/ui/icons`. Se dejan inline aquí para que la landing sea
- * autocontenida y no dependa de nombres de export que puedan cambiar.
- */
+
 interface IconProps {
   size?: number;
   className?: string;

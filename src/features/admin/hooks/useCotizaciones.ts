@@ -1,7 +1,4 @@
-// features/admin/hooks/useCotizaciones.ts
-// T4.1 — KPI genérico de cotizaciones para Inicio. El backend lo creará luego;
-// por ahora la bandera queda en false y el KPI muestra "—" (pendiente backend).
-// Cuando exista GET /orders/cotizaciones/resumen/, pon la bandera en true.
+
 
 import { useQuery } from '@tanstack/react-query';
 import { adminStatsService } from '../services/adminStatsService';

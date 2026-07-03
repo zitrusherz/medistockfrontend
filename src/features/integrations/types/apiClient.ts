@@ -1,8 +1,4 @@
-// src/features/integrations/types/apiClient.ts
-// T4.5 — Modelo de dominio (VM) de una API Key / ApiClient para la UI. Espejo de
-// accounts/types/trabajador.ts: el DTO crudo (snake_case) vive en ./index
-// (ApiClient, *Request, *Response); aquí solo el VM ya normalizado en camelCase.
-// Si la API cambia nombres de campo del listado, se ajusta SOLO apiClientMapper.ts.
+
 
 /** Estado de presentación para el badge de la tabla. */
 export type EstadoApiKey = 'ACTIVA' | 'VENCIDA' | 'REVOCADA';

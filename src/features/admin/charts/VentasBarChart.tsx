@@ -1,7 +1,4 @@
-// features/admin/charts/VentasBarChart.tsx
-// T4.1 — Barras de ventas confirmadas por mes (recharts). Responsive (M14):
-// ResponsiveContainer ocupa el ancho del padre. Estado vacío explícito en vez
-// de un gráfico roto cuando aún no hay ventas.
+
 
 import {
     Bar,

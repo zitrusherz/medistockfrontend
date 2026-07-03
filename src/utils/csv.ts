@@ -1,11 +1,4 @@
-// src/utils/csv.ts
-// Exportación de datos a CSV para descargar desde el navegador.
-//
-// Resuelve los problemas reales de un CSV "a mano":
-//  - Escapado: comas, comillas y saltos de línea dentro de un campo.
-//  - Delimitador: Excel en español espera ';' (con ',' mete todo en una columna).
-//  - BOM UTF-8: para que acentos y ñ se vean bien al abrir en Excel.
-//  - Inyección de fórmulas: neutraliza celdas que empiezan con = + - @.
+
 
 export interface CsvColumn<T> {
     /** Clave del objeto, o función para valores derivados. */
@@ -32,20 +25,13 @@ export interface CsvOptions<T> {
 const DEFAULT_DELIMITER = ";"
 const DEFAULT_EOL = "\r\n"
 
-/**
- * Convierte un valor de celda a texto seguro para CSV.
- * - null/undefined -> "".
- * - Si parece fórmula (= + - @ al inicio) y sanitizeFormulas, antepone '.
- * - Si contiene el delimitador, comillas o saltos de línea, lo encierra en
- *   comillas dobles y duplica las comillas internas (regla RFC 4180).
- */
+
 function escapeCell(value: unknown, delimiter: string, sanitizeFormulas: boolean): string {
     if (value === null || value === undefined) return ""
 
     let s = String(value)
 
-    // Mitigación de CSV injection: una celda que empieza con = + - @ (o tab/CR)
-    // podría ejecutarse como fórmula al abrir en Excel/Sheets.
+
     if (sanitizeFormulas && /^[=+\-@\t\r]/.test(s)) {
         s = `'${s}`
     }

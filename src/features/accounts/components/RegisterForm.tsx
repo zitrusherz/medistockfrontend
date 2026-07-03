@@ -87,8 +87,7 @@ export function RegisterForm() {
         formState: { errors },
     } = form;
 
-    // Región y comuna son combobox controlados: leemos su valor del form y lo
-    // escribimos con setValue (en vez de register, que es para <input>/<select>).
+
     const regionValue = watch('region');
     const comunaValue = watch('comuna');
 

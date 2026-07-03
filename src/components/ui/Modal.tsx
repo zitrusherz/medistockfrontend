@@ -1,8 +1,4 @@
-// src/components/ui/Modal.tsx
-// T5.1 / M13 — ÚNICO cambio respecto al original: ahora el Modal DEVUELVE el foco
-// al elemento que lo tenía antes de abrirse (al cerrar/desmontar). Ya tenía
-// role="dialog", aria-modal, cierre con Escape y focus-trap con Tab; faltaba el
-// retorno de foco, que es lo que pedía la pasada de accesibilidad.
+
 
 import {
     createContext,
@@ -75,10 +71,7 @@ export function Modal({
         return () => document.removeEventListener("keydown", handle)
     }, [open, closeOnEscape, onClose])
 
-    // M13 — Retorno de foco: capturamos el elemento activo al abrir y lo
-    // restauramos en el cleanup (cuando `open` pasa a false o el Modal se
-    // desmonta). Así, tras cerrar un OrderModal/StatModal, el foco vuelve al
-    // botón que lo abrió y no se pierde al <body>.
+
     useEffect(() => {
         if (!open) return
         const previouslyFocused = document.activeElement as HTMLElement | null

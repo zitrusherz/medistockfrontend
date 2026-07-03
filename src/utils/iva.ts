@@ -1,6 +1,4 @@
-// src/utils/iva.ts
-// Cálculos de IVA (19%). Drop-in: conserva calcularDiferencia / calcularIVA /
-// calcTotales (versión carrito) y AÑADE desgloseIVA() para un monto único.
+
 
 import type { CartItem } from '@/features/cart/types';
 

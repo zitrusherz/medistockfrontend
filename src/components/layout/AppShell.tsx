@@ -1,6 +1,6 @@
 // src/components/layout/AppShell.tsx
-import { useState } from 'react';
-import { Outlet, useNavigate, Link } from 'react-router';
+import { useEffect, useMemo, useState } from 'react';
+import { Outlet, useNavigate, useLocation, Link } from 'react-router';
 import { Store } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore.ts';
 import { queryClient } from '@/lib/queryClient.ts';
@@ -9,22 +9,10 @@ import { Navbar } from './Navbar';
 import { RoleSidebar } from './RoleSidebar';
 import { LogoMark } from './LogoMark';
 import { itemsForRole } from './navItems';
+import { prefetchAllForRole } from '@/router/prefetchPages';
 import { MenuIcon, SearchIcon, BellIcon } from '../ui/icons';
 
-/**
- * AppShell (T1.6) — chrome de los paneles internos.
- *
- * Responsabilidades:
- *  - Lee rol/usuario del authStore (fuente de verdad del rol).
- *  - Filtra NAV_ITEMS por rol (itemsForRole) → un único Sidebar sirve a todos.
- *  - Estado de layout: `collapsed` (rail desktop) y `mobileOpen` (off-canvas).
- *  - Logout: invalida la caché de React Query ANTES de limpiar la sesión.
- *
- * Patrón Composite (composición de chrome) + Proxy a nivel ruta lo aplica
- * RoleRoute aguas arriba (este shell asume que ya hay sesión y rol válidos).
- *
- * Se usa como elemento de ruta-layout: las páginas hijas entran por <Outlet/>.
- */
+
 interface AppShellProps {
   /** Badges numéricos por clave (ej. { pendingOrders: 3 }). Opcional. */
   badges?: Record<string, number>;
@@ -32,6 +20,7 @@ interface AppShellProps {
 
 export function AppShell({ badges = {} }: AppShellProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const rol = useAuthStore((s) => s.rol);
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
@@ -39,12 +28,30 @@ export function AppShell({ badges = {} }: AppShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const items = itemsForRole(rol);
 
-  // Nombre a mostrar — FIX: se usa `datosBasicosPerfil(user)` en vez de
-  // `user.datos.first_name` directo. Ese acceso plano solo es válido para
-  // CLIENTE: para TRABAJADOR el nombre/email vienen anidados en
-  // `user.datos.usuario` (types/auth.ts), así que daba siempre `undefined`.
+  const items = useMemo(() => itemsForRole(rol), [rol]);
+
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+
+  useEffect(() => {
+    if (!rol || items.length === 0) return;
+
+    const warmUp = () => prefetchAllForRole(rol, items);
+
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(warmUp);
+      return () => window.cancelIdleCallback(id);
+    }
+
+    const id = globalThis.setTimeout(warmUp, 300);
+    return () => globalThis.clearTimeout(id);
+  }, [rol, items]);
+
+
   const { first_name, last_name, email } = user
     ? datosBasicosPerfil(user)
     : { first_name: '', last_name: '', email: '' };
@@ -55,8 +62,7 @@ export function AppShell({ badges = {} }: AppShellProps) {
     ((first[0] ?? '') + (last[0] ?? '')).toUpperCase() || displayName.slice(0, 2).toUpperCase();
 
   function handleLogout() {
-    // DoD: el logout invalida la caché de React Query (datos de otro rol no deben
-    // quedar cacheados para el siguiente login).
+
     queryClient.clear();
     logout();
     navigate('/', { replace: true });

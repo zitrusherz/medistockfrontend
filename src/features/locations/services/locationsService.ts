@@ -7,15 +7,7 @@ import type {
     Sucursal,
 } from '@/types/models';
 
-/**
- * locationsService — Repository del dominio `locations`.
- *
- * Único punto de contacto HTTP para ubicaciones. Devuelve modelos tipados;
- * no conoce React ni stores. Si la API cambia rutas, solo se toca este archivo.
- *
- * Nota: `lib/axios` ya tiene baseURL terminada en `/api`, por eso las rutas
- * aquí empiezan en `/locations/...` (igual que authService usa `/accounts/...`).
- */
+
 
 /**
  * Algunos listados de DRF pueden volver como arreglo plano o envueltos en el

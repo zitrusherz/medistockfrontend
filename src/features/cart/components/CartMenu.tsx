@@ -1,10 +1,4 @@
-// src/features/cart/components/CartMenu.tsx
-// T2.7 — Mini-carrito del navbar. Badge en vivo (Observer).
-// Controles inline por línea: − / + / X. La validación vive en cartStore:
-//   - setQty(code, q): si q<=0 elimina la línea automáticamente; si q>stockMax la topa.
-//   - removeItem(code): borra la línea de inmediato (botón X).
-// Por eso desde la UI basta con llamar setQty(code, quantity ± 1). El store
-// blinda contra negativos y contra exceder stock (M3) sin lógica duplicada acá.
+
 
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';

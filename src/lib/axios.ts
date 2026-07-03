@@ -2,12 +2,10 @@
 import axios from "axios";
 import type { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 
-// Importamos DRFValidationError de types/api para no duplicar el mismo tipo.
-// Úsalo como FieldErrors en todo este archivo.
+
 import type { DRFValidationError } from "@/types/api";
 
-// authStore: getters síncronos + logout. Import estático seguro: sus getters
-// no invocan `api` al inicializarse, así que no hay riesgo de ciclo.
+
 import { authStore, useAuthStore } from "@/store/authStore";
 
 /* -------------------------------------------------------------------------- */
@@ -172,17 +170,7 @@ function toMessageList(value: unknown): string[] | null {
     return null;
 }
 
-/**
- * Aplana errores anidados de DRF.
- *
- * Ejemplos reales del backend:
- *   { usuario: { username: ["Ya existe..."] } }
- *   { direccion_entrega: { comuna: ["Pk inválida..."] } }
- *
- * Resultado:
- *   { "usuario.username": ["Ya existe..."] }
- *   { "direccion_entrega.comuna": ["Pk inválida..."] }
- */
+
 function flattenFieldErrors(
     data: unknown,
     result: FieldErrors,
@@ -248,8 +236,7 @@ export function toApiError(error: unknown): ApiError {
             const fieldErrors = extractFieldErrors(data);
             const hasFields = Object.keys(fieldErrors).length > 0;
 
-            // Si hay campos, el mensaje de referencia es el primer error de campo.
-            // Si no (400 con solo `detail` / `non_field_errors`), usar el mensaje global.
+
             const message =
                 (hasFields && firstFieldMessage(fieldErrors)) ||
                 extractUserMessage(data) ||
@@ -264,9 +251,7 @@ export function toApiError(error: unknown): ApiError {
             });
         }
 
-        // Resto: 401/403/404/409/502/etc.
-        // FIX: usa extractUserMessage (prueba `detail` Y `error`)
-        // antes caía directo a defaultMessageForStatus perdiendo el mensaje real.
+
         const message = extractUserMessage(data) ?? defaultMessageForStatus(status);
         return new ApiError({
             status,
@@ -374,17 +359,14 @@ api.interceptors.response.use(
 
 
         if (isRefreshEndpoint || isLoginEndpoint || originalRequest._retry) {
-            // 401 en login = credenciales malas: NO es sesión expirada,
-            // deja que useLogin lo pinte. Solo forzamos logout si NO es login.
+
             if (!isLoginEndpoint) forceLogout();
             return Promise.reject(toApiError(error));
         }
 
         // Si ya hay un refresh en curso, encola y espera el nuevo token.
         if (isRefreshing) {
-            // Marcar reintento ANTES de encolar: si esta petición vuelve a
-            // recibir 401 tras reintentarse con el token nuevo, caerá a logout
-            // en vez de disparar un segundo ciclo de refresh.
+
             originalRequest._retry = true;
             return new Promise<string>((resolve, reject) => {
                 failedQueue.push({ resolve, reject });
@@ -415,12 +397,7 @@ api.interceptors.response.use(
                 );
             const { access: newToken } = await authService.refresh(refreshToken);
 
-            // Persistir el nuevo access (conservando el refresh actual).
-            // Si tu backend ROTA el refresh y refresh() devuelve { access, refresh },
-            // reemplaza las dos líneas anteriores por:
-            //   const { access: newToken, refresh: newRefresh } =
-            //       await authService.refresh(refreshToken);
-            //   useAuthStore.getState().setTokens(newToken, newRefresh);
+
             useAuthStore.getState().setTokens(newToken, refreshToken);
 
             // Despertar a los que esperaban.

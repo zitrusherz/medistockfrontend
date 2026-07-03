@@ -1,9 +1,4 @@
-// src/features/cart/components/QuickAdd.tsx
-// T2.7 — Alta rápida por código (evolución de QuickAdd de la maqueta pedido.jsx).
-// Maqueta usaba Cart.add(code) sobre un CATALOG hardcodeado; aquí resolvemos el
-// Product real (useCatalogLookup) y delegamos en cartStore.addItem, que valida
-// stock total (M3). La sucursal la asigna el backend al crear el pedido, por eso
-// ya no hay selector de sucursal aquí.
+
 
 import { useState, type FormEvent } from 'react';
 import { Input } from '@/components/ui';

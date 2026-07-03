@@ -22,9 +22,7 @@ interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
     icon?: ReactNode
 }
 
-// ─── Estilos ─────────────────────────────────────────────────────────────────
-// Usan tokens de estado (info/success/warning/danger), no la paleta cruda.
-// La variante "error" mapea a los tokens `danger`.
+
 
 const styles: Record<AlertVariant, { container: string; icon: string }> = {
     info: { container: "bg-info-soft border-info/30 text-info-strong", icon: "text-info" },

@@ -1,24 +1,4 @@
-// src/components/common/QueryState.tsx
-// T5.1 / M12 — Estado unificado de carga / vacío / error para CUALQUIER vista con datos.
-// Centraliza los tres estados de una query para no repetir el patrón en cada pantalla.
-//
-// Compatible con dos formas:
-//   · UseQueryResult de React Query (expone isPending/isError/error/refetch).
-//   · Hooks propios estilo useCatalogo ({ isLoading, isError, isEmpty, error }).
-//
-// Uso típico (envuelve la lista, no la página entera):
-//
-//   const q = useTodosPedidos();
-//   <QueryState
-//     query={q}
-//     loading={<Table loading loadingRows={6}>…cabeceras…</Table>}
-//     empty={<EmptyState title="No hay pedidos" action={<Button as={Link} to="/catalogo">Ir al catálogo</Button>} />}
-//   >
-//     <OrdersTable pedidos={q.data} />
-//   </QueryState>
-//
-// Regla M12: el loading es SKELETON (forma del contenido), nunca un spinner a
-// pantalla completa; el error trae mensaje traducido + botón "Reintentar" (refetch).
+
 
 import type { ReactNode } from "react"
 import { ApiError } from "@/lib/axios"
@@ -63,8 +43,7 @@ export function QueryState({
     isEmpty,
     errorTitle = "No pudimos cargar la información",
 }: QueryStateProps) {
-    // isPending (RQ v5) o isLoading (hooks propios). isFetching NO dispara skeleton:
-    // con keepPreviousData queremos refetch sin parpadeo (M12).
+
     const cargando = query.isPending ?? query.isLoading ?? false
     const conError = query.isError ?? false
     const vacio = isEmpty ?? query.isEmpty ?? false

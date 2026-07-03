@@ -1,16 +1,4 @@
-// features/accounts/components/CustomersTable.tsx
-// T3.3 — Directorio de clientes PRESENTACIONAL y reutilizable. No sabe de roles
-// ni de la API; recibe `clientes` y un render-prop `renderAcciones`.
-//
-// NUEVO (T4.4, mockup admin-customers.jsx): columnas Comuna y Pedidos/Total
-// comprado, AMBAS OPCIONALES vía props — si no se pasan, la tabla se ve
-// exactamente igual que antes. Así Ejecutivo (T3.3, que usa esta misma tabla
-// sin pasar estas props) NO se ve afectado; solo Admin las activa.
-//
-// "Pedidos"/"Total comprado" NO viven en Cliente (ese dato viene de otro
-// dominio: pedidos, no de /accounts/clientes/). Por eso se reciben como un
-// Map externo ya agregado (Admin lo arma con useTopCompradores), en vez de
-// mancharse este componente con lógica de agregación o llamadas a otra API.
+
 
 import type { ReactNode } from 'react';
 import {

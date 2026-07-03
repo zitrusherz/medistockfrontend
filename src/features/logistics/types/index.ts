@@ -6,9 +6,7 @@ import type { EstadoEnvio, TipoDespacho } from '@/types/models';
  * cotizacion, creacion de envio, tracking y actualizacion de estado.
  */
 
-// ---------------------------------------------------------------------------
-// Cotizacion
-// ---------------------------------------------------------------------------
+
 
 /** Producto manual para cotizar (cuando no se cotiza por pedido). */
 export interface ProductoCotizacion {
@@ -34,16 +32,7 @@ export interface CotizarEnvioRequest {
   productos?: ProductoCotizacion[];
 }
 
-/**
- * Cuerpo del cotizador de CHECKOUT (pre-pedido). El frontend NO envía medidas:
- * el backend resuelve la caja óptima, las medidas y el peso total a partir de los
- * IDs de productos. Ver docs/COTIZACION_ENVIO_CHECKOUT.md.
- *
- * `productos_ids` es un arreglo PLANO de IDs; la CANTIDAD se expresa REPITIENDO el
- * id (ej: [12, 12, 15] = producto 12 ×2, producto 15 ×1). Se llama una vez por
- * sucursal candidata (las que tienen stock para todo el carrito) y el frontend
- * elige la opción más barata.
- */
+
 export interface CotizarProductosRequest {
   county_code_destino: string;
   sucursal_id: ID;
@@ -68,9 +57,7 @@ export interface CotizacionResponse {
   num_cajas: number;
 }
 
-// ---------------------------------------------------------------------------
-// Despacho / envio
-// ---------------------------------------------------------------------------
+
 
 /**
  * Despacho asociado a un pedido.
@@ -113,9 +100,7 @@ export interface CrearEnvioResponse {
   service_description: string;
 }
 
-// ---------------------------------------------------------------------------
-// Tracking
-// ---------------------------------------------------------------------------
+
 
 /**
  * Evento de tracking. La doc muestra `tracking: []` (vacio) sin detallar la
@@ -130,9 +115,7 @@ export interface TrackingResponse {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Actualizacion de estado de despacho
-// ---------------------------------------------------------------------------
+
 
 /** Estados a los que se puede transicionar manualmente un despacho. */
 export type NuevoEstadoEnvio =

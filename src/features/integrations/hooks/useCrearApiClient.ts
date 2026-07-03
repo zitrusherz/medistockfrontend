@@ -1,9 +1,4 @@
-// src/features/integrations/hooks/useCrearApiClient.ts
-// T4.5 — Lógica del alta de API Key (espejo de useWorkerForm). Valida con zod,
-// arma CrearApiClientRequest y, al éxito, invalida la lista + devuelve la
-// respuesta (que trae `api_key` en texto plano) por el callback `onCreated` para
-// que el componente abra el modal "copia ahora". 400 por campo → inline; el
-// resto (red, 409, 500…) → toast.
+
 
 import { useForm } from 'react-hook-form';
 import type { Path } from 'react-hook-form';

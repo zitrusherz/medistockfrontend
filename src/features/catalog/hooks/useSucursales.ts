@@ -1,7 +1,4 @@
-// features/catalog/hooks/useSucursales.ts
-// T3.3 — Lista de sucursales para el selector de bodega (Observer / React Query).
-// Reusa catalogService.getSucursales() (modelo mínimo { id, nombre }).
-// Sucursales cambian poco → staleTime alto.
+
 
 import { useQuery } from '@tanstack/react-query';
 import { catalogService } from '../services/catalogService';

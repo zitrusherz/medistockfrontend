@@ -1,8 +1,4 @@
-// src/pages/cliente/MisPagos.tsx — ruta: /cliente/pagos
-// Apéndice D #4 — Historial de pagos del propio cliente.
-// Container: usa el endpoint SCOPED al cliente (paymentService.misPagos →
-// GET /payments/mis-pagos/), NO /payments/todos/ (ese es del Analista y daría 403).
-// queryKey ['pagos','mis'] separada de la del panel interno. Reúsa PagosTable.
+
 
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "react-router"

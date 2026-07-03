@@ -1,13 +1,4 @@
-// src/features/admin/components/InicioBanner.tsx
-// T4.1 (visual) — Franja superior del Inicio del Admin: saludo + SantiagoClock
-// sobre fondo degradado plum→grape, calcado del banner "PANEL OPERATIVO" de la
-// maqueta (admin-home.jsx). El nombre sale del authStore con el mismo patrón
-// que ya usa AppShell.tsx (datosBasicosPerfil), así que si el usuario no tiene
-// nombre cargado cae a "Administrador" en vez de mostrar vacío.
-//
-// Usa <SantiagoClock dark /> (variante agregada a SantiagoClock.tsx) para que
-// la hora/fecha sean legibles sobre este fondo oscuro; el modo claro original
-// del componente no cambió.
+
 
 import { SantiagoClock } from '@/components/common/SantiagoClock';
 import { useAuthStore } from '@/store/authStore.ts';

@@ -1,12 +1,4 @@
-// src/pages/admin/Clientes.tsx
-// T4.4 — Página Admin · Clientes. Directorio con búsqueda, filtro por tipo,
-// paginación y ficha de detalle.
-//
-// NUEVO: columnas Comuna y Pedidos/Total comprado (mockup admin-customers.jsx).
-// Pedidos/Total NO salen de accountsService — se reusa useTopCompradores
-// (ya construido para T4.4, misma regla de negocio: RECHAZADO/CANCELADO no
-// cuentan como compra) y se arma un Map clienteId -> {pedidos,total} para
-// pasárselo a CustomersTable. Cero llamadas nuevas a la API.
+
 
 import { useMemo, useState } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';
@@ -33,8 +25,7 @@ export default function AdminClientes() {
 
     const { clientes, isLoading, isError } = useClientes(search);
 
-    // Reuso del ranking de T4.4 (Top compradores) para no duplicar lógica de
-    // agregación ni pedirle un campo nuevo al backend.
+
     const { ranking } = useTopCompradores();
     const comprasPorCliente = useMemo(() => {
         const map = new Map<number, { pedidos: number; total: number }>();

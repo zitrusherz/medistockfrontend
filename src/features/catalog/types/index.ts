@@ -1,6 +1,4 @@
-// src/features/catalog/types/index.ts
-// Contratos del feature catálogo: DTOs (forma cruda de la API) + filtros.
-// Los modelos de dominio (Product, Categoria, Marca) viven en @/types/models.
+
 
 /** Marca tal como la devuelve la API (anidada o como recurso propio). */
 export interface MarcaDTO {
@@ -32,17 +30,7 @@ export interface CategoriaAnidadaDTO {
   imagen_url: string | null;
 }
 
-/**
- * Lo que el backend mete en `producto.categorias[]`.
- *
- * REALIDAD: no es la categoría directa; es la fila de la TABLA INTERMEDIA
- * producto-categoría. Tiene su propio `id` (id de la relación) y un campo
- * `categoria` que envuelve la categoría real.
- *
- *   { id: 80, categoria: { id: 15, nombre: "...", padre, subcategorias, ... } }
- *
- * El mapper extrae `c.categoria.nombre` y descarta el resto.
- */
+
 export interface CategoriaEnProductoDTO {
   id: number;
   categoria: CategoriaAnidadaDTO;
@@ -107,15 +95,7 @@ export interface Sucursal {
   nombre: string;
 }
 
-/**
- * Modelo de dominio del ÁRBOL de categorías.
- * Fuente: GET /api/inventory/public/categorias/arbol/  (CategoriaArbolPublicoView).
- *
- * Es la versión camelCase + recursiva de `CategoriaAnidadaDTO`. Lo consume el
- * mega-menú del navbar (cards tipo "Browse Supplies") y cualquier vista que
- * necesite la jerarquía con imagen. `Categoria` (en @/types/models) sigue siendo
- * la forma plana para filtros; este modelo añade `padre`, `imagenUrl` y `subcategorias`.
- */
+
 export interface CategoriaArbol {
   id: number;
   nombre: string;

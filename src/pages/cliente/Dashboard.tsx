@@ -1,8 +1,4 @@
-// src/pages/cliente/Dashboard.tsx — ruta: /cliente
-// Apéndice D #3 — Aterrizaje del cliente tras login: KPIs + últimos pedidos + accesos.
-// Container: reúsa useMisPedidos (datos), PedidoCard (preview) y cartStore (ítems en
-// carrito). Cero lógica nueva. Estados manuales al estilo de MisPedidos.tsx
-// (card blanca + gold-rule + Spinner) para mantener el look del cliente.
+
 
 import type { ReactNode } from "react"
 import { Link, useNavigate } from "react-router"

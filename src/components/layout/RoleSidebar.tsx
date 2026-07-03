@@ -1,8 +1,10 @@
+// src/components/layout/RoleSidebar.tsx
 import { NavLink } from 'react-router';
 import type { Rol } from '@/types/roles.ts';
 import type { NavItem } from './navItems';
 import { LogoMark } from './LogoMark';
 import { LogoutIcon, ChevronLeftIcon, XIcon } from '../ui/icons';
+import { prefetchPage } from '@/router/prefetchPages';
 
 
 interface RoleSidebarProps {
@@ -72,6 +74,9 @@ export function RoleSidebar({
               to={item.path}
               end={item.end}
               onClick={onCloseMobile}
+
+              onMouseEnter={() => prefetchPage(item.path)}
+              onFocus={() => prefetchPage(item.path)}
               className={({ isActive }) =>
                 [
                   'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-semibold transition-colors',

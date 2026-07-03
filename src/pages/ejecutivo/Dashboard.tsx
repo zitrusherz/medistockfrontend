@@ -1,9 +1,4 @@
-// src/pages/ejecutivo/Dashboard.tsx — ruta: /ejecutivo
-// Apéndice D #5 — Aterrizaje del Ejecutivo: foco en lo que espera aprobación.
-// Container: reúsa useTodosPedidos (libro completo, ya cacheado por la bandeja),
-// useClientes (conteo) y OrdersTable (preview). Cero lógica nueva. Patrón de
-// estados igual a pages/analista/Pagos.tsx (ErrorRecarga inline + loading del
-// componente). Protegida por RoleRoute (Proxy) en el router.
+
 
 import { useMemo } from "react"
 import { Link, useNavigate } from "react-router"

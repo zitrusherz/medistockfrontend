@@ -1,10 +1,4 @@
-// src/features/cart/hooks/useCatalogLookup.ts
-// T2.7 — Resolver un Product a partir del código (SKU) que el usuario teclea en QuickAdd.
-//
-// Por qué existe: cartStore.addItem necesita un Product COMPLETO (trae stockBySucursal
-// para validar M3), pero el usuario sólo escribe un código. La API no expone "get by code"
-// (getProducto es por id), así que reusamos el catálogo ya cacheado por React Query
-// (Observer) y buscamos en memoria. Una sola descarga compartida; sin axios aquí (Layered).
+
 
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';

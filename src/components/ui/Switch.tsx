@@ -13,9 +13,7 @@ interface SwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"
     size?: "sm" | "md" | "lg"
 }
 
-// ─── Tamaños ─────────────────────────────────────────────────────────────────
-// `4.5`/`5.5` no existen en la escala de Tailwind; los tamaños lg usan valores
-// arbitrarios para no romper (antes el thumb lg no aplicaba nada).
+
 
 const trackSize = {
     sm: "h-4 w-7",

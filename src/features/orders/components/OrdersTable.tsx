@@ -1,13 +1,4 @@
-// features/orders/components/OrdersTable.tsx
-// T3.2 — Tabla de pedidos PRESENTACIONAL y reutilizable.
-//
-// Es el split del mega-admin de la maqueta (OrdersView → tabla tonta + lógica
-// en hook). No sabe de roles ni de mutaciones: recibe los pedidos ya filtrados
-// y un render-prop `renderAcciones` que decide qué botones lleva cada fila.
-// Por eso el MISMO componente lo usa el Ejecutivo (aprobar/rechazar, T3.2) y lo
-// usará Logística (avanzar estado, T3.5) — solo cambian las acciones. (IL3.1)
-//
-// Responsive (M14): la primitiva Table del kit ya envuelve en overflow-x-auto.
+
 
 import type { ReactNode } from 'react';
 import {

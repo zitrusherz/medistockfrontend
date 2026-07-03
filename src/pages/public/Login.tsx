@@ -1,8 +1,4 @@
-// src/pages/public/Login.tsx — ruta: /login
-// Apéndice D #1 — Aloja el formulario de login y rebota si ya hay sesión.
-// Container: solo compone AuthLayout + LoginForm; el 401 y el redirect post-éxito
-// los maneja useLogin (T1.4). Si el usuario llegó desde una ruta protegida,
-// PrivateRouter guardó `state.from`; volvemos ahí tras autenticar.
+
 
 import { Navigate, useLocation } from "react-router"
 import { AuthLayout, AuthTopbar, LogoMark } from "@/components/layout"
@@ -24,9 +20,7 @@ export default function Login() {
 
     return (
         <AuthLayout
-            // El logo ya viaja en <AuthTopbar/>, así que aquí no repetimos el
-            // `brand` centrado sobre el card (quedaba duplicado: uno arriba
-            // en la barra y otro sobre el formulario).
+
             topbar={<AuthTopbar homePath="/" />}
             aside={
                 <div className="text-center">

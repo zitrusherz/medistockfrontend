@@ -1,10 +1,4 @@
-// src/features/payments/services/pagoSession.ts
-// T2.9 — Persistencia EFÍMERA del pago en curso.
-//
-// Guarda el token_ws (y pedidoId) en sessionStorage antes de redirigir a Webpay,
-// para recuperar el flujo si la pestaña de retorno pierde el query param o el
-// usuario recarga. Es efímero: vive sólo la sesión de pestaña, no contamina el
-// localStorage permanente (donde viven los tokens de auth).
+
 
 const KEY = 'medistock-pago-pendiente';
 

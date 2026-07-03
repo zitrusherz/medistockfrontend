@@ -3,9 +3,7 @@ import { describe, it, expect, beforeAll, beforeEach } from 'vitest'
 import { useCartStore } from './cartStore'
 import type { Product } from '@/types/models'
 
-// El store usa `persist` con localStorage. El entorno de test es 'node' (sin
-// DOM), así que localStorage no existe por defecto: se deja un polyfill mínimo
-// en memoria, suficiente para que zustand/persist pueda leer/escribir.
+
 beforeAll(() => {
     const mem = new Map<string, string>()
     // @ts-expect-error -- polyfill mínimo solo para el test, no implementa el Storage completo

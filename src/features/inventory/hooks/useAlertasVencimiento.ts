@@ -1,6 +1,4 @@
-// features/inventory/hooks/useAlertasVencimiento.ts
-// Custom Hook + Observer (React Query). Los vencimientos cambian poco a lo largo
-// del día (un lote no se mueve de fecha) → staleTime más holgado.
+
 
 import { useQuery } from '@tanstack/react-query';
 import { inventoryService } from '../services/inventoryService';

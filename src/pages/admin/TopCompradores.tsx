@@ -1,8 +1,4 @@
-// src/pages/admin/TopCompradores.tsx
-// T4.4 — Página Admin · Top compradores. Ranking de clientes por monto total
-// comprado, agregado en front desde los pedidos (useTopCompradores). Protegida
-// por RoleRoute (Proxy) para el rol Administrador. Ruta: /admin/top-compradores.
-// Export default → lazy().
+
 
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { PageHeader } from '@/components/layout/PageHeader';

@@ -1,9 +1,4 @@
-// src/pages/public/NotFound.tsx — ruta: * (catch-all 404)
-// FIX Bug 2: ahora se monta DENTRO de PublicLayout (ver router/index.tsx), por lo
-// que la pantalla 404 conserva el header/navbar de la tienda. Se usa <section>
-// (no <main>) para no anidar dos <main> dentro del layout, y min-h-[70vh] en
-// lugar de min-h-screen porque ya hay header sticky arriba.
-// El botón vuelve a un home válido según sesión: home del rol si hay sesión, o "/".
+
 
 import { useNavigate } from "react-router"
 import { EmptyState } from "@/components/common/EmptyState"

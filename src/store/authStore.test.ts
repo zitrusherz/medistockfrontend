@@ -1,13 +1,7 @@
 // Ruta destino: src/store/authStore.test.ts
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest'
 
-// authStore hace `import('../features/auth/services/authService')` de forma
-// dinámica (lazy) para evitar traer axios al bundle inicial. No tenemos ese
-// archivo (hace peticiones HTTP reales), así que lo mockeamos: así probamos
-// SOLO la lógica del store (qué hace con la respuesta), no la red.
-// vi.mock() se hoistea por encima de estas declaraciones -> hay que usar
-// vi.hoisted() para poder referenciar los mocks tanto en el factory como en
-// los tests de más abajo (si no, Vitest lanza "Cannot access before initialization").
+
 const { getMe, logoutBackend } = vi.hoisted(() => ({
     getMe: vi.fn(),
     logoutBackend: vi.fn(),
@@ -16,8 +10,7 @@ vi.mock('../features/auth/services/authService', () => ({
     authService: { getMe, logout: logoutBackend },
 }))
 
-// El store usa `persist` con sessionStorage. Entorno 'node' -> no existe por
-// defecto: polyfill mínimo en memoria.
+
 beforeAll(() => {
     const mem = new Map<string, string>()
     // @ts-expect-error -- polyfill mínimo solo para el test

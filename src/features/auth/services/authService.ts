@@ -6,15 +6,7 @@ import type {
     RefreshResponse,
 } from '@/types/auth.ts';
 
-/**
- * authService — Repository de autenticación.
- *
- * Único punto de contacto entre el sistema de auth y la API.
- * Recibe credenciales crudas, llama los endpoints, devuelve datos tipados.
- * No conoce React, stores ni rutas. Solo HTTP.
- *
- * Si la API cambia de endpoints, solo se toca este archivo.
- */
+
 export const authService = {
     /**
      * POST /accounts/login/
@@ -26,13 +18,7 @@ export const authService = {
         return data;
     },
 
-    /**
-     * POST /accounts/login/refresh/
-     * Renueva el access token usando el refresh token.
-     * CRÍTICO: este endpoint NO debe pasar por el interceptor de 401,
-     * porque si el refresh falla no debe intentar re-refrescar.
-     * Eso se controla en lib/axios.ts (interceptores).
-     */
+
     async refresh(refreshToken: string): Promise<RefreshResponse> {
         const { data } = await api.post<RefreshResponse>('/accounts/login/refresh/', {
             refresh: refreshToken,

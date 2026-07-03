@@ -1,6 +1,4 @@
-// src/features/accounts/services/mappers/workerMapper.ts
-// Adapter: DTO crudo de /accounts/trabajadores/ -> modelo de dominio TrabajadorVM.
-// ESTE es el único archivo que hay que tocar si la API cambia nombres de campo.
+
 
 import type { Trabajador } from '../../types';
 import type { UsuarioDetalle } from '@/types/models';

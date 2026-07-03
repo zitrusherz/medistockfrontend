@@ -13,21 +13,7 @@ import {
 } from './home/components';
 import type { FeaturedProduct, CategoryCard } from './home/types';
 
-/**
- * Home — landing pública. Capa de página (Layered): orquesta los datos vía
- * hooks (`useCatalogo`, `useCategoriasArbol`), los mapea a view-models y los pasa
- * a secciones presentacionales. Una página nunca llama axios.
- *
- * - Destacados: primeros N de `getCatalogo()`.
- * - Categorías: `getCategoriasArbol()` — el endpoint ÁRBOL es el único que trae
- *   `imagen_url`; el endpoint plano (`/public/categorias/`) NO, por eso antes las
- *   cards salían siempre con el placeholder rayado. El service ya oculta "cajas".
- * - Degradación elegante (M12): si destacados/categorías fallan o vienen vacíos,
- *   esas secciones simplemente no se renderizan.
- *
- * El chrome (TopBar/Header/Footer) lo aporta el shell público (PublicLayout), no
- * la página; aquí solo viven las secciones de contenido.
- */
+
 
 const FEATURED_TOTAL = 8; // 4 arriba + 4 abajo
 
@@ -84,15 +70,13 @@ function toCategoryCard(c: Raw): CategoryCard {
     id,
     nombre: firstString(c, ['nombre', 'name', 'titulo']),
     slug: firstString(c, ['slug', 'codigo']) || String(id),
-    // `useCategoriasArbol` ya entrega camelCase (`imagenUrl`); dejamos las demás
-    // claves por compat si algún día cambia la fuente.
+
     imagenUrl: firstUrl(c, ['imagenUrl', 'imagen', 'imagen_url', 'image']),
   };
 }
 
 export default function Home() {
-  // Si tu `useCatalogo` no acepta argumentos, llama `useCatalogo()` sin el objeto.
-  // Interfaz del hook: { productos, isLoading, isFetching, isEmpty, isError }.
+
   const catalogo = useCatalogo({});
   const categorias = useCategoriasArbol();
 

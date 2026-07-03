@@ -1,12 +1,4 @@
-// src/features/cart/components/CartSummary.tsx
-// T2.7 · M2 — Desglose neto / IVA 19% / total ESTIMADO.
-// "Estimado" porque el total real lo fija el pedido en el backend (T2.8); aquí mostramos
-// la proyección a partir de los precios capturados en cada línea (useCartTotal → calcTotales).
-// Patrón Observer: lee selectores del cartStore; recalcula solo al cambiar items.
-//
-// CAMBIO 4: se reordena a tarjeta LATERAL vertical (columna derecha del carrito),
-//           sticky y alineada con el pedido. Antes era una barra apilada abajo con
-//           los totales y el botón en horizontal.
+
 
 import { useNavigate } from 'react-router';
 import { formatCLP } from '@/utils/formatCurrency';

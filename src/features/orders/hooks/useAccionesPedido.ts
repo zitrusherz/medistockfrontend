@@ -1,14 +1,4 @@
-// features/orders/hooks/useAccionesPedido.ts
-// T3.2 — Command sobre pedidos: aprobar / rechazar (Ejecutivo/Admin).
-//
-// Cada acción es una mutación de React Query que invalida ['pedidos','todos']
-// SOLO en onSuccess. Un 409 (el stock cambió entre la compra y la aprobación)
-// sube como ApiError desde el interceptor de lib/axios: se traduce con
-// notifyApiError y NO se invalida nada, así el pedido sigue mostrándose como
-// PENDIENTE (no se finge un cambio que el backend rechazó).
-//
-// `aprobar.variables` / `rechazar.variables` exponen el último id disparado:
-// la página lo usa para mostrar el spinner solo en la fila correspondiente.
+
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderService } from '../services/orderService';

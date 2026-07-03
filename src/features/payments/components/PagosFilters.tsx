@@ -1,7 +1,4 @@
-// features/payments/components/PagosFilters.tsx
-// T3.7 — Filtros de la auditoría de pagos. Controlado por el padre: emite un
-// TodosPagosFilters limpio (campos vacíos → undefined, axios los omite y la
-// queryKey no se ensucia con strings vacíos).
+
 
 import { Select } from '@/components/ui';
 import type { EstadoPago, MetodoPago } from '@/types/models';

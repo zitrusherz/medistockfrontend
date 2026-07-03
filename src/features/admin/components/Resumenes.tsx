@@ -1,17 +1,4 @@
-// src/features/admin/components/Resumenes.tsx
-// T4.1 — Resúmenes de solo lectura para el Inicio del Admin. NO reimplementan
-// lógica: reusan los mismos hooks/selectores que Logística y Analista
-// (useAlertasStock, useAlertasVencimiento, calcularCobranza). React Query
-// deduplica, así que aparecer aquí no cuesta una red extra. Muestran el top-N
-// más urgente; la gestión completa vive en los paneles de cada rol.
-//
-// EDICIÓN VISUAL (sin tocar datos): encabezado con título display en
-// text-primary + separador inferior, y badge de conteo urgente a la derecha,
-// para alinear con los "Panel" de la maqueta (admin-ui.jsx / admin-home.jsx).
-// Se usa `Card noPadding` + tabla full-bleed en vez del padding uniforme
-// anterior. Nota: `Table` trae su propio borde/rounded interno, así que puede
-// verse un doble borde muy sutil contra el borde del Card — no se tocó el
-// componente Table compartido para evitar romper otras vistas que lo usan.
+
 
 import type { ReactNode } from 'react';
 import {

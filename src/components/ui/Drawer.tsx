@@ -36,10 +36,7 @@ const placementStyles: Record<
     bottom: { panel: "bottom-0 left-0 w-full", open: "translate-y-0", closed: "translate-y-full" },
 }
 
-// ─── Componente ──────────────────────────────────────────────────────────────
-// Nota: mantiene su propio panelRef (necesario para el focus-trap), por eso no
-// usa forwardRef hacia afuera. Es un overlay controlado, no una primitiva de
-// layout reutilizable.
+
 
 export function Drawer({
                            open,

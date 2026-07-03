@@ -1,12 +1,4 @@
-// src/features/logistics/hooks/useEnvios.ts
-// T3.5 — Command sobre envíos (cotizar / crear / actualizar estado).
-// Espejo de useAccionesPedido: cada acción es una mutación de React Query que
-// invalida lo justo en onSuccess y traduce el error con notifyApiError.
-//
-// 502 (courier no responde) sube como ApiError desde lib/axios; notifyApiError lo
-// muestra como "servicio externo no responde, reintenta" SIN invalidar nada, así
-// no se finge un cambio que el courier rechazó. Crear envío NO se reintenta solo:
-// el operador decide reintentar (evita envíos duplicados).
+
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { logisticsService } from '../services/logisticsService';

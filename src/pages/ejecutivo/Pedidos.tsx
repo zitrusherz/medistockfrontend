@@ -1,11 +1,4 @@
-// pages/ejecutivo/Pedidos.tsx
-// T3.2 — Bandeja del Ejecutivo de Cuentas: aprobar/rechazar compras
-// institucionales (B2B) y derivarlas a logística. La protege un RoleRoute
-// (Proxy) en el router; las acciones son Command (mutaciones de useAccionesPedido).
-//
-// La página orquesta; la tabla es tonta (OrdersTable) y se reutiliza en Logística.
-// Pestañas = filtro por estado en cliente (M11: "PENDIENTE" representa los B2B
-// pendientes; no hay entidad Cotización separada). Default = PENDIENTE.
+
 
 import { useMemo, useState } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';

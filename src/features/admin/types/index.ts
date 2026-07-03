@@ -1,14 +1,6 @@
-// features/admin/types/index.ts
-// T4.1 — Contratos de los agregados que el BACKEND expondrá para el dashboard.
-// Mientras no existan, los hooks que los consumen quedan deshabilitados por
-// bandera (ver hooks/useCotizaciones.ts y hooks/useVentasPorCategoria.ts) y la
-// UI cae a un cálculo client-side / estado "pendiente backend".
-//
-// Ver CONTRATO_BACKEND_STATS.md para la forma exacta del JSON esperado.
 
-// ---------------------------------------------------------------------------
-// Ventas por categoría (donut de Estadísticas)
-// ---------------------------------------------------------------------------
+
+
 
 /** Forma cruda esperada de GET /payments/stats/ventas-por-categoria/. */
 export interface VentaCategoriaDTO {
@@ -38,9 +30,7 @@ export const toVentaCategoria = (dto: VentaCategoriaDTO): VentaCategoria => ({
     unidades: dto.unidades ?? null,
 });
 
-// ---------------------------------------------------------------------------
-// Cotizaciones (KPI genérico — backend lo creará después)
-// ---------------------------------------------------------------------------
+
 
 /**
  * Resumen de cotizaciones para el KPI de Inicio. Genérico a propósito: el

@@ -1,9 +1,4 @@
-// pages/admin/Estadisticas.tsx
-// T4.1 — Analítica de ventas del Administrador. KPIs (ventas 12m, pedidos,
-// ticket promedio, clientes activos), barras de ventas mensuales, donut por
-// categoría (real desde backend si está disponible; si no, por tipo de venta),
-// pedidos recientes y ranking de top compradores. Cada bloque expone "Detalles"
-// (StatModal) y "Exportar CSV". Protegida por RoleRoute (Proxy).
+
 
 import { useState, type ReactNode } from 'react';
 import { ShoppingCart, Receipt, Users, Banknote } from 'lucide-react';

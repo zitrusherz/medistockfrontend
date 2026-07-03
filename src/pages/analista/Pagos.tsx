@@ -1,14 +1,4 @@
-// pages/analista/Pagos.tsx
-// T3.7 — Auditoría de pagos del Analista de Finanzas. La protege un RoleRoute
-// (Proxy) en el router. La página orquesta; KPIs/filtros/tabla son componentes
-// tontos del feature payments.
-//
-// Datos: UNA sola consulta del libro completo (usePagos()) y el filtro se aplica
-// en memoria sobre ese cache. Es correcto filtre o no el server los params, evita
-// una segunda red y elimina cualquier fragilidad de keys. Los KPIs se calculan
-// sobre el libro completo (no se vuelven circulares al filtrar); la tabla muestra
-// el subconjunto filtrado. Si el volumen creciera, usePagos(filtros) ya soporta
-// filtrado server-side sin cambiar nada más.
+
 
 import { useMemo, useState } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';

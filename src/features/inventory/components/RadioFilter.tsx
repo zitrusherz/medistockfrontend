@@ -1,7 +1,4 @@
-// features/inventory/components/RadioFilter.tsx
-// Filtro de opción única construido sobre el kit (T3.6: RadioRow → ui/Radio).
-// Controlado: el padre mantiene `value`. Genérico para no perder el tipado del
-// valor seleccionado (ej. el enum de estado).
+
 
 import { type ReactNode } from 'react';
 import { Radio, RadioGroup } from '@/components/ui';

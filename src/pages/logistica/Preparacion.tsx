@@ -1,15 +1,4 @@
-// src/pages/logistica/Preparacion.tsx
-// T3.5 — Hoja de picking del pedido (ruta contextual /logistica/preparacion/:pedidoId).
-// Muestra las líneas del pedido y, por cada producto, los lotes disponibles
-// ordenados FEFO (vence antes = sugerido por defecto).
-//
-// IMPORTANTE: el set de APIs de T3.5 no incluye un endpoint "confirmar
-// preparación". Según orderService, el avance de estado del pedido lo dispara el
-// backend al CREAR EL ENVÍO. Por eso aquí la confirmación es una COMPUERTA DE UI:
-// valida que cada línea tenga lote y habilita el paso a Despacho. El estado se
-// moverá al crear el envío en la pantalla siguiente.
-//
-// Patrón State (lectura del ciclo del pedido) + reutilización de primitivas ui.
+
 
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router';

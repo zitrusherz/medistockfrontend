@@ -1,13 +1,4 @@
-// src/components/common/BackButton.tsx
-// Botón "Volver" reusable. Usa el historial del router para devolver al usuario
-// a la URL anterior exacta (incluye query string: filtros, paginación, etc.).
-//
-// Por qué `location.key === 'default'` decide el fallback:
-//   En React Router cada navegación SPA produce una `key` distinta. Cuando el
-//   usuario abre /producto/X directo (deep link, pestaña nueva, refresh tras
-//   navegar fuera), `location.key === 'default'` → no hay historial SPA al que
-//   volver, así que `navigate(-1)` saldría del sitio. En ese caso vamos al
-//   fallback (por defecto, /catalogo).
+
 
 import { useLocation, useNavigate } from 'react-router';
 import { cn } from '@/utils/cn';

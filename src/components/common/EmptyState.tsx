@@ -1,7 +1,4 @@
-// src/components/common/EmptyState.tsx
-// T5.1 / M12 — Estado vacío reutilizable: mensaje amable + acción opcional.
-// Lo usa QueryState (prop `empty`) y cualquier vista que necesite un vacío con CTA.
-// Mantiene un solo look para todos los vacíos (consistencia M15).
+
 
 import type { ReactNode } from "react"
 

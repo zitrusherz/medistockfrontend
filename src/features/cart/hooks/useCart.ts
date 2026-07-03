@@ -1,10 +1,4 @@
-// src/features/cart/hooks/useCart.ts
-// T0.8 — Hooks de consumo del carrito (Observer vía Zustand).
-// Cada hook selecciona el mínimo slice posible para evitar re-renders innecesarios.
-//
-// NOTA: el carrito ya no maneja sucursal (decisión de negocio: el backend reparte
-// stock entre sucursales y dispara traslados). Por eso se quitaron useCartSucursal
-// y cartImperative.getSucursalId.
+
 
 import { useMemo } from 'react';
 import { calcTotales } from '@/utils/iva';

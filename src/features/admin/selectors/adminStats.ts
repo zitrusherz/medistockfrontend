@@ -1,14 +1,4 @@
-// features/admin/selectors/adminStats.ts
-// T4.1 — Cálculo PURO de estadísticas del admin (sin React, sin red).
-// Recibe lo que useTodosPedidos() + usePagos() + useClientes() ya cachearon
-// (React Query deduplica entre vistas), así no dispara fetches extra. Puro =
-// testeable. Réplica de lo que hacía `Admin.kpis()` en la maqueta, pero sobre
-// datos reales. (Patrón: Adapter / selector.)
-//
-// Convenciones:
-//  · "Ventas" = dinero realmente ingresado = pagos en estado CONFIRMADO,
-//    monto = montoConfirmado, fecha = fechaConfirmacion (fallback fechaCreacion).
-//  · Montos en CLP entero (M1). El formateo lo hace la UI, NO este módulo.
+
 
 import type { Cliente } from '@/features/accounts/types/cliente';
 import type { Pago, Pedido, TipoVenta } from '@/types/models';

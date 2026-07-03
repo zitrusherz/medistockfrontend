@@ -25,10 +25,7 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
     children: ReactNode
 }
 
-// ─── Estilos ─────────────────────────────────────────────────────────────────
-// Token-agnósticos: usan tokens semánticos (surface/primary/success…), nunca la
-// paleta cruda (sky/slate/emerald). Cambiar el tema = cambiar variables, no este
-// archivo. Las opacidades (/10, /20) derivan el borde y el fondo del mismo token.
+
 
 const variantStyles: Record<BadgeVariant, { badge: string; dot: string }> = {
     default: { badge: "bg-surface-muted text-text border-border", dot: "bg-text-muted" },

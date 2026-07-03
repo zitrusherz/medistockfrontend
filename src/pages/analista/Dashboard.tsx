@@ -1,8 +1,4 @@
-// src/pages/analista/Dashboard.tsx — ruta: /analista
-// Apéndice D #7 — Aterrizaje del Analista de Finanzas: salud de pagos y cobranza.
-// Container: reúsa usePagos (libro completo, GET /payments/todos/), PagosKpis y
-// PagosTable, useTodosPedidos + cobranza (cruce puro) para el preview de morosos.
-// Cero lógica nueva. Aquí SÍ se usa todos/ (vista global), no mis-pagos/.
+
 
 import { useMemo } from "react"
 import { Link, useNavigate } from "react-router"

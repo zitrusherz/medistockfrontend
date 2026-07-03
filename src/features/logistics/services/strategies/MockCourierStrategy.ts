@@ -1,8 +1,4 @@
-// src/features/logistics/services/strategies/MockCourierStrategy.ts
-// Strategy concreto: courier FALSO. VITE_USE_MOCKS=true → demo/diseño sin sandbox.
-// Construye respuestas con el MISMO shape crudo del backend y las pasa por los
-// mismos mappers (toCotizacion / toDespacho / toEnvioTracking), así el mock
-// ejercita el Adapter exactamente igual que el courier real.
+
 
 import type {
     ActualizarEstadoDespachoRequest,

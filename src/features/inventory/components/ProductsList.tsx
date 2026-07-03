@@ -1,9 +1,4 @@
-// src/features/inventory/components/ProductsList.tsx
-// T4.2 — Listado de productos del admin (maqueta: ProductsList). Tabla con
-// buscador por nombre/código. Datos vía /inventory/catalogo/ (trae stock y
-// precio), por eso muestra stock real. La imagen NO viene en el DTO de lectura
-// del catálogo → se usa un thumb con la inicial (gap documentado: cuando el
-// backend exponga `imagen_url`, mapearlo en productMapper y pintarlo aquí).
+
 
 import { useMemo, useState } from 'react';
 import {

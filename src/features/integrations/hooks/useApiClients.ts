@@ -1,9 +1,4 @@
-// src/features/integrations/hooks/useApiClients.ts
-// T4.5 — Lista de API Keys (Observer vía React Query) + mutaciones de rotar /
-// revocar / reactivar (Command). El filtro de texto se aplica en cliente (igual
-// que useTrabajadores) para no refetchear por tecla. Las mutaciones invalidan la
-// misma query key, así la tabla se refresca sola. `rotar` devuelve `nueva_api_key`:
-// el componente la pasa al modal "copia ahora" vía el onSuccess de mutate().
+
 
 import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';

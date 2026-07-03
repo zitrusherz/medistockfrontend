@@ -1,20 +1,4 @@
-// src/pages/admin/Inicio.tsx
-// T4.1 — Tablero operativo del día del Administrador. Banner con saludo +
-// SantiagoClock, fila de KPIs operativos y resúmenes de solo lectura (stock,
-// vencimientos, por cobrar) que reusan los hooks de Logística/Analista.
-// Protegida por RoleRoute (Proxy) en el router.
-//
-// EDICIÓN VISUAL — calcado de la maqueta (admin-home.jsx / captura Inicio):
-//  · Se agregó InicioBanner (saludo + reloj) que antes no existía.
-//  · Las 4 StatCard genéricas se reemplazaron por PendingActionCard (icono
-//    degradado + tarjeta clickeable → navega a la sección relacionada).
-//  · La tarjeta "Cotizaciones pendientes" se mantiene igual que antes
-//    (kpis.cotizacionesDisponible ? … : '—'): sigue sin dato real de backend,
-//    por eso NO tiene onClick. No se agregó "Cotizaciones" al sidebar (así se
-//    definió), pero este KPI ya existía en el código original y se conserva.
-//  · Stock + Vencimientos ahora van lado a lado (2 columnas) y Morosos pasa a
-//    fila completa abajo, igual que la maqueta. Antes las 3 iban en una sola
-//    fila de 3 columnas.
+
 
 import { useNavigate } from 'react-router';
 import { ClipboardList, Users, Wallet, FileText } from 'lucide-react';

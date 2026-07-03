@@ -12,9 +12,7 @@ import type {
  * - Gestion de API Clients / API Keys (autenticacion JWT, solo trabajadores).
  */
 
-// ---------------------------------------------------------------------------
-// Pedido B2B (ERP de clinicas)
-// ---------------------------------------------------------------------------
+
 
 /** Tipo de venta permitido para pedidos B2B. */
 export type TipoVentaB2B = 'TRANSFERENCIA' | 'CREDITO_INSTITUCIONAL';
@@ -71,9 +69,7 @@ export interface CrearPedidoB2BResponse {
   mensaje: string;
 }
 
-// ---------------------------------------------------------------------------
-// API Clients / API Keys
-// ---------------------------------------------------------------------------
+
 
 /** Metadata de un ApiClient en listado (no expone la key). */
 export interface ApiClient {

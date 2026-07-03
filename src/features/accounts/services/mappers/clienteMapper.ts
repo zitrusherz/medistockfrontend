@@ -1,12 +1,4 @@
-// features/accounts/services/mappers/clienteMapper.ts
-// Adapter: DTO crudo de /accounts/clientes/ -> modelo de dominio Cliente.
-// ESTE archivo (junto con types/cliente.ts) es el único que hay que tocar si
-// la API cambia nombres de campo.
-//
-// FIX comuna: la API no manda un campo `comuna` plano — hay que sacarla de la
-// dirección marcada `es_principal` dentro de `direcciones[]` (fallback a la
-// primera si ninguna es principal). Si el array viene vacío (visto en data
-// real de prueba), se muestra "—" en vez de romper.
+
 
 import type { Cliente, ClienteDTO, TipoInstitucion } from '../../types/cliente';
 import { TIPO_INSTITUCION_LABEL } from '../../types/cliente';

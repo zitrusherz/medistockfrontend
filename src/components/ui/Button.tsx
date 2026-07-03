@@ -8,9 +8,7 @@ import {
 } from "react"
 import { cn } from "@/utils/cn.ts"
 
-// ─── Variantes ─────────────────────────────────────────────────────────────
-// Token-agnósticas: nada de sky/slate/emerald/red cocinado. El color lo decide
-// el tema vía tokens semánticos (primary, danger, success…).
+
 
 const variants = {
     primary:
@@ -96,8 +94,7 @@ function ButtonInner<E extends ElementType = "button">(
         children,
         ...rest
     }: ButtonProps<E>,
-    // El ref es HTMLElement, no HTMLButtonElement: al usar `as="a"` o un Link,
-    // el nodo raíz ya no es un <button>. (Antes mentía el tipo.)
+
     ref: ForwardedRef<HTMLElement>
 ) {
     const Tag = (as ?? "button") as ElementType

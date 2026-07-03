@@ -1,9 +1,4 @@
-// src/pages/admin/Pedidos.tsx
-// T4.x — Bandeja de pedidos para Administrador. La ruta /admin/pedidos ya
-// estaba en navItems.ts pero sin router ni page → 404 (link fantasma). Este
-// archivo cierra ese hueco reutilizando el mismo patrón de Ejecutivo/Pedidos:
-// tabla tonta (OrdersTable) + acciones Command (useAccionesPedido) + filtro
-// por pestaña en cliente. El endpoint aprobar/ permite Ejecutivos/Admin (doc API).
+
 
 import { useMemo, useState } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';

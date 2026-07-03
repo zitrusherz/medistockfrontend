@@ -20,12 +20,7 @@ const Warn = () => (
     </svg>
 );
 
-/* ──────────────────────────────────────────────────────────────────────────
-   OPCIONAL · Productos relacionados (simula los "complementarios")
-   El caso NO expone endpoint de complementarios. Se simula con la misma
-   categoria reutilizando el hook del catalogo (Repository + Observer).
-   Para quitarlo: borra este componente y su uso en el JSX (1 linea).
-   ────────────────────────────────────────────────────────────────────────── */
+
 function RelatedProducts({ categoryName, excludeCode }: { categoryName?: string; excludeCode: string }) {
     const { data: categorias = [] } = useQuery({
         queryKey: ['cats'],

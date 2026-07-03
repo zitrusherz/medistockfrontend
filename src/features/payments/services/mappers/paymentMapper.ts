@@ -1,5 +1,4 @@
-// features/payments/services/mappers/paymentMapper.ts
-// Adapter: DTO crudo -> modelo Pago de la UI. camelCase + card a 4 digitos.
+
 
 import type { Pago } from '@/types/models';
 import type { TransaccionPago, PagoEnriquecido } from '../../types';

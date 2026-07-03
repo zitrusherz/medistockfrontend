@@ -1,6 +1,4 @@
-// src/features/orders/types/index.ts
-// DTOs (forma cruda de la API) + enums + payloads del feature pedidos.
-// Los modelos de dominio (Pedido, DetallePedido) viven en @/types/models.
+
 
 // ---- Enums como uniones literales (T0.3 / P4) ----
 export type EstadoPedido =
@@ -78,12 +76,7 @@ export interface NuevoDetalle {
 
 export interface NuevoPedido {
   direccion_entrega_id: number;
-  /**
-   * Sucursal de ORIGEN del despacho. El backend lo exige como obligatorio
-   * (400 { sucursal_origen_id: ["This field is required."] } si falta).
-   * En el checkout se envía la sucursal de la opción de envío elegida (el origen
-   * que se cotizó); si no hubo cotización, la sucursal con mayor cobertura de stock.
-   */
+
   sucursal_origen_id: number;
   tipo_venta: TipoVenta;
   tipo_despacho?: TipoDespacho;
@@ -107,12 +100,7 @@ export interface AprobarPedido {
   comentario?: string;
 }
 
-/**
- * Filtros de la lista interna de pedidos (query params de GET /orders/pedidos/todos/).
- * Usado por orderService.todosPedidos() en los paneles de Ejecutivo/Logística/Admin.
- * NOTA: los nombres deben coincidir con el FilterSet real del backend; ajusta aquí
- * si difieren. Los campos `undefined` no se envían (axios los omite).
- */
+
 export interface FiltroPedidos {
   estado_pedido?: EstadoPedido;
   prioridad_medica?: PrioridadMedica;

@@ -1,15 +1,4 @@
-// src/store/cartStore.ts
-// T0.8 ⭐ — Carrito. Patrón: Observer + Singleton (Zustand) · persist.
-//
-// DECISIÓN DE NEGOCIO: la sucursal NO es elección del cliente. Se vende contra
-// stockTotal; el reparto entre sucursales y los traslados (EstadoTraslado) son
-// lógica interna (ejecutivo solicita movimiento de inventario, operador lo surte).
-// Por eso este store ya NO guarda sucursalId ni aplica la regla "1 sucursal por
-// carrito": addItem(product, qty) valida solo contra el stock total del producto.
-//
-// Capas: este store NO llama a axios. La página/feature obtiene el Product
-// (catalogService, T2.1) y lo pasa a addItem. El handoff toDetalles() alimenta
-// el checkout (T2.8). El backend asigna sucursal al crear el pedido.
+
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';

@@ -1,8 +1,4 @@
-// src/features/logistics/services/strategies/CourierStrategy.ts
-// Strategy (patrón) — T3.4. Contrato del courier. Chilexpress real y Mock lo
-// cumplen IGUAL. El resto de la app (logisticsService, hooks, Timeline) habla
-// solo con esta interfaz: cambiar de courier = cambiar la implementación, no la
-// feature. Espejo de PaymentStrategy.ts.
+
 
 import type {
     ActualizarEstadoDespachoRequest,

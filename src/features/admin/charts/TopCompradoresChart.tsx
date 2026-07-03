@@ -1,6 +1,4 @@
-// features/admin/charts/TopCompradoresChart.tsx
-// T4.1 — Ranking de top compradores en barras horizontales (recharts, layout
-// vertical). Altura proporcional al nº de filas para que no se aplaste.
+
 
 import {
     Bar,

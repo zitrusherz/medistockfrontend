@@ -1,9 +1,4 @@
-// features/inventory/components/ExpiryAlertsView.tsx
-// Vista de alertas de VENCIMIENTO (T3.6). Rellena el AlertShell con:
-//   · filtros: lote (Select) + días-para-vencer (RangeSlider, admite negativos)
-//   · columnas: producto · lote · marca · vence · días restantes
-// Origen de datos: GET /inventory/lotes/ (por eso no hay sucursal/cantidad; esos
-// viven en Inventario). Críticos resaltados: vencidos o ≤ 10 días.
+
 
 import { useMemo, useState } from 'react';
 import {

@@ -13,9 +13,7 @@ export const StockBadge = ({ stock }: { stock: number }) => {
     return <Badge variant="success">En stock</Badge>;
 };
 
-// ─── M1/M2: Price Tag ─────────────────────────────────────────────────────────
-// IVA = precio principal (más grande, plum-800 = morado más fuerte de la paleta).
-// Neto = secundario, más chico y atenuado.
+
 export const PriceTag = ({ neto, iva, unit }: { neto: number; iva: number; unit: string }) => (
     <div className="text-right leading-none">
         <span className="block font-display font-extrabold text-plum-800 text-[22px]">

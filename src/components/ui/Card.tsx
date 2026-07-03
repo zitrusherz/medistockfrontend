@@ -28,8 +28,7 @@ interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {
     children: ReactNode
 }
 
-// ─── Estilos ─────────────────────────────────────────────────────────────────
-// Tokens semánticos + sombras de marca (shadow-card / shadow-lift) del index.css.
+
 
 const variantStyles: Record<CardVariant, string> = {
     default: "bg-surface border border-border shadow-card",

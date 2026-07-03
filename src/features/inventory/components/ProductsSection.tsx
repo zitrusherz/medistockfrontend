@@ -1,10 +1,4 @@
-// src/features/inventory/components/ProductsSection.tsx
-// T4.2 — Sección de productos del admin (maqueta: ProductsSection). Toggle
-// segmentado entre "Listado" y "Nuevo producto". Al crear con éxito, ProductForm
-// llama onCreated y volvemos al listado (que ya se refrescó por invalidación).
-//
-// El toggle usa botones con clases del design system (tokens de tema), sin
-// depender de variantes concretas del kit, para no acoplar a su API.
+
 
 import { useState } from 'react';
 import { ProductsList } from './ProductsList';

@@ -1,14 +1,4 @@
-// src/components/layout/AuthTopbar.tsx
-// Barra superior para pantallas de autenticación (login, registro).
-//
-// Por qué existe aparte del `Navbar` genérico y del `StoreHeader` de
-// PublicLayout: ninguno de los dos calza aquí. `Navbar.tsx` es de propósito
-// general (paneles internos) y `StoreHeader` trae buscador + carrito + menú
-// de cuenta, que no tienen sentido en la pantalla donde justamente se está
-// iniciando sesión. `AuthTopbar` reutiliza el mismo logo/tokens de marca que
-// `PublicLayout` (mismo degradado, misma tipografía) para que se sienta como
-// una continuación del navbar público, pero reducido a lo que aplica acá:
-// marca + volver al inicio.
+
 import { useNavigate, Link } from "react-router"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui"

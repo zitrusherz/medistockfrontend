@@ -1,9 +1,4 @@
-// src/features/admin/components/PendingActionCard.tsx
-// T4.1 (visual) — Tarjeta de acción pendiente para el Inicio del Admin, calcada
-// del `PendingCard` de la maqueta (admin-home.jsx). Es DISTINTA del StatCard
-// genérico a propósito: acá el tono vive en un icono cuadrado degradado (no en
-// un borde izquierdo) y la tarjeta completa es clickeable cuando recibe onClick.
-// No reemplaza a StatCard en el resto de la app — solo se usa en Inicio.
+
 
 import type { ReactNode } from 'react';
 

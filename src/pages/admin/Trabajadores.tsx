@@ -1,8 +1,4 @@
-// src/pages/admin/Trabajadores.tsx
-// T4.3 — Página Admin · Trabajadores. Contenedor: PageWrapper + PageHeader +
-// WorkersView (alta + tabla del equipo). Protegida por RoleRoute (Proxy) en el
-// router para el rol Administrador. Ruta: /admin/trabajadores (ya declarada en
-// router/index.tsx y navItems.ts). Export default: el router la carga con lazy().
+
 
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { PageHeader } from '@/components/layout/PageHeader';

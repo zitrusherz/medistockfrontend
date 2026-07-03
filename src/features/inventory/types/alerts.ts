@@ -1,7 +1,4 @@
-// features/inventory/types/alerts.ts
-// Modelos de dominio para las alertas de inventario (T3.6).
-// La UI consume SOLO estos modelos; los DTO crudos (Inventario / Lote) se quedan
-// en el mapper. Adapter puro: si la API cambia un campo, solo cambia alertMapper.
+
 
 /** Alerta de stock (derivada de un registro de Inventario = lote + sucursal). */
 export interface AlertaStock {

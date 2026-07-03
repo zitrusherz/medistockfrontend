@@ -1,6 +1,4 @@
-// features/orders/hooks/usePedido.ts
-// T2.10 — Detalle de un pedido (Observer vía React Query).
-// queryKey ['pedidos','detalle', id]: useEditarPedido refresca esta entrada tras el PATCH.
+
 
 import { useQuery } from '@tanstack/react-query';
 import { orderService } from '../services/orderService';

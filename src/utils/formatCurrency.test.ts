@@ -2,9 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { formatCLP } from './formatCurrency'
 
-// No comparamos el string exacto (el separador/símbolo depende de la versión
-// de ICU del entorno donde corra Node), sino el contenido numérico: se extraen
-// solo los dígitos y se compara contra el valor esperado sin decimales.
+
 const soloDigitos = (s: string) => s.replace(/\D/g, '')
 
 describe('formatCLP', () => {

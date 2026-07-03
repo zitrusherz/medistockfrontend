@@ -1,7 +1,4 @@
-// features/payments/components/PagosKpis.tsx
-// T3.7 — KPIs de la auditoría de pagos. Cálculo puro sobre el array recibido
-// (lo hace el padre: KPIs sobre el LIBRO COMPLETO, la tabla sobre el filtrado).
-// Montos siempre con formatCLP (M1, CLP entero).
+
 
 import { useMemo } from 'react';
 import { Card } from '@/components/ui';

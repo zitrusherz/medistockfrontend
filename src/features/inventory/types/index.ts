@@ -6,9 +6,7 @@ import type { TipoMovimiento, EstadoTraslado } from '@/types/models';
  * categorias, marcas, productos, lotes, inventarios, movimientos y traslados.
  */
 
-// ---------------------------------------------------------------------------
-// Categorias y marcas
-// ---------------------------------------------------------------------------
+
 
 export interface Categoria {
   id: ID;
@@ -36,9 +34,7 @@ export interface MarcaInput {
   activo?: boolean;
 }
 
-// ---------------------------------------------------------------------------
-// Productos
-// ---------------------------------------------------------------------------
+
 
 /** Relacion producto-categoria tal como se anida en un Producto. */
 export interface ProductoCategoriaLink {
@@ -105,9 +101,7 @@ export interface ProductoResumen {
   unidad_medida: string;
 }
 
-// ---------------------------------------------------------------------------
-// Lotes
-// ---------------------------------------------------------------------------
+
 
 export interface Lote {
   id: ID;
@@ -136,9 +130,7 @@ export interface LoteRef {
   fecha_vencimiento: ISODate;
 }
 
-// ---------------------------------------------------------------------------
-// Inventarios (stock por sucursal/lote)
-// ---------------------------------------------------------------------------
+
 
 export interface Inventario {
   id: ID;
@@ -165,9 +157,7 @@ export interface InventarioInput {
   stock_critico?: number;
 }
 
-// ---------------------------------------------------------------------------
-// Movimientos de inventario
-// ---------------------------------------------------------------------------
+
 
 export interface MovimientoInventario {
   id: ID;
@@ -198,9 +188,7 @@ export interface MovimientoInventarioInput {
   observacion?: string;
 }
 
-// ---------------------------------------------------------------------------
-// Traslados entre sucursales
-// ---------------------------------------------------------------------------
+
 
 export interface DetalleTraslado {
   id: ID;
@@ -241,9 +229,7 @@ export interface TrasladoInput {
   detalles_write: DetalleTrasladoInput[];
 }
 
-// ---------------------------------------------------------------------------
-// Ingreso combinado (crea producto + lote + stock en una sola llamada)
-// ---------------------------------------------------------------------------
+
 
 /** Cuerpo de POST /api/inventory/ingresar-producto/. */
 export interface IngresarProductoRequest {

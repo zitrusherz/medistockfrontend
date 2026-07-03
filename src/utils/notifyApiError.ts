@@ -1,10 +1,4 @@
-// src/utils/notifyApiError.ts
-// T5.1 / M12 + M15 — Mensajería de error de usuario.
-//
-// CAMBIO en T5.1: se extrae `apiErrorMessage()` como FUENTE ÚNICA del texto que
-// ve el usuario para un ApiError. Antes el copy vivía solo dentro del toast; ahora
-// también lo consume el bloque de error inline (<QueryState/>), así el mismo 502
-// dice exactamente lo mismo en el toast y en la tarjeta de error (consistencia M15).
+
 
 import type { ApiError } from "@/lib/axios";
 import type { ToastContextValue } from "@/components/ui/toastContext";

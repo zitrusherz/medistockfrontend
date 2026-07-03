@@ -12,18 +12,7 @@ import {
   KeyIcon,
 } from '../ui/icons';
 
-/**
- * Navegación declarativa por rol (T1.6).
- *
- * Patrón Composite aplicado a la navegación: cada ítem tiene la MISMA forma,
- * así un único Sidebar los renderiza para cualquier rol. La pertenencia a un
- * rol vive en el dato (`roles[]`), no en el componente.
- *
- * IMPORTANTE: `roles` usa el enum REAL del backend (types/roles.ts):
- * CLIENTE | ADMINISTRADOR | EJECUTIVO | OPERADOR_LOGISTICO | ANALISTA.
- * (La referencia original usaba strings largos tipo 'Ejecutivo de Cuentas';
- *  quedaron normalizados a este enum.)
- */
+
 
 /** Los iconos son componentes lucide; aceptan size/className. */
 export type NavIconComponent = LucideIcon;

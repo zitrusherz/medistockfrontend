@@ -5,13 +5,7 @@ import type { Comuna, RegionConComunas } from '@/types/models';
 /** Query key estable para regiones+comunas. */
 export const regionesQueryKey = ['locations', 'regions-with-comunas'] as const;
 
-/**
- * Carga regiones con sus comunas anidadas y expone un helper para obtener las
- * comunas de una región concreta. Resuelve el select dependiente región→comuna
- * SIN una segunda llamada (las comunas vienen dentro de cada región).
- *
- * Las ubicaciones cambian rarísimo, así que se cachea de forma agresiva.
- */
+
 export function useRegionesConComunas() {
     const query = useQuery({
         queryKey: regionesQueryKey,

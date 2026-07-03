@@ -1,15 +1,4 @@
-// src/features/integrations/services/integrationsService.ts
-// T4.5 — Repository del dominio `integrations`. Gestiona los ApiClient / API Keys
-// que permiten a los ERP de las clínicas consumir la API propia con header
-// `X-Api-Key` (3ª integración). El listado se entrega como VM (toApiClient); las
-// respuestas de crear/rotar se devuelven CRUDAS porque exponen `api_key` en
-// texto plano (visible una sola vez).
-//
-// Rutas:
-//   - crear  : POST  /integrations/api-clients/crear/      (doc en types/index.ts)
-//   - patch  : PATCH /integrations/api-clients/{id}/        (doc en types/index.ts)
-//   - listar : GET   /integrations/api-clients/   ⚠️ SUPUESTO de ruta. Si tu API
-//     expone el listado en otra URL, cámbialo SOLO aquí.
+
 
 import api from '@/lib/axios';
 import type {

@@ -1,8 +1,4 @@
-// pages/logistica/Alertas.tsx
-// T3.6 — Alertas de inventario para el Operador Logístico.
-// Posee el encabezado de página y un conmutador entre las dos vistas; cada vista
-// trae su propio AlertShell (filtros + tabla). El router ya declara esta ruta
-// (/logistica/alertas) con import por defecto, por eso el export default.
+
 
 import { useState } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';

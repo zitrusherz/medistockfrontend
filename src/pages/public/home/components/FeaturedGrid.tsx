@@ -2,14 +2,7 @@ import { Link } from 'react-router';
 import { MediaThumb } from './MediaThumb';
 import type { FeaturedProduct } from '../types';
 
-/**
- * FeaturedGrid — rejilla de productos destacados. Portado de la maqueta
- * (`FeaturedGrid` + `ProductCard`), pero alimentado con datos reales que
- * llegan por props desde `Home.tsx` (primeros N de `getCatalogo()`).
- *
- * Estados (M12): loading → skeletons; vacío → no renderiza la sección.
- * Enlaces: cada tarjeta lleva a /producto/:code.
- */
+
 interface FeaturedGridProps {
   items: FeaturedProduct[];
   loading?: boolean;

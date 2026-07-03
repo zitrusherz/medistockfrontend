@@ -1,13 +1,4 @@
-// features/orders/components/PedidoCard.tsx
-// T2.10 — Fila/tarjeta de un pedido en la lista. Muestra nº, fecha, estado (badge), total
-// y enlace al detalle. Presentacional: recibe el Pedido ya mapeado.
-//
-// CAMBIO (pago desde "Mis pedidos"): si el pedido está impago (PENDIENTE + venta
-// WEBPAY, ver orderService.puedePagarPedido) se ofrece un botón "Pagar" que va a
-// /cliente/pago/:id (inicia/reintenta el cobro Webpay). Para no anidar dos
-// interactivos (botón dentro de <a>, HTML inválido) la tarjeta usa el patrón
-// "stretched link": un Link que cubre toda la fila (detalle) + el botón Pagar
-// por encima (z-10) capturando su propio clic.
+
 
 import { Link } from 'react-router';
 import type { Pedido } from '@/types/models';

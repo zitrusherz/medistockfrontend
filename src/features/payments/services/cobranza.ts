@@ -1,16 +1,4 @@
-// features/payments/services/cobranza.ts
-// T3.7 — Cuentas por cobrar: cruce PURO pagos ↔ pedidos (sin React, sin red).
-//
-// Definición honesta: "por cobrar" = pedido EXIGIBLE (ya aprobado y en curso)
-// SIN pago en estado CONFIRMADO. NO afirmamos "moroso" en sentido estricto:
-// el modelo Pedido no expone plazo ni fecha de vencimiento de pago, así que no
-// podemos saber si la deuda está VENCIDA. Usamos los días desde la creación como
-// PROXY y, con un umbral de crédito, marcamos cada línea como vencida/vigente.
-//   → Si el backend agrega fecha de vencimiento real, reemplazar
-//     `diasMora > diasCredito` por `fechaVencimiento < ahora`.
-//
-// Recibe lo que usePagos() + useTodosPedidos() ya cachearon (React Query
-// deduplica entre vistas), por eso no dispara fetches extra. Puro = testeable.
+
 
 import type {
     Pago,
@@ -20,15 +8,7 @@ import type {
     TipoVenta,
 } from '@/types/models';
 
-/**
- * Estados de pedido que generan deuda exigible. Se excluyen:
- *   PENDIENTE  → aún no aprobado. Además, en Webpay B2C el pago ocurre durante
- *                la transición PENDIENTE→aprobado, así que un PENDIENTE es
- *                "aún no pagó / en proceso o abandonado", NO "debe". Incluirlo
- *                llenaría la cobranza de falsos positivos (carros abandonados).
- *                Los fallidos B2C se ven por estado_pago en la pantalla Pagos.
- *   RECHAZADO / CANCELADO → pedido muerto, no se cobra.
- */
+
 const ESTADOS_EXIGIBLES: EstadoPedido[] = [
     'APROBADO',
     'EN_PICKING',

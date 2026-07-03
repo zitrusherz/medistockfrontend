@@ -1,16 +1,4 @@
-// src/features/logistics/services/envioState.ts
-// T2.11 — STATE (patrón). El `estado_envio` del despacho decide qué se ve en el
-// timeline. Aislamos aquí el mapeo estado→presentación para que la página y el
-// componente Timeline no repitan condicionales (espejo de paymentState.ts).
-//
-// Máquina de estados del despacho (canónica):
-//   PENDIENTE ──► RETIRADO ──► EN_TRANSITO ──► ENTREGADO
-//                                   │
-//                                   └─► DEVUELTO   (rama de excepción)
-//   (cualquiera) ─────────────────────► CANCELADO  (rama de excepción)
-//
-// Los 4 PASOS forman la barra de progreso lineal. DEVUELTO/CANCELADO no son
-// "un paso más": son ramas terminales que se muestran aparte (tone danger).
+
 
 import type { EstadoEnvio } from '@/types/models';
 

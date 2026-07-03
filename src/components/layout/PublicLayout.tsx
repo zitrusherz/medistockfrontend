@@ -12,17 +12,7 @@ import { queryClient } from "@/lib/queryClient"
 import { formatCLP } from "@/utils/formatCurrency"
 import { datosBasicosPerfil } from "@/types/auth"
 
-/**
- * PublicLayout — chrome de la TIENDA pública (TopBar + Header + Outlet).
- *
- * Reutiliza los componentes ya existentes:
- *   · <CartMenu/>  → mini-carrito con apertura por HOVER (ver CartMenu.tsx).
- *   · <LoginForm/> → form real de login dentro de un popover (AccountMenu).
- *
- * Se monta como LAYOUT ROUTE en router/index.tsx envolviendo /, /categorias,
- * /catalogo, /producto/:codigo y el 404. El header es `sticky`, así que las
- * páginas no necesitan padding-top.
- */
+
 export function PublicLayout() {
     return (
         <div className="min-h-screen bg-background text-text">
@@ -34,11 +24,7 @@ export function PublicLayout() {
     )
 }
 
-/* ── Logo: portado tal cual de la maqueta (components.jsx).
-   Grilla 2×2 rotada 45° (TL oro, TR plum, BL grape, BR oro) + wordmark con
-   "Stock" en degradado oro (.text-gold-gradient, definido en index.css).
-   Los degradados van con `style` inline porque en Tailwind v4 `bg-gradient-to-br`
-   pasó a llamarse `bg-linear-to-br`; el inline funciona igual sin depender del nombre. */
+
 function Logo() {
     return (
         <Link
@@ -159,11 +145,7 @@ function StoreHeader() {
     const user = useAuthStore((s) => s.user)
     const logout = useAuthStore((s) => s.logout)
 
-    // FIX Bug 3: nombre con apellido abreviado a la inicial (ej. "Salvador P.").
-    // FIX: se usa `datosBasicosPerfil(user)` en vez de `user.datos.first_name`
-    // directo. Ese acceso plano solo es válido para CLIENTE: para TRABAJADOR
-    // el nombre/email vienen anidados en `user.datos.usuario`, así que daba
-    // siempre `undefined` y el saludo caía al fallback "Mi cuenta".
+
     const { first_name, last_name, email } = user
         ? datosBasicosPerfil(user)
         : { first_name: "", last_name: "", email: "" }
@@ -181,8 +163,7 @@ function StoreHeader() {
     }
 
     const handleLogout = () => {
-        // Igual que en AppShell: se limpia la caché de React Query ANTES de
-        // limpiar la sesión, para no arrastrar datos de la sesión anterior.
+
         queryClient.clear()
         logout()
         navigate("/", { replace: true })

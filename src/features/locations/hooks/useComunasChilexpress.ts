@@ -1,6 +1,4 @@
-// src/features/locations/hooks/useComunasChilexpress.ts
-// Custom Hook + Observer (React Query) — T3.5. Cobertura Chilexpress para validar
-// la comuna de destino antes de cotizar. La cobertura cambia poco → caché larga.
+
 
 import { useQuery } from '@tanstack/react-query';
 import { locationsService } from '../services/locationsService';

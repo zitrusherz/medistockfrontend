@@ -1,6 +1,4 @@
-// features/orders/services/mappers/orderMapper.ts
-// Adapter: DTO crudo de la API -> modelo de dominio que usa la UI.
-// snake_case -> camelCase, y se exponen montos ya desglosados (M2).
+
 
 import type { Pedido, DetallePedido } from '@/types/models';
 import type { PedidoDTO, DetallePedidoDTO } from '../../types';

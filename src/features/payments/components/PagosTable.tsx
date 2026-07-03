@@ -1,7 +1,4 @@
-// features/payments/components/PagosTable.tsx
-// T3.7 — Tabla auditable de transacciones. "Tonta": recibe los pagos ya
-// normalizados (modelo Pago) y solo los pinta. La lógica (filtros, KPIs) vive
-// en la página. Reúsa el kit Table y PagoEstadoBadge.
+
 
 import {
     Table,

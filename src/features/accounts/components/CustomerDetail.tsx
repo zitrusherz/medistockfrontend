@@ -1,19 +1,4 @@
-// features/accounts/components/CustomerDetail.tsx
-// T3.3 / T4.4 — Modal de detalle de cliente. Autocontenido: tiene sus PROPIAS
-// queries perezosas (enabled = open), así la página no precarga nada. Compone
-// features: datos del cliente (accounts) + sus pedidos (orders) + sus pagos
-// (payments, solo Admin). Tabs (ui/Tabs) en modo lectura; CreditBar para
-// institucionales con cupo.
-//
-// T4.4 — Nueva prop `showPagos` (default false):
-//   - Ejecutivo (T3.3) lo monta SIN la prop → sigue con 2 tabs (Datos/Pedidos)
-//     y NO consulta /payments/todos/ (evita 403 por permisos).
-//   - Admin (T4.4) pasa showPagos → aparece el 3er tab "Pagos". El hook de pagos
-//     se gatilla solo si (open && showPagos), así no hay fetch para Ejecutivo.
-//
-// Recibe la fila `cliente` como fallback inmediato y la enriquece con el detalle
-// cuando llega (crédito, etc.). Si el endpoint de detalle no existe/falla, se
-// muestra igual lo que ya traía la fila.
+
 
 import {
     Modal,

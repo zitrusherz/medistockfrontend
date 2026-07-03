@@ -1,13 +1,4 @@
-// features/orders/components/PedidoEditForm.tsx
-// T2.10 — Edición acotada del pedido. Por contrato del caso, el cliente solo puede
-// editar mientras el pedido está PENDIENTE; esta restricción la aplica la PÁGINA
-// (renderiza este form solo en ese estado). El form, además, se autoprotege con `soloPendiente`.
-//
-// Campo editable: `observacion`. Es el único campo seguro de tocar sin reabrir el
-// recálculo de stock/montos del backend (editar líneas exigiría revalidación de stock).
-//
-// NOTA DE SUPUESTO: se asume que `EditarPedido` admite `observacion?: string`.
-// Si el tipo real difiere, ajustar el payload (1 línea) según features/orders/types.
+
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

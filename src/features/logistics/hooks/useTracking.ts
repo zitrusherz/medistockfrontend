@@ -1,11 +1,4 @@
-// src/features/logistics/hooks/useTracking.ts
-// Custom Hook + Observer (React Query) — T2.11. Espejo de useCatalogo.ts.
-//
-// Reglas de la spec:
-//   · Polling suave: refetch cada ~30s SOLO mientras estado_envio === 'EN_TRANSITO'.
-//   · 404 (sin despacho) NO es error rojo: se expone como `sinDespacho` (estado
-//     controlado) y NO se reintenta.
-//   · 502 (courier no responde) se expone como `courierCaido` y ofrece reintento.
+
 
 import { useQuery } from '@tanstack/react-query';
 import { logisticsService } from '../services/logisticsService';

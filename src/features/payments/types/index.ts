@@ -5,9 +5,7 @@ import type { EstadoPago, EstadoPedido, MetodoPago } from '@/types/models';
  * Tipos del modulo Pagos (integracion Webpay Plus / Transbank).
  */
 
-// ---------------------------------------------------------------------------
-// Transaccion de pago
-// ---------------------------------------------------------------------------
+
 
 /** Estado de la transaccion segun Webpay. */
 export type WebpayStatus = 'AUTHORIZED' | 'FAILED' | string;
@@ -72,9 +70,7 @@ export interface TodosPagosFilters {
   metodo_pago?: MetodoPago;
 }
 
-// ---------------------------------------------------------------------------
-// Iniciar pago Webpay
-// ---------------------------------------------------------------------------
+
 
 /** Cuerpo de POST /api/payments/webpay/iniciar/. */
 export interface IniciarPagoWebpayRequest {
@@ -99,9 +95,7 @@ export interface IniciarPagoWebpayExistenteResponse {
   transaccion_pago: TransaccionPago;
 }
 
-// ---------------------------------------------------------------------------
-// Commit / confirmacion
-// ---------------------------------------------------------------------------
+
 
 /** Cuerpo de POST /api/payments/webpay/commit/. */
 export interface CommitWebpayRequest {
@@ -129,9 +123,7 @@ export interface CommitWebpayResponse {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Estado Webpay
-// ---------------------------------------------------------------------------
+
 
 /** Respuesta de GET /api/payments/webpay/estado/{token_ws}/. */
 export interface EstadoWebpayResponse {

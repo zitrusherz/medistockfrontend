@@ -51,10 +51,7 @@ function getInitials(name: string): string {
     return ((parts[0]?.[0] ?? "") + (parts[parts.length - 1]?.[0] ?? "")).toUpperCase()
 }
 
-// ─── Color de fondo determinístico desde el nombre ─────────────────────────────
-// Paleta DECORATIVA (no semántica): se arma con las familias de la marca para no
-// introducir colores ajenos (sky/slate). Todos los tonos son suficientemente
-// oscuros para texto blanco.
+
 
 const BG_PALETTE = [
     "bg-plum-600",

@@ -7,9 +7,7 @@ import type { Grupo } from './roles';
  * duplicacion (usuarios, ubicaciones, enums de estado, etc.).
  */
 
-// ---------------------------------------------------------------------------
-// Enumeraciones de dominio (valores tal cual los entrega/acepta la API)
-// ---------------------------------------------------------------------------
+
 
 /** Tipo de cliente. */
 export type TipoCliente = 'PARTICULAR' | 'INSTITUCIONAL';
@@ -91,9 +89,7 @@ export type EstadoTraslado =
     | 'RECIBIDO'
     | 'CANCELADO';
 
-// ---------------------------------------------------------------------------
-// Usuarios
-// ---------------------------------------------------------------------------
+
 
 /** Forma reducida de usuario (respuestas de registro). */
 export interface UsuarioBasico {
@@ -123,9 +119,7 @@ export interface UsuarioRegistro {
     password2: string;
 }
 
-// ---------------------------------------------------------------------------
-// Ubicaciones (modulo locations) - referenciadas por direcciones y sucursales
-// ---------------------------------------------------------------------------
+
 
 /** Referencia minima a una region ({ id, nombre }). */
 export interface RegionRef {

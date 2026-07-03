@@ -1,9 +1,4 @@
-// src/features/accounts/components/WorkersView.tsx
-// T4.3 — Vista de Trabajadores: alta de cuentas internas + tabla del equipo con
-// activar/desactivar por fila. Reutiliza el kit (Table/Avatar/Badge) igual que
-// CustomersTable. Guard clave: el admin NO puede desactivar su propia cuenta
-// (se compara por email contra el perfil logueado). Solo-admin: la ruta ya está
-// protegida por RoleRoute (Proxy) en el router.
+
 
 import { useState } from 'react';
 import {

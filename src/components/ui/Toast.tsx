@@ -4,8 +4,7 @@ import { cn } from "@/utils/cn.ts"
 import { ToastContext } from "./toastContext"
 import type { ToastInput, ToastItem, ToastVariant, ToastPosition } from "./toastContext"
 
-// ─── Estilos ─────────────────────────────────────────────────────────────────
-// Tokens de estado; "error" mapea a danger.
+
 
 const variantStyles: Record<ToastVariant, { container: string; icon: string }> = {
     info: { container: "border-info/30 bg-surface", icon: "text-info" },

@@ -1,10 +1,4 @@
-// src/utils/image.ts
-// Utilidades para validar y previsualizar imágenes en el navegador.
-//
-// Regla central: NO confiar en la extensión ni solo en `file.type` (ambos
-// se deducen del nombre y son falsificables). Verificamos el CONTENIDO real
-// del archivo (magic bytes) y, además, confirmamos que el navegador puede
-// decodificarlo como imagen.
+
 
 export type ImageType = 'jpeg' | 'png' | 'gif' | 'webp' | 'bmp' | 'avif';
 
@@ -24,8 +18,7 @@ export interface ImageValidationResult {
 }
 
 const DEFAULT_MAX_BYTES = 5 * 1024 * 1024; // 5 MB
-// Nota de seguridad: NO incluimos SVG por defecto. Un SVG es XML y puede
-// contener <script>, lo que abre la puerta a XSS si se renderiza inline.
+
 const DEFAULT_ALLOWED: ImageType[] = ['jpeg', 'png', 'webp'];
 
 /**
@@ -98,13 +91,7 @@ export async function canDecode(file: Blob): Promise<boolean> {
     }
 }
 
-/**
- * Validación completa de un archivo subido. Comprueba, en orden:
- * 1) que sea un File no vacío, 2) tamaño, 3) tipo por CONTENIDO,
- * 4) que el tipo esté permitido, 5) que el navegador pueda decodificarlo.
- *
- * Devuelve un resultado con `error` listo para mostrar (encaja con M12).
- */
+
 export async function validateImage(
     file: File,
     options: ImageValidationOptions = {},

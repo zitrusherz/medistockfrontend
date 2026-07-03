@@ -1,15 +1,4 @@
-// src/pages/cliente/Pago.tsx
-// T2.9 ⭐ — INICIO del pago. Recibe :pedidoId, llama al FACADE checkoutService.pagar
-// (STRATEGY por detrás: Webpay real o mock), guarda el token_ws y redirige a Webpay.
-//
-// Flujo:
-//   1. iniciar() → IniciarResult { token, redirectUrl, yaIniciada }
-//   2. guardar token_ws en sessionStorage (recupera el flujo si se pierde la pestaña)
-//   3a. redirectUrl fresca (transacción nueva) → window.location.assign(redirectUrl)
-//   3b. yaIniciada (200, sin URL fresca) → ir a /cliente/pago/retorno con el token
-//   4. error 502 (Webpay caído) → mensaje claro + reintentar
-//
-// Patrón: Facade (checkoutService.pagar) + Strategy (estrategia de pasarela).
+
 
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
@@ -42,8 +31,7 @@ export default function Pago() {
         checkoutService
             .pagar(id)
             .then((res) => {
-                // Persistir token_ws antes de salir del sitio: si la pestaña de
-                // retorno pierde el query param, lo recuperamos desde aquí.
+
                 guardarPagoPendiente({
                     token: res.token,
                     pedidoId: res.pedidoId,
@@ -57,8 +45,7 @@ export default function Pago() {
                     return;
                 }
 
-                // Ya existía una transacción (200) sin URL fresca → resolverla
-                // en el retorno usando el token (commit / consulta de estado).
+
                 if (res.token) {
                     navigate(
                         `/cliente/pago/retorno?token_ws=${encodeURIComponent(res.token)}`,

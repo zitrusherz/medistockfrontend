@@ -1,7 +1,4 @@
-// src/features/accounts/components/TopBuyers.tsx
-// T4.4 — Vista de Top compradores (porta TopBuyersView de la maqueta a tokens del
-// kit). PRESENTACIONAL: recibe el ranking ya ordenado y dibuja barras
-// proporcionales al máximo. No sabe de la API. (IL3.1: reúso por composición.)
+
 
 import { Avatar } from '@/components/ui';
 import { formatCLP } from '@/utils/formatCurrency';

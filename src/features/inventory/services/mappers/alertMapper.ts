@@ -1,18 +1,9 @@
-// features/inventory/services/mappers/alertMapper.ts
-// Adapter: traduce los DTO crudos de inventario al modelo de dominio de la UI.
-//   Inventario → AlertaStock        (stock por lote+sucursal vs. umbral)
-//   Lote       → AlertaVencimiento  (días-a-vencer desde la fecha de caducidad)
+
 
 import type { Inventario, Lote } from '../../types';
 import type { AlertaStock, AlertaVencimiento } from '../../types/alerts';
 
-/**
- * Días enteros entre hoy (medianoche local) y una fecha ISO "YYYY-MM-DD".
- * Negativo = ya vencido. Se calcula desde la fecha (fuente única) en lugar de
- * confiar en `dias_para_vencer` del backend, que depende de cuándo se generó la
- * respuesta. Si la fecha no es parseable, devuelve NaN para poder caer al valor
- * del backend en el mapper.
- */
+
 export const diasHasta = (fechaISO: string): number => {
     const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(fechaISO ?? '');
     if (!m) return Number.NaN;
@@ -36,8 +27,7 @@ export const toAlertaStock = (dto: Inventario): AlertaStock => {
         minimo,
         faltante: Math.max(0, minimo - stock),
         agotado: stock === 0,
-        // Confía en la bandera del backend, pero también la deriva por si llega
-        // un registro sin la bandera calculada.
+
         critico: dto.alerta_stock_critico || stock <= minimo,
     };
 };

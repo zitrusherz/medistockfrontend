@@ -1,7 +1,4 @@
-// src/features/catalog/services/mappers/productMapper.ts
-// Adapter: traduce el DTO crudo de la API al modelo de dominio que usa la UI.
-// Regla de oro: el frontend elige sus propios nombres; si la API cambia un campo,
-// SOLO cambia este archivo.
+
 
 import type { Product, StockSucursal, Categoria, Marca } from '@/types/models';
 import type {
@@ -18,20 +15,7 @@ const toStockSucursal = (dto: StockPorSucursalDTO): StockSucursal => ({
     stock: dto.stock_neto,
 });
 
-/**
- * Adapter puntual para las categorías embebidas en un producto.
- *
- * El backend serializa `producto.categorias[]` como filas de la TABLA INTERMEDIA
- * producto-categoría, con la categoría real ANIDADA:
- *
- *   { id: 80, categoria: { id: 15, nombre: "Antisépticos...", padre, subcategorias, imagen_url, activo } }
- *
- * `Product.categories` en @/types/models es `string[]`, así que aquí extraemos
- * `c.categoria.nombre`. Defensivo a propósito: si por cualquier razón llega un
- * string plano o un shape distinto, devolvemos cadena vacía en vez de propagar
- * el objeto al render (eso era exactamente lo que rompía Producto.tsx:
- * "Objects are not valid as a React child").
- */
+
 const toCategoryName = (
     c: CategoriaEnProductoDTO | string | null | undefined,
 ): string => {

@@ -1,9 +1,4 @@
-// src/features/integrations/components/RevealKeyModal.tsx
-// T4.5 — Modal "copia la key AHORA". Es la ÚNICA vez que se ve la key en texto
-// plano (al crear o al rotar). Incluye botón copiar, advertencia destacada y un
-// snippet cURL listo para la demo: POST /integrations/pedidos/ con header
-// X-Api-Key (sin JWT) → demuestra que un ERP externo se abastece solo (201).
-// No cierra por overlay para evitar perder la key sin querer.
+
 
 import { useState } from 'react';
 import {

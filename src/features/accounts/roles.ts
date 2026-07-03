@@ -1,13 +1,4 @@
-// src/features/accounts/roles.ts
-// FUENTE ÚNICA del rol de trabajador (M4). Aquí —y solo aquí— viven:
-//   1) las opciones reales del <select> de alta (enum del backend, NO la maqueta),
-//   2) la traducción Rol -> etiqueta humana (la del caso),
-//   3) la traducción Grupo Django (`usuario.grupos[]`) -> Rol, para LEER el rol
-//      de un trabajador en la tabla.
-//
-// Por qué existe: ni `UsuarioRegistro` ni `RegistroTrabajadorRequest` traen un
-// campo `rol`. El rol se materializa como grupo Django en el usuario. Centralizar
-// el mapeo aquí evita repetir strings frágiles por toda la feature.
+
 
 import { Roles, type Rol } from '@/types/roles';
 import type { Grupo, GrupoNombre } from '@/types/roles';

@@ -1,6 +1,4 @@
-// src/utils/formatDate.ts
-// Formateo de fechas para es-CL (formato chileno dd-mm-aaaa).
-// Acepta string ISO, número (epoch ms) o Date. Devuelve "" si no es válida.
+
 
 type DateInput = string | number | Date
 

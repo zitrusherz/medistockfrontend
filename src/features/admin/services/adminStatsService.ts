@@ -1,8 +1,4 @@
-// features/admin/services/adminStatsService.ts
-// T4.1 — Repository de los agregados del dashboard. Único punto del feature que
-// toca lib/axios. Tolera respuesta como arreglo plano o como objeto DRF.
-// Endpoints AÚN NO existen en el backend: los hooks los llaman con `enabled`
-// en false hasta que se publiquen (ver CONTRATO_BACKEND_STATS.md).
+
 
 import api from '@/lib/axios';
 import {

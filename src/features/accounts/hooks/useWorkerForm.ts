@@ -1,8 +1,4 @@
-// src/features/accounts/hooks/useWorkerForm.ts
-// T4.3 — Lógica del alta de trabajador (espejo de useRegisterForm). Valida con
-// zod, arma el payload de POST /accounts/registro/trabajador/ y, al éxito,
-// invalida la lista para que la tabla muestre la nueva cuenta. Los errores 400
-// por campo se pintan junto al input; el resto cae a toast.
+
 
 import { useForm } from 'react-hook-form';
 import type { Path } from 'react-hook-form';
@@ -22,16 +18,7 @@ import type { RegistroTrabajadorRequest } from '../types';
 /*  Esquema de validación (zod)                                               */
 /* -------------------------------------------------------------------------- */
 
-/**
- * `rol` se valida como string (los `value` de un <select> son siempre string).
- * `pass` usa mínimo 6 (criterio del
- * caso). Si tu backend exige más, ajusta el `.min()` aquí y el placeholder.
- *
- * NOTA contraseña: el tipo `UsuarioRegistro` exige password + password2, así que
- * el alta pide clave en el POST. Si tu backend en cambio envía invitación por
- * correo (el trabajador define su clave), elimina pass/pass2 de este esquema y
- * del builder, y quita los campos del WorkerForm.
- */
+
 export const workerSchema = z
     .object({
         nombre: z.string().trim().min(1, 'Ingresa el nombre'),
@@ -49,10 +36,7 @@ export const workerSchema = z
         rol: z
             .string()
             .min(1, 'Selecciona un rol')
-            // NO usar el type-guard `isWorkerRol` aquí: su firma `v is WorkerRol`
-            // hace que zod ESTRECHE el output a la unión, dejando z.input='' (string)
-            // y z.output=WorkerRol distintos → rompe DEFAULTS y el Resolver de RHF.
-            // `.includes` devuelve boolean puro: input === output === string.
+
             .refine((v) => (WORKER_ROLES as readonly string[]).includes(v), 'Rol inválido'),
         telefono: z
             .string()

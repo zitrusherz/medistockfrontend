@@ -1,11 +1,4 @@
-// src/features/inventory/services/fefo.ts
-// T3.5 — Lógica de negocio 2: FEFO (First Expired, First Out).
-// Dado el conjunto de lotes, devuelve los de un producto ordenados por
-// vencimiento (el que vence antes, primero) y sugiere el primero.
-//
-// Puro, sin React. Solo considera lotes activos. La validación de stock real por
-// sucursal vive en Inventario (no en Lote); cuando se requiera FEFO con stock se
-// cruzará con /inventory/inventarios/ (fuera del alcance de esta tarea).
+
 
 import type { Lote } from '../types';
 

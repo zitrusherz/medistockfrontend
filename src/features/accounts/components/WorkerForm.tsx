@@ -1,7 +1,4 @@
-// src/features/accounts/components/WorkerForm.tsx
-// T4.3 — Formulario de alta de cuenta interna. Presentacional: toda la lógica
-// (zod, payload, mutación, errores) vive en useWorkerForm. El <select> de rol
-// usa el enum REAL del caso (M4), nunca los roles de la maqueta.
+
 
 import { forwardRef, useState, type ReactNode } from 'react';
 import { Input, Select, Button } from '@/components/ui';

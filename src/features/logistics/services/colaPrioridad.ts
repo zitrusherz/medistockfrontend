@@ -1,10 +1,4 @@
-// src/features/logistics/services/colaPrioridad.ts
-// T3.5 — Lógica de negocio 1: cola priorizada del Operador Logístico.
-// Orden canónico: prioridad médica (CRÍTICA→ALTA→NORMAL) → EXPRESS arriba →
-// más antiguo primero (FIFO por fecha de creación).
-//
-// Pura y sin dependencias de React: se puede testear en aislamiento y reusar en
-// cualquier vista (Órdenes, dashboard, alertas).
+
 
 import type { Pedido, PrioridadMedica } from '@/types/models';
 

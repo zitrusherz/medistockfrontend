@@ -1,7 +1,4 @@
-// src/features/cart/components/CartRow.tsx
-// T2.7 — Línea del carrito. Reusa QtyStepper (IL3.1). Tope de stock por M3.
-// Cambio: el recuadro "Foto" ahora muestra la imagen real del producto (fallback
-// a placeholder rayado si no hay imagen o falla la carga).
+
 
 import { QtyStepper } from '@/features/catalog/components/QtyStepper';
 import { formatCLP } from '@/utils/formatCurrency';

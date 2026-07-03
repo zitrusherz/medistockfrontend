@@ -1,11 +1,4 @@
-// src/pages/admin/ApiKeys.tsx
-// T4.5 — Página Admin · API Keys ERP. Contenedor: PageWrapper + PageHeader +
-// (CrearApiClientForm | ApiClientsTable). Es la evidencia de la 3ª integración:
-// la API propia consumida por sistemas externos (ERP) vía X-Api-Key. Protegida
-// por RoleRoute (Proxy) para Administrador. Ruta /admin/api-keys (declarada en
-// router/index.tsx como @/pages/admin/ApiKeys y en navItems.ts). Export default:
-// el router la carga con lazy(). Posee el estado del modal "copia ahora" porque
-// tanto crear como rotar producen una key que se muestra una sola vez.
+
 
 import { useState } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';

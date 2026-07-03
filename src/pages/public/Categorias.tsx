@@ -4,18 +4,7 @@ import { ChevronRight, ShoppingBag } from 'lucide-react';
 import { useCategoriasArbol } from '@/features/catalog/hooks/useCategoriasArbol';
 import type { CategoriaArbol } from '@/features/catalog/types';
 
-/**
- * Categorias — navegador de categorías estilo "Browse Supplies" (drill-down).
- *
- * Flujo (reemplaza el ir directo a la tienda):
- *   /categorias        → grilla de categorías raíz.
- *   /categorias/:id    → grilla de SUBCATEGORÍAS de esa categoría.
- *   click en hoja      → /catalogo?cat=<id>  (productos filtrados).
- *
- * Una categoría con hijas abre otro nivel del mismo navegador; una hoja (sin
- * hijas) salta al catálogo. Cada card tiene tamaño fijo y la imagen se adapta
- * con object-cover. Datos: GET /inventory/public/categorias/arbol/.
- */
+
 
 // ─── Helpers de árbol ─────────────────────────────────────────────────────────
 function findNode(nodes: CategoriaArbol[], id: number): CategoriaArbol | null {

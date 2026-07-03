@@ -1,16 +1,12 @@
 // src/features/orders/services/checkoutService.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-// Igual que en orderService.test.ts: mockeamos todo lo que hace red o toca
-// otro store, para probar SOLO la lógica de checkoutService en aislamiento
-// (Builder de buildPedido() y el Facade que delega en orderService/paymentService).
+
 vi.mock('@/lib/axios', () => ({
     default: { get: vi.fn(), post: vi.fn(), patch: vi.fn() },
 }))
 
-// vi.mock() se hoistea POR ENCIMA de estas declaraciones. Para poder referenciar
-// los mocks dentro del factory (y también más abajo en los tests), hay que
-// envolverlos en vi.hoisted(); si no, Vitest lanza "Cannot access before initialization".
+
 const { toDetalles, clear } = vi.hoisted(() => ({
     toDetalles: vi.fn(),
     clear: vi.fn(),

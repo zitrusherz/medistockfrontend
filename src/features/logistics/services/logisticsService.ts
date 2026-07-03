@@ -1,12 +1,4 @@
-// src/features/logistics/services/logisticsService.ts
-// Repository (patrón) — T3.4. Único punto del feature que orquesta la logística.
-// Delega en la CourierStrategy elegida por entorno (real ↔ mock): este service
-// solo expone métodos de dominio tipados; el "cómo habla cada courier" vive en la
-// estrategia y la normalización en los mappers (Adapter).
-//
-// Los errores NO se re-envuelven: el interceptor de lib/axios ya rechaza con
-// ApiError. Se dejan propagar a React Query (404 = sin despacho, 502 = courier
-// caído los distingue useTracking por `status`).
+
 
 import api from '@/lib/axios';
 import type {
@@ -29,14 +21,7 @@ export const logisticsService = {
     cotizar: (req: CotizarEnvioRequest): Promise<CotizacionResponse> =>
         courier.cotizar(req),
 
-    /**
-     * POST /api/logistics/cotizar/ (variante CHECKOUT).
-     * Cotiza pasando SOLO productos (producto_id + cantidad) + sucursal + destino;
-     * el backend arma la caja óptima y calcula medidas/peso. Va DIRECTO al backend
-     * real (sin strategy: en este flujo no hay nada que mockear).
-     * ⚠️ Ruta asumida; contrato en docs/COTIZACION_ENVIO_CHECKOUT.md. Si tu API la
-     * expone en otro path, cámbiala SOLO aquí.
-     */
+
     cotizarProductos: async (
         req: CotizarProductosRequest,
     ): Promise<CotizacionResponse> => {

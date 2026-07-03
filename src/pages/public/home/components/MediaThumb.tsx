@@ -1,13 +1,5 @@
 // src/pages/public/home/components/MediaThumb.tsx
-/**
- * MediaThumb — muestra la imagen real del producto/categoría cuando existe,
- * y cae al marcador rayado (`ph-stripes`) de la maqueta cuando no hay URL.
- *
- * TAMAÑO PREDEFINIDO: el `className` define la CAJA (p. ej. `aspect-square w-full`).
- * La imagen se posiciona absoluta y la llena con `object-cover`, así CUALQUIER
- * proporción de archivo se adapta al espacio y se recorta sin deformar — la card
- * conserva siempre el mismo tamaño sin importar la imagen.
- */
+
 interface MediaThumbProps {
   src?: string | null;
   alt: string;

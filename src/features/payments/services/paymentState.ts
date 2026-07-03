@@ -1,14 +1,4 @@
-// src/features/payments/services/paymentState.ts
-// T2.9 — STATE (patrón). El `estado_pago` de la transacción decide qué se ve.
-//
-// Máquina de estados del pago:
-//   INICIADO ──► CONFIRMADO   (aprobado)
-//            ├─► RECHAZADO    (banco rechaza)
-//            ├─► ANULADO      (usuario anula en Webpay)
-//            └─► ERROR        (falla técnica / no se pudo confirmar)
-//
-// Aislamos aquí el mapeo estado→presentación para que las páginas de pago no
-// repitan condicionales y para documentar el patrón State del flujo (rúbrica IL3.3).
+
 
 import type { CommitResult } from './strategies/PaymentStrategy';
 

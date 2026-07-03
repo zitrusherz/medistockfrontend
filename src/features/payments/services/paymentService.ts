@@ -1,5 +1,4 @@
-// features/payments/services/paymentService.ts
-// Repository + Facade. Pago via Strategy. Listados via api directo.
+
 
 import  api  from '@/lib/axios';
 import { getPaymentStrategy } from './strategies';

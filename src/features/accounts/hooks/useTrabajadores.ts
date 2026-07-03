@@ -1,8 +1,4 @@
-// src/features/accounts/hooks/useTrabajadores.ts
-// T4.3 — Lista de trabajadores (Observer vía React Query) + mutación de
-// activar/desactivar. El filtro de texto y rol se aplica en cliente (igual que
-// useClientes) para no refetchear por tecla. La mutación invalida la misma
-// query key, así la tabla se refresca sola tras el toggle. (Command)
+
 
 import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';

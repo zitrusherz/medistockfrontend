@@ -1,7 +1,4 @@
-// features/admin/charts/VentasDonut.tsx
-// T4.1 — Donut de ventas por categoría (o por tipo de venta como fallback,
-// mientras el backend no exponga la categoría real). recharts PieChart con
-// innerRadius. Total al centro. Estado vacío explícito.
+
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { formatCLP } from '@/utils/formatCurrency';

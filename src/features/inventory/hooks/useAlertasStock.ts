@@ -1,6 +1,4 @@
-// features/inventory/hooks/useAlertasStock.ts
-// Custom Hook + Observer (React Query). El inventario cambia con frecuencia
-// media → staleTime de 60s, suficiente para una pantalla de monitoreo.
+
 
 import { useQuery } from '@tanstack/react-query';
 import { inventoryService } from '../services/inventoryService';

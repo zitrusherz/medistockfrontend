@@ -1,9 +1,7 @@
 // src/router/lazyPages.ts
 import { lazy } from "react"
 
-// ─── Lazy-load por zona: cada rol = su propio chunk en el build ───────────────
-// Extraídas de index.tsx para que el router solo exporte config (no componentes)
-// y así satisfacer react-refresh/only-export-components.
+
 
 // Públicas
 export const Home        = lazy(() => import("@/pages/public/Home"))

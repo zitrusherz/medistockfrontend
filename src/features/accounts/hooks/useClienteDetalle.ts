@@ -1,6 +1,4 @@
-// features/accounts/hooks/useClienteDetalle.ts
-// T3.3 — Detalle de un cliente. Query PEREZOSA: solo se dispara cuando el modal
-// está abierto (enabled), así la página no precarga datos de todos los clientes.
+
 
 import { useQuery } from '@tanstack/react-query';
 import { accountsService } from '../services/accountsService';

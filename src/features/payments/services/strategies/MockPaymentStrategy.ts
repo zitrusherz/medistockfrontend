@@ -1,6 +1,4 @@
-// features/payments/services/strategies/MockPaymentStrategy.ts
-// Mock: UI sin sandbox Transbank. VITE_USE_MOCKS=true.
-// Simula token y redirige a callback propio. commit siempre aprueba.
+
 
 import type { PaymentStrategy, IniciarResult, CommitResult } from './PaymentStrategy';
 import type { Pago } from '@/types/models';

@@ -5,10 +5,7 @@ import { useLogin } from '../hooks/useLogin';
 import { Input, Button, Alert } from '@/components/ui';
 import type { NormalizedError } from '@/types/api';
 
-// Zod valida antes de enviar. En login NO se valida largo de contraseña
-// (solo que exista): el largo lo decide el backend, y un min(8) aquí rechaza
-// credenciales legítimas más cortas. El nombre del campo (username) debe
-// coincidir con LoginRequest de @/types/auth.
+
 const loginSchema = z.object({
     username: z.string().min(1, 'El correo es requerido').email('Ingresa un correo válido'),
     password: z.string().min(1, 'La contraseña es requerida'),
@@ -30,8 +27,7 @@ export function LoginForm() {
 
     const onSubmit = (data: LoginFormData) => doLogin(data);
 
-    // Solo el 401 se muestra inline ("credenciales malas" del DoD). El resto
-    // (500 / red / 502) lo manda useLogin.onError al toast global.
+
     const credentialsError =
         apiError?.status === 401 ? 'Correo o contraseña incorrectos' : null;
 

@@ -1,11 +1,4 @@
-// src/pages/logistica/Dashboard.tsx — ruta: /logistica
-// Apéndice D #6 — Aterrizaje del Operador Logístico: cola priorizada + alertas.
-// Container: reúsa useTodosPedidos + ordenarColaLogistica (orden CRÍTICA→ALTA→
-// NORMAL, EXPRESS arriba), useAlertasStock y useAlertasVencimiento. Cero lógica nueva.
-//
-// Nota: el KPI "envíos en tránsito" del Apéndice se sustituye por "En preparación"
-// (pedidos EN_PICKING), porque useEnvios no fue provisto; todos los datos aquí salen
-// de hooks confirmados. Si se incorpora useEnvios, agregar ese KPI es trivial.
+
 
 import { useMemo } from "react"
 import { Link, useNavigate } from "react-router"

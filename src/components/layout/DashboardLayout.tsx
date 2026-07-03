@@ -19,20 +19,7 @@ interface DashboardLayoutProps extends HTMLAttributes<HTMLDivElement> {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-/**
- * Shell estructural: Navbar (fijo arriba) + Sidebar (fijo izquierda) + main scrolleable.
- * Navbar y Sidebar se inyectan ya renderizados → layout desacoplado de su estado.
- *
- * Offset responsive (M14): en móvil el main NO se empuja (ml-0); el sidebar va
- * off-canvas. El offset solo aplica en `lg:` vía `lg:ml-[var(--sidebar-w)]`, donde
- * `--sidebar-w` lleva el ancho dinámico (expandido/colapsado). Se evita el
- * `style={{ marginLeft }}` fijo no-responsive (anti-patrón §5/§12 de la guía).
- *
- * Uso:
- *   <DashboardLayout navbar={<Navbar .../>} sidebar={<Sidebar .../>} sidebarCollapsed={collapsed}>
- *     <PageWrapper>...</PageWrapper>
- *   </DashboardLayout>
- */
+
 export const DashboardLayout = forwardRef<HTMLDivElement, DashboardLayoutProps>(
     (
         {

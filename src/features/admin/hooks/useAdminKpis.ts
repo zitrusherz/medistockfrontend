@@ -1,7 +1,4 @@
-// features/admin/hooks/useAdminKpis.ts
-// T4.1 — KPIs operativos del día para la página Inicio del Admin. Compone las
-// mismas queries cacheadas que el resto del panel (dedup por React Query) más
-// el cruce de cobranza (cobranza.ts) y el KPI genérico de cotizaciones.
+
 
 import { useMemo } from 'react';
 import { useTodosPedidos } from '@/features/orders/hooks/useTodosPedidos';

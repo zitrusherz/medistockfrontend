@@ -1,13 +1,4 @@
-// src/features/logistics/components/Timeline.tsx
-// T2.11 — Timeline del envío. Se ARMA sobre `estado` (la máquina de estados del
-// despacho); los `eventos` del courier lo ENRIQUECEN (pueden venir vacíos).
-//
-// Patrón State: el estado actual decide qué paso está "hecho", cuál es el actual
-// y el tono de color (ver envioState.ts). DEVUELTO/CANCELADO no son un paso más:
-// se muestran como banda de excepción.
-//
-// Sin dependencias externas de iconos: el check es un <svg> inline para no
-// acoplarse a un set de iconos concreto.
+
 
 import type { EstadoEnvio } from '@/types/models';
 import { formatDateTime } from '@/utils/formatDate';

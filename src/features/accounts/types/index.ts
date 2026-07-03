@@ -19,9 +19,7 @@ import type {
  * - Direcciones de entrega del cliente
  */
 
-// ---------------------------------------------------------------------------
-// Direcciones de entrega
-// ---------------------------------------------------------------------------
+
 
 /** Direccion de entrega tal como la devuelve la API. */
 export interface DireccionEntrega {
@@ -53,9 +51,7 @@ export interface DireccionEntregaInput {
     es_principal?: boolean;
 }
 
-// ---------------------------------------------------------------------------
-// Perfil propio (GET/PATCH /api/accounts/perfil/me/)
-// ---------------------------------------------------------------------------
+
 
 /**
  * Datos del cliente en su propio perfil.
@@ -97,9 +93,7 @@ export interface ActualizarMiPerfilRequest {
     comuna?: ID;
 }
 
-// ---------------------------------------------------------------------------
-// Trabajadores
-// ---------------------------------------------------------------------------
+
 
 /** Trabajador (listado/detalle). */
 export interface Trabajador {
@@ -116,17 +110,7 @@ export interface Trabajador {
     activo: boolean;
 }
 
-/**
- * Cuerpo para registrar/crear un trabajador.
- *
- * M4 — Carrier del rol: el rol REAL del backend se materializa como grupo
- * Django en el usuario. Ni `UsuarioRegistro` ni este request traen un campo de
- * rol "oficial", así que añadimos `rol` (enum del caso) de forma explícita y,
- * por compatibilidad, también se envía `cargo` con la etiqueta del rol. El
- * builder (useWorkerForm.ts) es el ÚNICO lugar que decide cómo viaja el rol; si
- * tu backend lo espera anidado en `usuario`, como `grupo`, o lo deriva del
- * `cargo`, se ajusta SOLO ahí.
- */
+
 export interface RegistroTrabajadorRequest {
     usuario: UsuarioRegistro;
     rut: string;
@@ -152,12 +136,7 @@ export interface RegistroTrabajadorResponse {
     activo: boolean;
 }
 
-/**
- * Cuerpo de PATCH /api/accounts/trabajadores/{id}/.
- * Para activar/desactivar enviamos `{ activo }` (mismo criterio que
- * ActualizarClienteRequest). Si tu backend usa `is_active` o lo anida bajo
- * `usuario`, cambia SOLO el método `actualizarTrabajador` del accountsService.
- */
+
 export interface ActualizarTrabajadorRequest {
     activo?: boolean;
     telefono?: string;
@@ -167,9 +146,7 @@ export interface ActualizarTrabajadorRequest {
     cargo?: string;
 }
 
-// ---------------------------------------------------------------------------
-// Clientes
-// ---------------------------------------------------------------------------
+
 
 /**
  * Cliente (listado/detalle).

@@ -1,11 +1,4 @@
-// src/features/inventory/hooks/useProductForm.ts
-// Toda la lógica del alta de producto (T4.2): validación zod, datos de los
-// selects (marcas/categorías/sucursales), preview de IVA, construcción del
-// payload (form plano → IngresarProductoRequest) y la mutación multipart.
-// El componente ProductForm queda "tonto": solo pinta lo que este hook expone.
-//
-// Mismo patrón que useRegisterForm: el form maneja TODO como strings (los value
-// de inputs/selects son strings) y el builder convierte a number/boolean.
+
 
 import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
@@ -159,9 +152,7 @@ export function useProductForm({ onCreated }: UseProductFormOptions = {}) {
     const [imagen, setImagen] = useState<File | null>(null);
 
     const { marcas, isLoading: loadingMarcas, isError: errorMarcas } = useMarcas();
-    // useCategorias devuelve el resultado de useQuery ({ data, isLoading, ... }),
-    // no { categorias }. Tomamos `data` y lo normalizamos a [] para tener un
-    // arreglo tipado (Categoria[]) en el componente.
+
     const categoriasQuery = useCategorias();
     const categorias = categoriasQuery.data ?? [];
     const loadingCategorias = categoriasQuery.isLoading;
@@ -193,8 +184,7 @@ export function useProductForm({ onCreated }: UseProductFormOptions = {}) {
         },
     });
 
-    // Preview de IVA bajo el campo de precio (M2).
-    // useWatch (no form.watch): watch() no es memoizable por React Compiler.
+
     const precioRaw = useWatch({ control: form.control, name: 'valorUnitario' });
     const ivaPreview = soloEnteros(precioRaw ?? '')
         ? desgloseIVA(Number(precioRaw))
@@ -205,8 +195,7 @@ export function useProductForm({ onCreated }: UseProductFormOptions = {}) {
             inventoryService.ingresarProducto(buildIngreso(values), imagen),
 
         onSuccess: (res) => {
-            // Command + Observer: invalidar catálogo (público) y la tabla admin
-            // hace que el producto aparezca sin recargar.
+
             queryClient.invalidateQueries({ queryKey: ['catalogo'] });
             queryClient.invalidateQueries({ queryKey: ['productos'] });
 

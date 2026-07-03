@@ -1,10 +1,4 @@
-// src/features/integrations/components/ApiClientsTable.tsx
-// T4.5 — Tabla de API Keys (espejo de WorkersView): listado por institución con
-// estado y acciones por fila (rotar / revocar / reactivar). La key NUNCA se
-// muestra aquí (la API no la expone en el listado): solo al crear o al rotar, vía
-// el modal "copia ahora". Solo-admin: la ruta ya está protegida por RoleRoute
-// (Proxy) en el router. La rotación devuelve `nueva_api_key` → se sube por
-// onRotated para que el contenedor abra el reveal.
+
 
 import { useState } from 'react';
 import {

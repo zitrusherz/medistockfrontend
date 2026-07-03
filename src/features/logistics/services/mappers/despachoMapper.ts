@@ -1,12 +1,4 @@
-// src/features/logistics/services/mappers/despachoMapper.ts
-// Adapter (patrón) — T3.4. Normaliza la respuesta cruda de cotización, creación y
-// actualización de envío a modelos estables (CotizacionResponse / Despacho), sin
-// importar qué courier respondió.
-//
-// Mismo criterio que trackingMapper: lectura DEFENSIVA. Cada courier
-// (Chilexpress / Shippo / mock) puede nombrar distinto sus campos; aquí probamos
-// varias claves candidatas y caemos a valores neutros si faltan, de modo que la
-// UI nunca reciba un Despacho roto si el shape cambia.
+
 
 import type { EstadoEnvio, TipoDespacho } from '@/types/models';
 import type {

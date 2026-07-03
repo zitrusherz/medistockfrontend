@@ -1,7 +1,4 @@
-// src/features/integrations/services/mappers/apiClientMapper.ts
-// Adapter: DTO crudo de GET /integrations/api-clients/ -> VM de dominio
-// ApiClientVM. ÚNICO archivo a tocar si la API cambia nombres de campo del
-// listado. El estado de presentación se deriva aquí (la API no lo expone).
+
 
 import type { ApiClient } from '../../types';
 import type { ApiClientVM, EstadoApiKey } from '../../types/apiClient';

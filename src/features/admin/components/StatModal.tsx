@@ -1,9 +1,4 @@
-// features/admin/components/StatModal.tsx
-// T4.1 — Modal de detalle de un bloque de estadística (tabla cruda completa).
-// Reusa la primitiva ui/Modal. Renderiza su propio encabezado para no depender
-// de que Modal acepte una prop `title`.
-//
-// ⚠️ Si tu ui/Modal usa `isOpen` en vez de `open`, cambia esa única prop.
+
 
 import type { ReactNode } from 'react';
 import { Modal } from '@/components/ui';

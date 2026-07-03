@@ -1,19 +1,4 @@
-// src/components/common/SantiagoClock.tsx
-// T4.1 — Reloj en vivo en zona America/Santiago (independiente de la zona del
-// navegador). Tic cada segundo, limpia el intervalo al desmontar. Pensado para
-// el banner de Inicio del Admin, pero es genérico (acepta className).
-//
-// EDICIÓN VISUAL — se agrega la prop `dark`: variante para fondos oscuros
-// (banner degradado plum→grape del Inicio admin), calcada del SantiagoClock de
-// la maqueta (admin-ui.jsx): hora grande en blanco, fecha en gold-200 + "·
-// Santiago, Chile", SIN ícono de reloj (la maqueta no lo trae en esa
-// variante). El modo claro (dark=false, default) queda EXACTAMENTE igual que
-// antes — cero impacto en otros usos existentes del componente.
-//
-// Antes se intentaba sobrescribir el color solo con `className` concatenado a
-// mano (`text-text ${className}`), lo que no resuelve conflictos de Tailwind
-// de forma confiable. Ahora se usa `cn()` (twMerge) y, para el caso oscuro, un
-// bloque de estilos propio en vez de intentar "forzar" el claro por encima.
+
 
 import { useEffect, useState } from 'react';
 import { Clock } from 'lucide-react';

@@ -1,12 +1,4 @@
-// pages/analista/Cobranza.tsx
-// T3.7 — Cobranza del Analista: cuentas por cobrar (pedidos exigibles sin pago
-// confirmado). Honesto: NO afirmamos "moroso" estricto porque no hay fecha de
-// vencimiento real; usamos antigüedad como proxy y separamos vencido/vigente.
-// Protegida por RoleRoute (Proxy).
-//
-// Reúsa la capa de datos de Pagos sin pedir nada nuevo: usePagos() y
-// useTodosPedidos() ya están cacheadas por otras vistas (React Query deduplica),
-// así que la página es delgada: solo el cruce (cobranza.ts) y la tabla.
+
 
 import { useMemo } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';

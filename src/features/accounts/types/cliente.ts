@@ -1,20 +1,4 @@
-// features/accounts/types/cliente.ts
-// T3.3 — Tipos del directorio de clientes.
-//
-// FIX nombre "Cliente N": el DTO real anida nombre/email bajo `usuario` y la
-// razón social bajo `institucion` (no en la raíz).
-//
-// FIX comuna (a partir de la respuesta real de GET /accounts/clientes/):
-// NO hay un campo `comuna` plano en la raíz. El backend devuelve
-// `direcciones: DireccionEntrega[]` (mismo shape que el de mis-direcciones/,
-// ya tipado en ./index) y cada una trae `comuna_detalle` + `es_principal`.
-// Se reusa `DireccionEntrega` en vez de redefinir el shape acá.
-//
-// institucion.tipo_institucion: confirmado que la API SÍ manda la clave,
-// pero en null cuando no está asignado (ver data real, cliente id:3). El
-// mapper ya lo trata como "no viene" en ese caso.
-//
-// Si el DTO vuelve a cambiar, AJUSTA SOLO este archivo + clienteMapper.ts.
+
 
 import type { InstitucionRef, TipoCliente, UsuarioDetalle } from '@/types/models';
 import type { DireccionEntrega } from './index';

@@ -1,6 +1,4 @@
-// features/admin/components/StatActions.tsx
-// T4.1 — Acciones de cada bloque de Estadísticas: "Detalles" (abre StatModal con
-// la tabla cruda) y "Exportar CSV". Tonto: solo dispara los callbacks del padre.
+
 
 import { Eye, Download } from 'lucide-react';
 import { Button } from '@/components/ui';

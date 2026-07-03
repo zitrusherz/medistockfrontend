@@ -1,16 +1,4 @@
-// src/features/logistics/services/mappers/trackingMapper.ts
-// Adapter (patrón) — T2.11. Normaliza la respuesta cruda del endpoint de
-// tracking a un modelo de dominio estable para la UI.
-//
-// La forma de cada evento NO está fijada por el courier (la doc muestra
-// `tracking: []` vacío). Por eso leemos las claves de forma DEFENSIVA: probamos
-// varios nombres posibles (estado/status, fecha/date/timestamp, etc.) y caemos a
-// null si no vienen. Así, si Chilexpress/Shippo/mock cambian el shape, la UI no
-// se rompe: solo muestra menos detalle.
-//
-// `estado_envio` (la fuente del timeline) puede venir en el nivel `data` o, si no,
-// se infiere del último evento con estado reconocible. Si nada se reconoce → null
-// y la página decide el fallback (PENDIENTE en un 200, "sin despacho" en un 404).
+
 
 import type { EstadoEnvio } from '@/types/models';
 import type { TrackingEvento } from '../../types';

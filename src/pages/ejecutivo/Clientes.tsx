@@ -1,8 +1,4 @@
-// pages/ejecutivo/Clientes.tsx
-// T3.3 — Directorio de instituciones/clientes en SOLO LECTURA para el Ejecutivo.
-// La página consulta (useClientes); CustomersTable es presentacional. Al Ejecutivo
-// solo le pasamos "Ver" (no handlers de mutación) → queda de lectura. Admin (T4.4)
-// reusará la MISMA tabla con su propia página y handlers de edición.
+
 
 import { useState } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';

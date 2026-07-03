@@ -1,5 +1,4 @@
-// features/payments/services/strategies/PaymentStrategy.ts
-// Strategy: contrato de pasarela. Webpay real y Mock lo cumplen igual.
+
 
 import type { EstadoPago } from '@/types/models';
 import type { Pago } from '@/types/models';

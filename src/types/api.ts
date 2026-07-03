@@ -1,23 +1,4 @@
-/**
- * Tipos generales de infraestructura para consumir la API de MEDISTOCK.
- *
- * Convenciones de la API (ver documentación):
- * - Autenticación JWT: `Authorization: Bearer <token>`
- * - Fechas datetime en ISO 8601 UTC: "2025-07-10T14:32:00Z"
- * - Fechas date: "YYYY-MM-DD"
- * - Moneda: enteros en CLP (50000 = $50.000)
- *
- * Arquitectura de errores en este archivo (dos capas distintas):
- *
- *   CAPA 1 — Formas de error del SERVIDOR (ApiDetailError / ApiMessageError /
- *             DRFValidationError): representan el JSON crudo que devuelve la API.
- *             Se usan dentro de `lib/axios.ts` para leer la respuesta.
- *
- *   CAPA 2 — Error normalizado del FRONTEND (NormalizedError): lo produce
- *             `toApiError()` y es el único tipo que el resto de la app consume
- *             (notifyApiError, onError de mutaciones, formularios).
- *
-*/
+
 
 // ─── Primitivos ───────────────────────────────────────────────────────────────
 
@@ -102,16 +83,7 @@ export type ApiError = ApiDetailError | ApiMessageError | DRFValidationError;
 
 // ─── Capa 2: Error normalizado del frontend ───────────────────────────────────
 
-/**
- * Error normalizado para uso INTERNO del frontend.
- *
- * Lo PRODUCE:  `toApiError(axiosError)` en `lib/axios.ts`
- * Lo CONSUMEN: `notifyApiError()`, callbacks `onError` de mutaciones y
- *              formularios (para pintar fieldErrors junto a los inputs).
- *
- * Con este tipo la app entera trabaja con un único shape predecible,
- * independientemente de qué forma devolvió el servidor.
- */
+
 export interface NormalizedError {
   /** Código HTTP. 0 si no hubo respuesta (error de red). */
   status: HttpStatus | 0;
@@ -153,21 +125,7 @@ export const isDRFValidationError = (e: unknown): e is DRFValidationError =>
   !('error' in e) &&
   Object.values(e as object).every(v => Array.isArray(v));
 
-/**
- * Narrowing de `NormalizedError`: confirma que el error tiene `fieldErrors`.
- * Úsalo en mutaciones para decidir si pintar errores de campo o mostrar toast.
- *
- * @example
- * onError: (err) => {
- *   if (hasFieldErrors(err)) {
- *     Object.entries(err.fieldErrors).forEach(([field, msgs]) =>
- *       form.setError(field, { message: msgs[0] })
- *     );
- *   } else {
- *     notifyApiError(err);
- *   }
- * }
- */
+
 export const hasFieldErrors = (
   e: NormalizedError,
 ): e is NormalizedError & Required<Pick<NormalizedError, 'fieldErrors'>> =>

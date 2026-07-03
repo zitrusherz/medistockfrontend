@@ -1,11 +1,4 @@
-// src/pages/logistica/Ordenes.tsx
-// T3.5 — Hub del Operador Logístico: cola priorizada de pedidos a preparar y
-// despachar. REUSA OrdersTable (split del mega-admin, IL3.1) en variante
-// "avanzar": mismas filas que el Ejecutivo, distinto set de acciones.
-// La protege un RoleRoute (Proxy) en el router.
-//
-// Orden de la cola = ordenarColaLogistica: CRÍTICA→ALTA→NORMAL, EXPRESS arriba,
-// luego por fecha. Preparar/Despachar navegan a las rutas contextuales por pedido.
+
 
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';

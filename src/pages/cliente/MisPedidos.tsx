@@ -1,7 +1,4 @@
-// src/pages/cliente/MisPedidos.tsx
-// T2.10 — Lista de pedidos del cliente. Estilo alineado con Carrito/Checkout
-// (card blanca + gold-rule, breadcrumb, header). La lógica vive en el hook;
-// la página solo compone estados (loading / empty / error / datos).
+
 
 import { Link } from 'react-router';
 import { Spinner } from '@/components/ui';

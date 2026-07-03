@@ -1,7 +1,4 @@
-// features/admin/charts/chartTheme.ts
-// Paleta y helpers compartidos por los gráficos. Los colores son CSS vars del
-// tema (index.css) para que el gráfico herede la identidad MediStock y respete
-// cambios de tema sin recompilar.
+
 
 export const CHART_PALETTE = [
     'var(--color-plum-700)',

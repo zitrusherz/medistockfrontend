@@ -1,7 +1,4 @@
-// features/accounts/hooks/useClientePedidos.ts
-// T3.3 — Pedidos de un cliente, para el tab "Pedidos" del detalle. Reusa
-// orderService.todosPedidos({ cliente_id }) (FiltroPedidos ya soporta cliente_id).
-// Perezoso: enabled cuando el modal está abierto.
+
 
 import { useQuery } from '@tanstack/react-query';
 import { orderService } from '@/features/orders/services/orderService';

@@ -1,44 +1,4 @@
-// src/features/orders/components/CheckoutForm.tsx
-// T2.8 ⭐ — Formulario de checkout (evolución de "Finalizar pedido" de OrderPage).
-//
-// Captura: dirección de entrega · tipo de despacho · prioridad médica ·
-// observación. Al confirmar arma el payload (Builder) vía checkoutService
-// (Facade) y crea el pedido.
-//
-// CAMBIO 8 (finalizar = pagar): tras el 201 ya NO se muestra una pantalla
-//           intermedia de "pedido creado" con un botón manual. El éxito navega
-//           directo a /cliente/pago/:id, que inicia el cobro Webpay
-//           (checkoutService.pagar → POST /payments/webpay/iniciar/). Así
-//           "Confirmar y pagar" realmente lleva a la pasarela; el pedido no
-//           queda creado-sin-pagar por un clic omitido. Si el pago se rechaza
-//           o anula, el pedido queda PENDIENTE y se paga luego desde "Mis
-//           pedidos" (botón Pagar en la lista y en el detalle).
-//
-// La sucursal NO se captura para el pedido: el backend asigna la bodega de origen
-// por stock. Pero SÍ se usa el stock por sucursal para COTIZAR el envío (ver abajo).
-//
-// Reglas (M12):
-//  - SOLO se vacía el carrito tras 201 (onSuccess). 400/409 dejan el carrito intacto.
-//  - 400 { detalles:[...] } (stock) → se pintan inline en la(s) línea(s); no toast.
-//  - 409 { error:"Sin stock..." } → toast de conflicto; no vaciar.
-//  - 403 { detail:"...no tiene perfil de cliente..." } → mensaje claro de rol.
-//
-// CAMBIO 6: la dirección permite elegir una existente O ingresar una NUEVA al
-//           momento (se persiste primero para obtener su id: el pedido exige
-//           direccion_entrega_id).
-// CAMBIO 5 (cotización en vivo): "Tipo de despacho" lista los SERVICIOS REALES de
-//           Chilexpress con su precio. Se cotiza EN ESTA PANTALLA (pre-pedido):
-//             · sucursales candidatas = las que tienen stock para todo el carrito,
-//             · una cotización por sucursal (useCotizacionEnvio), se elige la más
-//               barata por servicio,
-//             · el frontend NO envía medidas: manda solo producto_id + cantidad y el
-//               backend arma la caja óptima (ver docs/COTIZACION_ENVIO_CHECKOUT.md).
-//           Si ningún local cubre todo o falta dirección → selector Normal/Express.
-//           Si la cotización falla (p. ej. producto sin medidas) → "envío pendiente,
-//           se paga después" (no bloquea crear el pedido).
-// CAMBIO 7: se eliminó el texto "El total definitivo lo confirma el backend…".
-//
-// Patrón: Facade (checkoutService) + Builder (buildPedido) + Observer (cartStore).
+
 
 import { useEffect, useMemo, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -287,14 +247,11 @@ export function CheckoutForm() {
     }, [opciones, servicioSel, form]);
 
     const opcionSel = opciones.find((o) => o.serviceTypeCode === servicioSel) ?? null;
-    // Origen del despacho para el pedido (backend lo exige): la sucursal de la
-    // opción de envío elegida; si no hay cotización, la de mayor cobertura de stock.
+
     const origenSucursalId = opcionSel?.sucursalId ?? mejorSucursal?.id ?? null;
     const cotizando = hasCounty && !sinCobertura && cotizandoRaw;
     const showServices = opciones.length > 0;
-    // county resuelto pero sin tarifas (sin cobertura / error / vacío) → se paga después.
-    //const pendiente = hasCounty && !showServices && !cotizando;
-    //const showManual = !hasCounty || pendiente;
+
 
     const mutation = useMutation({
         mutationFn: async (vars: SubmitVars): Promise<Pedido> => {
@@ -316,8 +273,7 @@ export function CheckoutForm() {
             });
         },
         onSuccess: (pedido, vars) => {
-            // El pedido existe (201): vaciamos el carrito y refrescamos la lista
-            // de "mis pedidos" para que aparezca al volver.
+
             checkoutService.limpiarCarrito();
             setLineErrors([]);
             setBlockError(null);
@@ -325,8 +281,7 @@ export function CheckoutForm() {
             if (vars.modo === 'nueva') {
                 queryClient.invalidateQueries({ queryKey: ['accounts', 'mis-direcciones'] });
             }
-            // Finalizar = pagar: saltamos directo al inicio del cobro Webpay.
-            // `replace` evita que "atrás" vuelva al checkout con el carrito ya vacío.
+
             navigate(`/cliente/pago/${pedido.id}`, { replace: true });
         },
         onError: (err) => {

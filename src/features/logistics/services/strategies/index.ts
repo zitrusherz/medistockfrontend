@@ -1,6 +1,4 @@
-// src/features/logistics/services/strategies/index.ts
-// Factory: elige el courier por entorno. VITE_USE_MOCKS=true → mock. Espejo del
-// selector de pagos. Cambiar Chilexpress ↔ Shippo ↔ mock = una sola línea aquí.
+
 
 import { chilexpressStrategy } from './ChilexpressStrategy';
 import { mockCourierStrategy } from './MockCourierStrategy';

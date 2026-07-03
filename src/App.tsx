@@ -12,8 +12,7 @@ export const App = () => {
     const status = useAuthStore((s) => s.status);
 
     useEffect(() => {
-        // Obtenemos una captura síncrona del estado actual mediante getState() al montar.
-        // Esto evita re-ejecuciones innecesarias y dependencias inestables.
+
         const { status: initialStatus, accessToken, loadProfile } = useAuthStore.getState();
 
         if (initialStatus !== 'idle') return; // Ya en progreso o resuelta por otra vía
@@ -27,8 +26,7 @@ export const App = () => {
         }
     }, []); // Array de dependencias vacío: se ejecuta estrictamente UNA VEZ al montar
 
-    // Splash screen global (bootstrap)
-    // Bloquea el render del ruteador hasta conocer con certeza el estado de la sesión
+
     if (status === 'idle' || status === 'loading') {
         return (
             <div className="flex min-h-screen items-center justify-center bg-gray-50">

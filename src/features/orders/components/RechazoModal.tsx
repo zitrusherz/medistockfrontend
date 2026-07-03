@@ -1,7 +1,4 @@
-// features/orders/components/RechazoModal.tsx
-// T3.2 — Captura el motivo obligatorio del rechazo. DoD: rechazo exige comentario
-// no vacío. Valida en cliente antes de disparar la mutación; el botón Rechazar
-// queda deshabilitado mientras el campo esté vacío o la mutación esté en curso.
+
 
 import { useState } from 'react';
 import {

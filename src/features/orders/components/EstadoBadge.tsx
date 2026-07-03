@@ -1,6 +1,4 @@
-// features/orders/components/EstadoBadge.tsx
-// T2.10 — State pattern hecho visual: cada EstadoPedido mapea a un pill con su label
-// y sus clases de token. Única fuente de verdad del look de estado en el feature.
+
 
 import type { EstadoPedido } from '../types';
 

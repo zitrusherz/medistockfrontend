@@ -1,8 +1,4 @@
-// features/inventory/components/StockAlertsView.tsx
-// Vista de alertas de STOCK (T3.6). Rellena el AlertShell con:
-//   · filtros: sucursal (Radio) + estado (Radio) + umbral de faltante (RangeSlider)
-//   · columnas: producto · sucursal · stock · mínimo · faltante
-// Todo el filtrado y el orden se resuelven en cliente. Críticos resaltados.
+
 
 import { useMemo, useState } from 'react';
 import {
@@ -51,8 +47,7 @@ export function StockAlertsView() {
 
     const [sucursal, setSucursal] = useState('Todas');
     const [estado, setEstado] = useState<EstadoFiltro>('criticos');
-    // null = rango completo. Así sigue al maxFaltante real cuando llega la query,
-    // sin necesidad de un useEffect que reinicie el tope.
+
     const [rango, setRango] = useState<[number, number] | null>(null);
     const [orden, setOrden] = useState<OrdenStock>('faltanteDesc');
 

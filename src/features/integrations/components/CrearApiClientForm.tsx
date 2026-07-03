@@ -1,9 +1,4 @@
-// src/features/integrations/components/CrearApiClientForm.tsx
-// T4.5 — Formulario de alta de API Key (espejo de WorkerForm). Presentacional:
-// la lógica (zod, payload, mutación, errores) vive en useCrearApiClient. El
-// selector de institución REUTILIZA useClientes (solo INSTITUCIONAL) → reúso de
-// servicios = IL3.1. Al crear con éxito, el contenedor recibe la respuesta (con
-// `api_key`) por onCreated y abre el modal "copia ahora".
+
 
 import { useMemo } from 'react';
 import { Input, Select, Button, Alert } from '@/components/ui';

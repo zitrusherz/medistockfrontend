@@ -1,19 +1,4 @@
-// src/features/orders/services/checkoutService.ts
-// T2.8 ⭐ — FACADE del checkout + BUILDER del pedido.
-// T2.9 ⭐ — Se extiende el FACADE con `pagar`: única cara para "convertir el
-//           carrito en pedido" y luego "cobrar ese pedido".
-//
-// Facade: una sola cara para "convertir el carrito en pedido". La página/form no
-// conoce el cartStore ni el orderService; sólo pasa los datos de entrega.
-// Builder: buildPedido() arma el payload NuevoPedido (snake_case de la API) a
-// partir de los detalles del carrito y los datos del checkout.
-//
-// CAMBIO: el backend ahora EXIGE `sucursal_origen_id`. Se recibe desde el form
-//         (la sucursal de la opción de envío elegida, o la de mayor cobertura de
-//         stock si no hubo cotización) y se incluye en el payload.
-//
-// Capas: page → CheckoutForm → checkoutService → orderService → lib/axios.
-// El form NUNCA llama a axios ni al store directamente para crear el pedido.
+
 
 import { orderService } from './orderService';
 import { paymentService } from '@/features/payments/services/paymentService';
@@ -39,16 +24,7 @@ export interface CheckoutInput {
 /*  BUILDER — form plano + carrito  →  payload NuevoPedido (snake_case)        */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Arma POST /orders/pedidos/.
- *  - detalles[] salen del carrito (Singleton del store).
- *  - tipo_venta fijo 'WEBPAY' (flujo B2C de paciente particular).
- *  - observacion vacía → undefined (no ensuciar el payload).
- *  - sucursal_origen_id requerido por el backend (origen del despacho).
- *
- * Lanza si el carrito está vacío: el form debe impedir llegar aquí, pero
- * validamos por contrato.
- */
+
 export const buildPedido = (input: CheckoutInput): NuevoPedido => {
     const detalles = cartImperative.toDetalles();
 
@@ -72,23 +48,13 @@ export const buildPedido = (input: CheckoutInput): NuevoPedido => {
 /* -------------------------------------------------------------------------- */
 
 export const checkoutService = {
-    /**
-     * Crea el pedido desde el carrito. Devuelve el Pedido con montos REALES
-     * (monto_neto, monto_iva, total) calculados por el backend.
-     * NO vacía el carrito: eso lo decide el llamador SOLO tras un 201 (onSuccess),
-     * para que un 400/409 deje el carrito intacto.
-     */
+
     crearDesdeCarrito: async (input: CheckoutInput): Promise<Pedido> => {
         const payload = buildPedido(input);
         return orderService.crearPedido(payload);
     },
 
-    /**
-     * T2.9 — Inicia el pago Webpay de un pedido YA creado. Delega en
-     * paymentService (Strategy: Webpay real o mock según VITE_USE_MOCKS) y
-     * devuelve a dónde redirigir (IniciarResult). La página /cliente/pago/:id
-     * no necesita conocer los endpoints ni la estrategia: sólo pide "pagar".
-     */
+
     pagar: (pedidoId: number) => paymentService.iniciarPago(pedidoId),
 
     /** Vaciar carrito tras pago/creación confirmada. */

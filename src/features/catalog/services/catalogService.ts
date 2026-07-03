@@ -1,6 +1,4 @@
-// src/features/catalog/services/catalogService.ts
-// Repository: expone métodos de dominio tipados. Ningún consumidor sabe qué URL existe.
-// Layered: este es el único punto del feature que toca lib/axios.
+
 
 import api from '@/lib/axios';
 import type { Product, Categoria, Marca } from '@/types/models';
@@ -20,14 +18,7 @@ import { toProduct, toCategoria, toMarca } from './mappers/productMapper';
 const unwrap = <T>(data: { results?: T[] } | T[]): T[] =>
     Array.isArray(data) ? data : (data.results ?? []);
 
-/**
- * Categorías de USO INTERNO que NO deben aparecer en ninguna UI pública
- * (filtros, menú, navegador, landing). Caso: "Cajas de envío" es logística pura.
- *
- * Criterio: normalizamos (sin acentos, minúsculas) y ocultamos cualquier nombre
- * que contenga "caja" → cubre "Cajas", "Cajas de envío", etc. en un solo punto.
- * Si el día de mañana hay una categoría legítima con esa palabra, ajusta aquí.
- */
+
 const esCategoriaOculta = (nombre: string): boolean => {
     const n = (nombre ?? '')
         .normalize('NFD')
@@ -123,12 +114,7 @@ export const catalogService = {
             .filter((c) => !esCategoriaOculta(c.nombre));
     },
 
-    /**
-     * GET /api/inventory/public/categorias/arbol/  (público)
-     * Devuelve la jerarquía (raíces + subcategorias) con `imagen_url`.
-     * La consumen el mega-menú del navbar, el navegador de categorías y la landing.
-     * Oculta las categorías internas (cajas) en TODOS los niveles.
-     */
+
     getCategoriasArbol: async (): Promise<CategoriaArbol[]> => {
         const { data } = await api.get('/inventory/public/categorias/arbol/');
         return unwrap<CategoriaAnidadaDTO>(data)

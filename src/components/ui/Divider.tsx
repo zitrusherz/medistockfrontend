@@ -29,9 +29,7 @@ const labelAlignStyles: Record<DividerLabelAlign, string> = {
     right: "justify-end",
 }
 
-// ─── Componente ──────────────────────────────────────────────────────────────
-// El nodo raíz cambia (div vertical / div con label / hr), por eso el ref se
-// tipa como HTMLElement y se castea por rama.
+
 
 export const Divider = forwardRef<HTMLElement, DividerProps>(
     ({ orientation = "horizontal", variant = "solid", label, labelAlign = "center", className, ...rest }, ref) => {

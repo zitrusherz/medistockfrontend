@@ -1,6 +1,4 @@
-// features/orders/hooks/useMisPedidos.ts
-// T2.10 — Lista de pedidos del cliente (Observer vía React Query).
-// queryKey ['pedidos','mis'] es la que invalida useEditarPedido tras un PATCH.
+
 
 import { useQuery } from '@tanstack/react-query';
 import { orderService } from '../services/orderService';

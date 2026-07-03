@@ -1,8 +1,4 @@
-// src/pages/admin/Productos.tsx
-// T4.2 — Página Admin · Productos / inventario. Contenedor: PageWrapper +
-// PageHeader + ProductsSection (toggle listado/alta). Protegida por RoleRoute
-// (Proxy) en el router para el rol Administrador. Ruta: /admin/productos.
-// Export default: el router la carga con lazy().
+
 
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { PageHeader } from '@/components/layout/PageHeader';

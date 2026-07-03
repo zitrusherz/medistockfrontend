@@ -1,10 +1,4 @@
-// src/features/logistics/services/strategies/ChilexpressStrategy.ts
-// Strategy concreto: courier REAL. Habla con la API propia (que integra
-// Chilexpress) y normaliza cada respuesta con los mappers (Adapter).
-//
-// NO atrapa errores: deja propagar el ApiError del interceptor de lib/axios
-// (404 = sin despacho, 502 = courier caído) para que useTracking los distinga
-// por `status`.
+
 
 import api from '@/lib/axios';
 import type {

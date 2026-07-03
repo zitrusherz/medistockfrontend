@@ -1,8 +1,4 @@
-// features/admin/hooks/useAdminStats.ts
-// T4.1 — Fuente de datos de la página Estadísticas. Compone tres queries que
-// OTRAS vistas ya cachean (useTodosPedidos, usePagos, useClientes): React Query
-// deduplica, así que esto NO añade red. Toda la analítica sale de los selectores
-// puros (adminStats.ts), memorizada. (Observer vía React Query + Adapter.)
+
 
 import { useMemo } from 'react';
 import { useTodosPedidos } from '@/features/orders/hooks/useTodosPedidos';

@@ -1,7 +1,4 @@
-// src/features/inventory/components/ProductForm.tsx
-// T4.2 — Alta de producto (maqueta: ProductForm). Form "tonto": toda la lógica
-// vive en useProductForm. Imagen → ui/FileUpload + utils/image (validate/preview).
-// Secciones: datos del producto · imagen · stock inicial y lote.
+
 
 import type { ReactNode } from 'react';
 import { Input, Select, Textarea, Button, Alert, FileUpload } from '@/components/ui';

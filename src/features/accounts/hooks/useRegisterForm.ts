@@ -1,16 +1,4 @@
-// src/features/accounts/hooks/useRegisterForm.ts
-//
-// Registro de cliente B2C/B2B en UNA sola vista. Compatibiliza el form con el
-// contrato de POST /accounts/registro/cliente/ (ClienteCreateSerializer) sin
-// tocar el backend. Reglas que replica el schema/builder:
-//   - tipo_cliente: PARTICULAR | INSTITUCIONAL
-//   - documento: rut XOR pasaporte (nunca ambos, nunca ninguno)
-//   - INSTITUCIONAL exige rut (no pasaporte) + datos_institucion
-//   - PARTICULAR no lleva institución
-//   - direccion_entrega siempre obligatoria
-// El registro público NO lista instituciones, así que el caso institucional
-// SIEMPRE envía datos_institucion (el backend hace get_or_create por rut_empresa);
-// no se usa institucion_id.
+
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -49,18 +37,7 @@ const NETWORK_SUBMIT_ERROR =
 /*  Esquema de validación (zod)                                               */
 /* -------------------------------------------------------------------------- */
 
-/**
- * `region`/`comuna` guardan IDs como string (los `value` de los selects siempre
- * son string). La región es solo filtro para poblar comunas: NO viaja al
- * backend; lo que viaja es `comuna` (su ID convertido a number).
- *
- * `rut`, `pasaporte`, `razon_social` y `rut_empresa` son opcionales en la forma
- * base porque su obligatoriedad depende de `tipo_cliente`/`tipo_documento`. Las
- * reglas cruzadas viven en el `superRefine`.
- *
- * `pass` usa mínimo 8 + letra/número para quedar más cerca de los validadores
- * típicos de Django y evitar 400 por claves demasiado débiles.
- */
+
 export const registerSchema = z
     .object({
         // Tipo de cuenta
@@ -185,39 +162,7 @@ export type RegisterFormValues = z.infer<typeof registerSchema>;
 /*  Builder del payload (form plano → request anidado de la API)              */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Arma el cuerpo de POST /accounts/registro/cliente/ según el tipo de cliente.
- *
- * Contrato del backend (ClienteCreateSerializer):
- *   {
- *     usuario: { username, email, first_name, last_name, password, password2 },
- *     rut?, pasaporte?, tipo_cliente, telefono?,
- *     institucion_id?, datos_institucion?, direccion_entrega
- *   }
- *
- * IMPORTANTE — no enviar la plantilla "completa" con strings vacíos:
- *  - `rut` y `pasaporte` son UNIQUE en el modelo. Mandar `pasaporte: ""` en un
- *    registro con RUT (o `rut: ""` en uno con pasaporte) hace que el SEGUNDO
- *    registro choque contra la unicidad del string vacío → el backend responde
- *    "algunos datos ya existen". Por eso se envía SOLO el documento que aplica
- *    y nunca vacío.
- *  - `datos_institucion` solo va en INSTITUCIONAL. Para PARTICULAR debe ir
- *    ausente; un objeto vacío lo rechaza el backend ("Un cliente particular no
- *    debe tener institución.").
- *
- * Decisiones:
- *  - `username = correo`: el form no pide username y la API lo exige (EmailField).
- *    Por eso el correo viaja dos veces (username y email), con el mismo valor.
- *  - `comuna` viaja como ID (number); la región NO se envía (derivable).
- *  - rut/rut_empresa se envían con formato estándar (`formatRut`), no como
- *    string limpio. El backend actual compara duplicados por string exacto y tu
- *    BD ya tiene RUTs con separadores; enviar el valor visual evita varios
- *    falsos negativos de unicidad desde el front. La solución definitiva sería
- *    normalizar también en backend antes de guardar/comparar.
- *  - INSTITUCIONAL → siempre `datos_institucion` (sin institucion_id). El backend
- *    hace get_or_create por rut_empresa, así que reusar una institución existente
- *    funciona sin endpoint de listado.
- */
+
 function buildRegistroCliente(v: RegisterFormValues): RegistroClienteRequest {
     const usuario = {
         username: v.correo.trim(),
@@ -325,8 +270,7 @@ const SERVER_TO_FORM: Record<string, Path<RegisterFormValues>> = {
 function submitMessageFromApiError(error: ApiError): string {
     if (error.isNetworkError) return NETWORK_SUBMIT_ERROR;
 
-    // Si el backend trae un mensaje global real, úsalo. Si solo dice
-    // "Datos inválidos.", mantenemos el copy amable del formulario.
+
     if (error.message && error.message !== 'Datos inválidos.') {
         return error.message;
     }
@@ -394,10 +338,7 @@ export function useRegisterForm() {
         onSuccess: async (_res, values) => {
             setSubmitError(null);
 
-            // Auto-login: registramos con username = correo, así que iniciamos
-            // sesión con esas mismas credenciales. Si falla (p. ej. el backend
-            // pide verificación de correo), la cuenta YA quedó creada: avisamos
-            // y mandamos a /login.
+
             try {
                 const tokens = await authService.login({
                     username: values.correo.trim(),
@@ -425,8 +366,7 @@ export function useRegisterForm() {
             const apiErr = err as ApiError;
 
             if (import.meta.env.DEV) {
-                // Esto es intencional: mientras depuramos el 400 necesitamos ver
-                // el cuerpo real de DRF, no solo "Bad Request" en la terminal.
+
                 console.group('[registro cliente] error');
                 console.log('status:', apiErr.status);
                 console.log('message:', apiErr.message);

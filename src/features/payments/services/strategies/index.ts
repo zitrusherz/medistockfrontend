@@ -1,5 +1,4 @@
-// features/payments/services/strategies/index.ts
-// Factory: elige estrategia por env. VITE_USE_MOCKS=true -> mock.
+
 
 import { webpayStrategy } from './WebpayStrategy';
 import { mockPaymentStrategy } from './MockPaymentStrategy';

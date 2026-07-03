@@ -1,12 +1,4 @@
-// src/components/ui/Table.tsx
-// T5.1 / M14 — ÚNICO cambio respecto al original: se agrega el prop `minWidth`.
-// El contenedor YA tenía overflow-x-auto, pero el <table> hacía `w-full` y en
-// móvil las columnas se aplastaban en vez de scrollear. Con `minWidth` (opt-in,
-// no rompe tablas angostas) el <table> conserva un ancho mínimo y el contenedor
-// scrollea horizontalmente.
-//
-//   Tablas de datos anchas (pedidos, pagos, clientes, productos, stock):
-//     <Table minWidth="40rem"> … </Table>   // 40rem ≈ 640px (recomendación M14)
+
 
 import {
     createContext,
@@ -130,9 +122,7 @@ export function Table({
         onSortChange?.(next)
     }
 
-    // El minWidth va al <table>, no al contenedor: el contenedor sigue siendo el
-    // que scrollea (overflow-x-auto). Se respeta cualquier `style` que pase el
-    // consumidor.
+
     const tableStyle: CSSProperties | undefined = minWidth
         ? { minWidth, ...style }
         : style

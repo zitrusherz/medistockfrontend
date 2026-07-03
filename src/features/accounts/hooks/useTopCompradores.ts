@@ -1,11 +1,4 @@
-// src/features/accounts/hooks/useTopCompradores.ts
-// T4.4 — Ranking de clientes por monto comprado. No hay endpoint de ranking, así
-// que se AGREGA en front (lo permite el plan) sobre los pedidos ya cacheados:
-// reusa useTodosPedidos() → comparte la query ['pedidos','todos', null] con la
-// bandeja interna, sin red extra. (Observer + agregación memorizada.)
-//
-// Regla de negocio: RECHAZADO y CANCELADO NO son compra real → no suman. El
-// resto (incluye transferencia/crédito institucional) sí cuenta como gasto.
+
 
 import { useMemo } from 'react';
 import { useTodosPedidos } from '@/features/orders/hooks/useTodosPedidos';

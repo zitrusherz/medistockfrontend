@@ -1,9 +1,4 @@
-// src/features/accounts/types/trabajador.ts
-// T4.3 — Modelo de dominio del trabajador (lo que consume la UI) + filtro de
-// listado. Espejo de types/cliente.ts: el DTO crudo (snake_case, `usuario`
-// detalle) es la interfaz `Trabajador` de ./index; aquí solo vive el VM ya
-// normalizado en camelCase. Si la API cambia campos, se ajusta SOLO el
-// workerMapper, no el resto de la feature.
+
 
 import type { WorkerRol } from '../roles';
 

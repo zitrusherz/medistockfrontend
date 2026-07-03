@@ -1,6 +1,4 @@
-// features/accounts/hooks/useClientes.ts
-// T3.3 — Lista de clientes (Observer vía React Query). El filtro de texto se
-// aplica en cliente (igual que useCatalogo) para no refetchear por tecla.
+
 
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';

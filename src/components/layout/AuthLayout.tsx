@@ -38,9 +38,7 @@ export const AuthLayout = forwardRef<HTMLElement, AuthLayoutProps>(
         ref
     ) => {
         return (
-            // `min-h-screen` + `bg-surface-muted` viven ahora en el wrapper para que
-            // el topbar (si existe) quede fuera de la fila con `flex-1` de abajo y
-            // no se descuadre el alto disponible para el card + aside.
+
             <div className="min-h-screen bg-surface-muted flex flex-col">
                 {topbar}
 

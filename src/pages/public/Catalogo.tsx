@@ -9,10 +9,7 @@ import { Spinner, Checkbox, Badge, Input, SkeletonCard } from '@/components/ui';
 
 const PAGE_SIZE = 12;
 
-// ─── Pager local (cliente) ─────────────────────────────────────────────────────
-// Helper de página, no una primitiva nueva. Si prefieres respetar al 100% la regla
-// "una primitiva por concepto", reemplázalo por tu <Pagination> de components/ui
-// (revisa sus props) — la lógica de slicing de abajo no cambia.
+
 function Pager({
                    page,
                    totalPages,
@@ -81,10 +78,7 @@ export default function Catalogo() {
     const [searchParams, setSearchParams] = useSearchParams();
     const [view, setView] = useState<'grid' | 'list'>('grid');
 
-    // ─── Estado leído desde la URL (fuente única de verdad) ───
-    // Filtros + página viven en la query string. Esto permite que al ir a un
-    // producto y volver con el botón "Volver" (navigate(-1) en Producto.tsx),
-    // el usuario aterrice EXACTAMENTE en la página y filtros donde estaba.
+
     const filtros = {
         search: searchParams.get('search') || '',
         categoria_id: searchParams.get('cat') || undefined,
@@ -107,8 +101,7 @@ export default function Catalogo() {
     const start = (safePage - 1) * PAGE_SIZE;
     const visibles = productos.slice(start, start + PAGE_SIZE);
 
-    // Handlers de URL. El reset de página vive AQUÍ (evento), no en un useEffect:
-    // todo cambio de filtro pasa por estos handlers → sin renders en cascada.
+
     const updateFilter = (key: string, value: string | null) => {
         const next = new URLSearchParams(searchParams);
         if (value) next.set(key, value);
@@ -124,8 +117,7 @@ export default function Catalogo() {
         if (p <= 1) next.delete('page');
         else next.set('page', String(p));
         setSearchParams(next);
-        // Subir al inicio cuando el usuario cambia de página (no es un filtro
-        // sino navegación de listado), igual que harías en cualquier paginador.
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 

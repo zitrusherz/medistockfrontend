@@ -1,15 +1,4 @@
-// src/pages/cliente/PedidoDetalle.tsx
-// T2.11 ⭐ — Detalle del pedido + seguimiento del envío.
-//
-// Compone dos lecturas:
-//   1. orderService.detallePedido(id)  → cabecera y líneas del pedido.
-//   2. useTracking(id)                 → timeline del envío (Timeline).
-//
-// Estados controlados del tracking (M12), NO pantallas rotas:
-//   · 404 → "aún sin despacho" (tono info, no rojo).
-//   · 502 → "courier no responde" + Reintentar.
-//   · otro error → mensaje + Reintentar.
-// Polling suave mientras EN_TRANSITO lo gobierna el hook.
+
 
 import { type ReactNode } from 'react';
 import { Link, useParams } from 'react-router';

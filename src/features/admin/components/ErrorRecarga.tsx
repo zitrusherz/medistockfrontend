@@ -1,7 +1,4 @@
-// features/admin/components/ErrorRecarga.tsx
-// T4.1 — Banner de error con reintento. Mismo patrón que las páginas de Analista
-// (consistencia de microcopy, M15). En la voz de la interfaz: dice qué falló y
-// cómo arreglarlo, no se disculpa.
+
 
 import { Button } from '@/components/ui';
 

@@ -1,19 +1,4 @@
-// src/features/inventory/services/inventoryService.ts
-// Repository del dominio `inventory`. Único punto HTTP del feature.
-//
-// Drop-in: REEMPLAZA tu inventoryService.ts. Conserva todo lo previo
-// (getLotes / getInventarios / getAlertasStock / getAlertasVencimiento, T3.5/T3.6)
-// y AÑADE lo que necesita T4.2 (Admin · Productos / inventario):
-//   · getProductosCatalogo : lista para la tabla admin (con stock y precio IVA).
-//   · getMarcas / getCategorias : poblar los <select> del alta.
-//   · getSucursales : poblar el <select> de sucursal del stock inicial.
-//   · ingresarProducto : alta combinada (producto + lote + stock) vía multipart.
-//
-// Dos niveles de método:
-//   · getters CRUDOS (getLotes / getInventarios): devuelven el contrato de la API
-//     (snake_case). Los usa T3.5 (picking / FEFO) y quien necesite el DTO.
-//   · getters de DOMINIO: aplican el mapper (Adapter) y devuelven modelos
-//     camelCase para las vistas.
+
 
 import api from '@/lib/axios';
 import type { Paginated } from '@/types/api';
@@ -26,8 +11,7 @@ import type {
 import type { AlertaStock, AlertaVencimiento } from '../types/alerts';
 import { toAlertaStock, toAlertaVencimiento } from './mappers/alertMapper';
 
-// Reuso del Adapter del catálogo: si la API cambia un campo del producto,
-// SOLO cambia productMapper. No duplicamos el mapeo aquí.
+
 import { toProduct } from '@/features/catalog/services/mappers/productMapper';
 import type {
     CatalogoProductoDTO,
@@ -89,15 +73,7 @@ async function fetchInventarios(params?: InventarioQuery): Promise<Inventario[]>
 
 /* --- helpers de T4.2 ------------------------------------------------------ */
 
-/**
- * Construye el cuerpo multipart de POST /inventory/ingresar-producto/.
- *
- * El endpoint recibe ARCHIVO (confirmado con el docente), por eso enviamos
- * FormData y NO JSON. Decisiones:
- *   · `categoria_ids` viaja como clave repetida (DRF ListField la lee así).
- *   · booleanos como 'true'/'false' (DRF BooleanField los parsea).
- *   · campo de imagen = 'imagen'. Si el backend usa otro nombre, cámbialo aquí.
- */
+
 function buildIngresoFormData(
     body: IngresarProductoRequest,
     imagen?: File | null,
@@ -162,13 +138,7 @@ export const inventoryService = {
 
     // ── T4.2: catálogo admin + alta de producto ────────────────────────────
 
-    /**
-     * Lista de productos para la tabla del admin.
-     * Usa /inventory/catalogo/ (no /inventory/productos/) porque ESE endpoint
-     * SÍ trae `stock_por_sucursal` y `precio_con_iva`, que es lo que la tabla
-     * muestra. `toProduct` ya deriva `stockTotal`. Misma fuente que el catálogo
-     * público → al crear un producto e invalidar la caché, aparece en ambos.
-     */
+
     async getProductosCatalogo(filtros: CatalogoFiltros = {}): Promise<Product[]> {
         const { data } = await api.get<CatalogoProductoDTO[] | Paginated<CatalogoProductoDTO>>(
             '/inventory/catalogo/',

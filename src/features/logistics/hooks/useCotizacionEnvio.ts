@@ -1,16 +1,4 @@
-// src/features/logistics/hooks/useCotizacionEnvio.ts
-// Custom Hook + Observer (React Query) — cotización de envío EN EL CHECKOUT.
-//
-// Qué hace:
-//  1. Determina las sucursales "candidatas": las que tienen stock suficiente para
-//     TODAS las líneas del carrito (usa stock_por_sucursal del catálogo cacheado).
-//  2. Lanza una cotización por cada sucursal candidata (en paralelo), pasando SOLO
-//     producto_id + cantidad (el backend arma la caja óptima y calcula medidas/peso).
-//  3. Junta los servicios y, por cada serviceTypeCode, se queda con la sucursal más
-//     barata. Devuelve las opciones ordenadas de menor a mayor precio.
-//
-// No hay mock: usa logisticsService.cotizarProductos → backend real.
-// Contrato del endpoint: docs/COTIZACION_ENVIO_CHECKOUT.md.
+
 
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -44,13 +32,7 @@ export function useCotizacionEnvio(countyCode: string | null) {
         [catalogo],
     );
 
-    // Sucursales candidatas para el ORIGEN del despacho: las que tienen stock
-    // (aunque sea parcial) de ALGÚN producto del carrito. El backend cotiza el
-    // carrito completo desde el origen indicado (arma caja/medidas/peso con los
-    // productos_ids) y NO exige que ese local tenga todo el stock. Cotizamos desde
-    // cada candidata y elegimos la más barata. (Antes se exigía cubrir TODO el
-    // carrito en un solo local, lo que dejaba cero candidatas y "envío pendiente"
-    // cuando el stock estaba repartido entre locales.)
+
     const { candidatas, mejorSucursal, sinCobertura } = useMemo(() => {
         if (!items.length || !catalogo.length) {
             return {
@@ -87,8 +69,7 @@ export function useCotizacionEnvio(countyCode: string | null) {
         return { candidatas, mejorSucursal, sinCobertura: candidatas.length === 0 };
     }, [items, catalogo, byCode]);
 
-    // Payload de productos: arreglo PLANO de IDs; la cantidad se expresa repitiendo
-    // el id (ej: [12,12,15]). El backend calcula caja/medidas/peso desde los IDs.
+
     const productosIds: number[] = useMemo(
         () => items.flatMap((it) => Array.from({ length: it.quantity }, () => it.productId)),
         [items],
@@ -124,8 +105,7 @@ export function useCotizacionEnvio(countyCode: string | null) {
                             sucursalNombre: suc.nombre,
                         }));
                     } catch {
-                        // Una sucursal que falle (p. ej. producto sin medidas) no debe
-                        // tumbar al resto. Si TODAS fallan → opciones vacías → "pendiente".
+
                         return [] as OpcionEnvio[];
                     }
                 }),

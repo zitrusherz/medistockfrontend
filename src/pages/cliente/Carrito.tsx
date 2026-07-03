@@ -1,14 +1,4 @@
-// src/pages/cliente/Carrito.tsx
-// T2.7 — Página del carrito (evolución de OrderPage de pedido.jsx).
-// Compone: QuickAdd (aside izq) + líneas (CartRow) + resumen (CartSummary, aside der).
-// Nota: el SideNav de la maqueta era navegación de marketing → es responsabilidad del
-// layout, no del carrito; se omite a propósito para no duplicar navegación.
-//
-// CAMBIO 3/4 (revisado): el breadcrumb Y el título "Mi pedido" salen de la grilla y
-//           van a lo ancho, arriba. Así las TRES tarjetas (Suministros · pedido ·
-//           Resumen) arrancan a la misma altura (al nivel del pedido) en lugar de que
-//           las laterales queden por sobre el título.
-// Nota: raíz en <div> (no <main>) porque el PublicLayout ya renderiza el <main>.
+
 
 import { Link } from 'react-router';
 import { useCartItems, useCartCount } from '@/features/cart/hooks/useCart';
@@ -19,8 +9,7 @@ export default function Carrito() {
     const count = useCartCount();
     const vacio = items.length === 0;
 
-    // Con pedido → 3 columnas (Suministros · Pedido · Resumen).
-    // Vacío → 2 columnas (Suministros · mensaje), sin resumen.
+
     const cols = vacio
         ? 'lg:grid-cols-[280px_minmax(0,1fr)]'
         : 'lg:grid-cols-[280px_minmax(0,1fr)_300px]';

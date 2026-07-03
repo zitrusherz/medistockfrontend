@@ -1,11 +1,7 @@
 // Ruta destino: src/features/orders/services/orderService.test.ts
 import { describe, it, expect, vi } from 'vitest'
 
-// orderService.ts importa `api` desde '@/lib/axios' a nivel de módulo (para
-// crearPedido, misPedidos, etc., que sí hacen red). Lo que probamos aquí es
-// SOLO la máquina de estados (puedePasar / transicionesValidas), que es lógica
-// pura y no toca la red — por eso mockeamos axios en vez de pedir ese archivo:
-// así el import no falla y el test queda aislado de la capa HTTP.
+
 vi.mock('@/lib/axios', () => ({
     default: { get: vi.fn(), post: vi.fn(), patch: vi.fn() },
 }))

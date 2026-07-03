@@ -1,18 +1,4 @@
-// src/pages/logistica/Envio.tsx
-// T3.5 — Despacho del pedido (ruta contextual /logistica/envio/:pedidoId).
-// Cierra la Integración 2 de punta a punta: cotizar → crear envío (genera nº de
-// seguimiento) → el cliente lo ve moverse en su tracking (T2.11).
-//
-// Patrón State (ciclo del despacho, vía Timeline/envioState) + Strategy (courier,
-// vía logisticsService).
-//
-// Reglas de borde:
-//   · NO crear dos envíos: si getTracking devuelve un despacho (≠404), se oculta
-//     el flujo de creación y se pasa a gestionar el estado.
-//   · Comuna sin cobertura: solo se ofrecen comunas con cobertura Chilexpress; si
-//     no hay, se bloquea la cotización con mensaje.
-//   · 502 del courier: lo traduce notifyApiError ("servicio externo no responde");
-//     en el tracking se muestra aviso con reintento, sin perder el pedido.
+
 
 import { useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router';

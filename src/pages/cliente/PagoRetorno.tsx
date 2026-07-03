@@ -1,6 +1,4 @@
-// src/pages/cliente/PagoRetorno.tsx
-// T2.9 ⭐ — RETORNO de Webpay. El backend procesa el POST de Transbank de forma segura
-// y redirige al navegador aquí con los parámetros de la transacción ya validados.
+
 
 import { useEffect, type ReactNode } from 'react';
 import { Link, useSearchParams, Navigate } from 'react-router';

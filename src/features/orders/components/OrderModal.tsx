@@ -1,9 +1,4 @@
-// features/orders/components/OrderModal.tsx
-// T3.2 — Modal de detalle de pedido. Porta el OrderModal de la maqueta al
-// ui/Modal del kit (compound) + tabla de líneas + desglose con IVA (M2).
-//
-// `acciones` es un slot opcional para el footer: la página del Ejecutivo inyecta
-// ahí Aprobar/Rechazar cuando el pedido está PENDIENTE; si no, queda "Cerrar".
+
 
 import type { ReactNode } from 'react';
 import {

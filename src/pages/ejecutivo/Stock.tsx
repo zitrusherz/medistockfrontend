@@ -1,8 +1,4 @@
-// pages/ejecutivo/Stock.tsx
-// T3.3 — Consulta de stock multi-bodega (solo lectura) para el Ejecutivo, previa
-// a aprobar pedidos. Orquesta: selector de sucursal + búsqueda → useCatalogo
-// (servidor filtra por sucursal_id; texto se filtra en cliente) → StockTable.
-// Protegida por RoleRoute (Proxy) en el router.
+
 
 import { useMemo, useState } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';

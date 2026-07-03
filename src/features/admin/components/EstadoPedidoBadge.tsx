@@ -1,6 +1,4 @@
-// features/admin/components/EstadoPedidoBadge.tsx
-// T4.1 — Badge de estado de pedido con etiqueta es-CL y tono coherente. Se usa
-// en las tablas de pedidos recientes y en los resúmenes de Inicio.
+
 
 import { Badge } from '@/components/ui';
 import type { BadgeVariant } from '@/components/ui';

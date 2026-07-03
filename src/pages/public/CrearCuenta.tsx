@@ -1,8 +1,4 @@
-// src/pages/public/CrearCuenta.tsx — ruta: /registro
-// Página pública de registro de cliente.
-// Es ruta SUELTA (no cuelga de PublicLayout), así que monta su propia navbar
-// simple: wordmark MediStock (→ /) + botón "Volver al inicio" (→ /).
-// La lógica vive en features/accounts (useRegisterForm + RegisterForm).
+
 
 import { Link } from 'react-router';
 import { Navbar } from '@/components/layout';

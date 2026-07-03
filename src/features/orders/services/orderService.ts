@@ -1,7 +1,4 @@
-// features/orders/services/orderService.ts
-// Repository: métodos de dominio tipados. Único punto del feature que toca lib/axios.
-// Command:    cada acción interna (aprobar/rechazar) es un comando reutilizable.
-// State:      tabla de transiciones de EstadoPedido para validar avances de pedido.
+
 
 import api from '@/lib/axios';
 import type { Pedido } from '@/types/models';
@@ -52,21 +49,7 @@ export const puedePasar = (de: EstadoPedido, a: EstadoPedido): boolean =>
 export const esEstadoTerminal = (estado: EstadoPedido): boolean =>
     transicionesValidas(estado).length === 0;
 
-/**
- * ¿El cliente puede iniciar/reintentar el pago Webpay de este pedido?
- *
- * Regla: es pagable mientras siga PENDIENTE y sea venta WEBPAY (B2C particular).
- *  - Un pago CONFIRMADO saca al pedido de PENDIENTE (el commit lo aprueba y crea
- *    el despacho), así que deja de mostrarse como pagable.
- *  - Un pago RECHAZADO/ANULADO deja el pedido en PENDIENTE: la UI habilita el
- *    reintento apuntando de nuevo a /cliente/pago/:id.
- *  - Ventas institucionales / transferencia / crédito NO pasan por Webpay, por
- *    lo que no ofrecemos el botón de pago en la UI del cliente.
- *
- * Nota: el modelo Pedido no trae `estado_pago` (vive en la transacción Pago
- * aparte); por eso el "está pagado" se infiere del estado del pedido, que es lo
- * que el backend mueve tras confirmar el cobro.
- */
+
 export const puedePagarPedido = (pedido: Pedido): boolean =>
     pedido.estado === 'PENDIENTE' && pedido.tipoVenta === 'WEBPAY';
 

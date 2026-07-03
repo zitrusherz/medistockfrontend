@@ -1,8 +1,4 @@
-// components/ui/StatCard.tsx
-// T4.1 — Tarjeta de KPI reutilizable. Unifica los KpiCard locales que vivían
-// sueltos en PagosKpis y Cobranza (una sola primitiva por concepto). Soporta
-// tono (borde izquierdo), subtítulo, icono y una tendencia opcional (% vs algo).
-// Estado loading con Skeleton (M12). Montos se pasan ya formateados por el padre.
+
 
 import type { ReactNode } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';

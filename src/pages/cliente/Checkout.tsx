@@ -1,6 +1,4 @@
-// src/pages/cliente/Checkout.tsx
-// T2.8 ⭐ — Página de checkout. Guarda carrito vacío y compone el CheckoutForm.
-// El estado de "pedido creado" lo gestiona el propio CheckoutForm (handoff a pago).
+
 
 import { Link } from 'react-router';
 import { useCartItems } from '@/features/cart/hooks/useCart';

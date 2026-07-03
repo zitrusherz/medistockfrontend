@@ -17,14 +17,7 @@ interface RangeSliderProps {
     disabled?: boolean
 }
 
-// ─── Componente ──────────────────────────────────────────────────────────────
-//
-// Slider de rango con dos pulgares (T3.6: RangeControl → ui/RangeSlider).
-// Técnica: dos <input type="range"> superpuestos; cada pista es transparente y
-// solo el pulgar captura el puntero (clase `.range-thumb` en index.css, que pone
-// pointer-events:auto en el thumb mientras el input queda pointer-events:none).
-// Colores/forma 100% por tokens: pista en `border`, recorrido activo con el
-// degradado primary→accent.
+
 
 export function RangeSlider({
     min,

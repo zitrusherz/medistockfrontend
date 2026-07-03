@@ -7,12 +7,10 @@ import { AppShell } from "@/components/layout/AppShell"
 import { Roles } from "@/types/roles"
 import { S } from "./withSuspense"
 
-// Login EAGER (no lazy): es el destino de redirección más frecuente para
-// invitados (mini-carrito → /login). Sin chunk lazy = sin spinner de carga.
+
 import Login from "@/pages/public/Login"
 
-// Páginas lazy extraídas a su propio módulo: así este archivo de config solo
-// exporta no-componentes (router, homeByRole) y no rompe react-refresh.
+
 import {
     Home, Catalogo, Categorias, Producto, CrearCuenta, NotFound,
     ClienteDashboard, Carrito, Checkout, Pago, PagoRetorno,
@@ -28,11 +26,7 @@ import {
 export { homeByRole } from "./homeByRole"
 
 export const router = createBrowserRouter([
-    // ── Tienda pública (con header de tienda) ─────────────────────────────────
-    // FIX Bug 1: se registran /categorias y /categorias/:id (el navbar y el
-    // MainMenu ya apuntaban aquí, pero la ruta no existía → 404).
-    // FIX Bug 2: el catch-all 404 ahora vive DENTRO de PublicLayout para que la
-    // pantalla de "no encontrado" conserve el header/navbar de la tienda.
+
     {
         element: <PublicLayout />,
         children: [
@@ -47,15 +41,11 @@ export const router = createBrowserRouter([
         ],
     },
 
-    // ── Auth (sin el header de tienda; usan su propio AuthLayout) ─────────────
-    // /login eager (sin S): redirección instantánea para invitados.
+
     { path: "/login",    element: <Login /> },
     { path: "/registro", element: S(<CrearCuenta />) },
 
-    // ── Privadas (requieren sesión) ──────────────────────────────────────────
-    // FIX Bug 2: cada grupo de rol se envuelve en <AppShell/> (chrome interno:
-    // navbar + RoleSidebar + logout). Antes las páginas se montaban "peladas",
-    // por eso el dashboard aparecía sin navbar y sin forma de navegar/volver.
+
     {
         element: <PrivateRoute />, // Guarda 1: autenticación
         children: [
@@ -63,10 +53,7 @@ export const router = createBrowserRouter([
             {
                 element: <RoleRoute roles={[Roles.CLIENTE]} />, // Guarda 2: rol
                 children: [
-                    // CAMBIO 2: el carrito y el checkout usan el MISMO header de la
-                    // tienda pública (PublicLayout) en lugar del chrome interno
-                    // (AppShell). Así "Ver carrito" mantiene el navbar de la tienda.
-                    // Siguen protegidos por PrivateRoute + RoleRoute (solo CLIENTE).
+
                     {
                         element: <PublicLayout />,
                         children: [

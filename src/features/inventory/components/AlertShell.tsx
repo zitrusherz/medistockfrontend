@@ -1,9 +1,4 @@
-// features/inventory/components/AlertShell.tsx
-// Template Method (T3.6): define el esqueleto INVARIANTE de una vista de alertas
-// —panel de filtros + encabezado + toolbar + área de tabla— y delega en cada
-// vista concreta (Stock / Vencimiento) SOLO lo que cambia: sus filtros, su
-// toolbar y sus filas (`children`). Responsive (M14): el panel se apila sobre la
-// tabla en móvil; la tabla del kit ya envuelve su contenido en overflow-x-auto.
+
 
 import { type ReactNode } from 'react';
 
