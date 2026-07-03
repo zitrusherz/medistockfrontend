@@ -20,6 +20,7 @@ import {
     Alert,
 } from '@/components/ui';
 import { useAuthStore } from '@/store/authStore';
+import { datosBasicosPerfil } from '@/types/auth';
 import { formatDate } from '@/utils/formatDate';
 import { WorkerForm } from './WorkerForm';
 import { useTrabajadores } from '../hooks/useTrabajadores';
@@ -33,22 +34,21 @@ export function WorkersView() {
     const { trabajadores, isLoading, isEmpty, isError, toggleActivo } =
         useTrabajadores({ search, rol });
 
-    // Email del admin logueado: PerfilMe.datos.email existe en ambas ramas del
-    // union (cliente/trabajador). Sirve para bloquear la auto-desactivación.
-    const miEmail = useAuthStore((s) => s.user)?.datos.email?.toLowerCase() ?? null;
+    const miEmail = useAuthStore((s) => {
+        if (!s.user) return null;
+        return datosBasicosPerfil(s.user).email.toLowerCase();
+    });
 
     const togglingId =
         toggleActivo.isPending ? toggleActivo.variables?.id : undefined;
 
     return (
         <div className="grid gap-8 lg:grid-cols-[minmax(0,400px)_1fr]">
-            {/* ── Columna izquierda: alta ──────────────────────────────────── */}
             <section aria-label="Crear trabajador">
                 <h2 className="mb-4 text-lg font-semibold text-text">Nuevo trabajador</h2>
                 <WorkerForm />
             </section>
 
-            {/* ── Columna derecha: equipo ──────────────────────────────────── */}
             <section aria-label="Equipo" className="min-w-0">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end">
                     <div className="flex-1">
@@ -114,15 +114,9 @@ export function WorkersView() {
     );
 }
 
-/* -------------------------------------------------------------------------- */
-/*  Fila de trabajador                                                        */
-/* -------------------------------------------------------------------------- */
-
 interface WorkerRowProps {
     trabajador: TrabajadorVM;
-    /** true si la fila es la cuenta del propio admin logueado. */
     esMiCuenta: boolean;
-    /** true mientras su mutación de toggle está en vuelo. */
     toggling: boolean;
     onToggle: () => void;
 }

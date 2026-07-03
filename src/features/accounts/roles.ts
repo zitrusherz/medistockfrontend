@@ -54,10 +54,10 @@ export const rolLabel = (rol: Rol | null | undefined): string =>
 /* -------------------------------------------------------------------------- */
 
 const GRUPO_TO_ROL: Partial<Record<GrupoNombre, WorkerRol>> = {
-    Administradores: 'ADMINISTRADOR',
-    Ejecutivos: 'EJECUTIVO',
-    OperadoresLogisticos: 'OPERADOR_LOGISTICO',
-    Analistas: 'ANALISTA',
+    Administrador: 'ADMINISTRADOR',
+    Ejecutivo: 'EJECUTIVO',
+    OperadorLogistico: 'OPERADOR_LOGISTICO',
+    Analista: 'ANALISTA',
 };
 
 /** Deriva el Rol de trabajador desde sus grupos. `null` si no hay match. */

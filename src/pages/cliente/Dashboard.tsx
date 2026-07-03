@@ -4,6 +4,7 @@
 // carrito). Cero lógica nueva. Estados manuales al estilo de MisPedidos.tsx
 // (card blanca + gold-rule + Spinner) para mantener el look del cliente.
 
+import type { ReactNode } from "react"
 import { Link, useNavigate } from "react-router"
 import { Package, Clock, Wallet, ShoppingCart, ListOrdered, CreditCard } from "lucide-react"
 import { PageWrapper, PageHeader } from "@/components/layout"
@@ -15,19 +16,20 @@ import { useCartStore } from "@/store/cartStore"
 import { useMisPedidos } from "@/features/orders/hooks/useMisPedidos"
 import { PedidoCard } from "@/features/orders/components/PedidoCard"
 import type { EstadoPedido } from "@/types/models"
+import { datosBasicosPerfil } from "@/types/auth"
 
 const TERMINALES: EstadoPedido[] = ["ENTREGADO", "CANCELADO", "RECHAZADO"]
 const ANULADOS: EstadoPedido[] = ["RECHAZADO", "CANCELADO"]
 
 function AccesoTile({
-    to,
-    icon,
-    label,
-    hint,
-    badge,
-}: {
+                        to,
+                        icon,
+                        label,
+                        hint,
+                        badge,
+                    }: {
     to: string
-    icon: React.ReactNode
+    icon: ReactNode
     label: string
     hint: string
     badge?: number
@@ -55,7 +57,7 @@ function AccesoTile({
 
 export default function ClienteDashboard() {
     const user = useAuthStore((s) => s.user)
-    const nombre = user?.datos?.first_name?.trim()
+    const nombre = user ? datosBasicosPerfil(user).first_name.trim() : ""
     const itemsCarrito = useCartStore((s) => s.count())
     const navigate = useNavigate()
 
@@ -87,7 +89,6 @@ export default function ClienteDashboard() {
             />
 
             <div className="mt-6 space-y-6">
-                {/* KPIs */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <StatCard
                         label="Pedidos activos"
@@ -115,7 +116,6 @@ export default function ClienteDashboard() {
                     />
                 </div>
 
-                {/* Últimos pedidos */}
                 <section>
                     <div className="mb-3 flex items-center justify-between">
                         <h2 className="font-display text-lg font-bold text-plum-700">
@@ -168,7 +168,6 @@ export default function ClienteDashboard() {
                     </div>
                 </section>
 
-                {/* Accesos rápidos */}
                 <section>
                     <h2 className="mb-3 font-display text-lg font-bold text-plum-700">
                         Accesos rápidos

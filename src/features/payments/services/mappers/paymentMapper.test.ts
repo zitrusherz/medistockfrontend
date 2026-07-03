@@ -3,7 +3,9 @@ import { describe, it, expect } from 'vitest'
 import { toPago, toPagoEnriquecido } from './paymentMapper'
 import type { TransaccionPago, PagoEnriquecido } from '../../types'
 
-const transaccionDTO = (overrides: Partial<TransaccionPago> = {}): TransaccionPago =>
+const transaccionDTO = (
+    overrides: Partial<TransaccionPago> = {},
+): TransaccionPago =>
     ({
         id: 1,
         pedido_id: 100,
@@ -20,13 +22,14 @@ const transaccionDTO = (overrides: Partial<TransaccionPago> = {}): TransaccionPa
         transaction_date: '2026-06-01T10:05:00Z',
         fecha_creacion: '2026-06-01T10:00:00Z',
         fecha_confirmacion: '2026-06-01T10:05:00Z',
-        observacion: null,
+        observacion: '',
         ...overrides,
     }) as TransaccionPago
 
 describe('toPago', () => {
     it('mapea snake_case -> camelCase', () => {
         const p = toPago(transaccionDTO())
+
         expect(p.pedidoId).toBe(100)
         expect(p.authorizationCode).toBe('AUTH-1')
         expect(p.cardLastDigits).toBe('6623')
@@ -34,7 +37,12 @@ describe('toPago', () => {
     })
 
     it('observacion null cae a string vacío', () => {
-        const p = toPago(transaccionDTO({ observacion: null }))
+        const p = toPago(
+            transaccionDTO({
+                observacion: null as unknown as string,
+            }),
+        )
+
         expect(p.observacion).toBe('')
     })
 })

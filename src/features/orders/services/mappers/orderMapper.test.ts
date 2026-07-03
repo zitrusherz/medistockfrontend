@@ -16,7 +16,7 @@ const detalleDTO = (overrides: Partial<DetallePedidoDTO> = {}): DetallePedidoDTO
         precio_unitario_historico: 2000,
         descuento: 0,
         subtotal: 6000,
-        observacion: null,
+        observacion: '',
         ...overrides,
     }) as DetallePedidoDTO
 
@@ -34,13 +34,13 @@ const pedidoDTO = (overrides: Partial<PedidoDTO> = {}): PedidoDTO =>
         prioridad_medica: 'ALTA',
         fecha_creacion: '2026-06-01T10:00:00Z',
         fecha_actualizacion: '2026-06-01T10:00:00Z',
-        fecha_requerida_entrega: null,
+        fecha_requerida_entrega: null as unknown as string,
         subtotal: 6000,
         descuento_total: 0,
         monto_neto: 6000,
         monto_iva: 1140,
         total: 7140,
-        observacion: null,
+        observacion: '',
         detalles: [detalleDTO()],
         ...overrides,
     }) as PedidoDTO
@@ -48,6 +48,7 @@ const pedidoDTO = (overrides: Partial<PedidoDTO> = {}): PedidoDTO =>
 describe('toDetallePedido', () => {
     it('mapea snake_case -> camelCase', () => {
         const d = toDetallePedido(detalleDTO())
+
         expect(d.productoId).toBe(10)
         expect(d.productoNombre).toBe('Guantes de nitrilo')
         expect(d.precioUnitario).toBe(2000)
@@ -55,7 +56,12 @@ describe('toDetallePedido', () => {
     })
 
     it('observacion null cae a string vacío', () => {
-        const d = toDetallePedido(detalleDTO({ observacion: null }))
+        const d = toDetallePedido(
+            detalleDTO({
+                observacion: null as unknown as string,
+            }),
+        )
+
         expect(d.observacion).toBe('')
     })
 })
@@ -63,6 +69,7 @@ describe('toDetallePedido', () => {
 describe('toPedido', () => {
     it('mapea los campos principales y desglosa los montos', () => {
         const p = toPedido(pedidoDTO())
+
         expect(p.id).toBe(100)
         expect(p.cliente).toBe('Clínica Andes')
         expect(p.estado).toBe('PENDIENTE')
@@ -73,17 +80,29 @@ describe('toPedido', () => {
 
     it('mapea el arreglo de detalles', () => {
         const p = toPedido(pedidoDTO())
+
         expect(p.detalles).toHaveLength(1)
         expect(p.detalles[0]?.productoSku).toBe('SKU-010')
     })
 
     it('detalles ausentes -> arreglo vacío (no undefined)', () => {
-        const p = toPedido(pedidoDTO({ detalles: undefined as never }))
+        const p = toPedido(
+            pedidoDTO({
+                detalles: undefined,
+            }),
+        )
+
         expect(p.detalles).toEqual([])
     })
 
     it('cliente_nombre y observacion ausentes caen a string vacío', () => {
-        const p = toPedido(pedidoDTO({ cliente_nombre: null as never, observacion: null }))
+        const p = toPedido(
+            pedidoDTO({
+                cliente_nombre: null as unknown as string,
+                observacion: null as unknown as string,
+            }),
+        )
+
         expect(p.cliente).toBe('')
         expect(p.observacion).toBe('')
     })
