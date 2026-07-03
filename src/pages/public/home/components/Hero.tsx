@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { MediaThumb } from './MediaThumb';
 import { ArrowIcon } from './icons';
-import image from "../../../../assets/heroImg.jpeg";
+import image from "../../../../assets/heroImg.jpg";
 
 /**
  * Hero — tesis de la landing. Portado de la maqueta (Hero).
