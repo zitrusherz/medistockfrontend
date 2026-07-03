@@ -274,7 +274,7 @@ export function toApiError(error: unknown): ApiError {
 /* -------------------------------------------------------------------------- */
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000/api",
+    baseURL: import.meta.env.VITE_API_BASE_URL ?? "http://98.95.174.251/api",
     headers: {
         "Content-Type": "application/json",
     },

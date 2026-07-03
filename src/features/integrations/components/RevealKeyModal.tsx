@@ -23,7 +23,7 @@ interface RevealKeyModalProps {
     advertencia?: string;
 }
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://98.95.174.251:8000/api';
 const TITLE_ID = 'reveal-key-title';
 
 export function RevealKeyModal({
