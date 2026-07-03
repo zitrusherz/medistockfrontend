@@ -1,4 +1,4 @@
-
+// src/pages/admin/Pedidos.tsx
 
 import { useMemo, useState } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';
@@ -9,21 +9,24 @@ import { OrderModal } from '@/features/orders/components/OrderModal';
 import { RechazoModal } from '@/features/orders/components/RechazoModal';
 import { useTodosPedidos } from '@/features/orders/hooks/useTodosPedidos';
 import { useAccionesPedido } from '@/features/orders/hooks/useAccionesPedido';
+import { usePagos } from '@/features/payments/hooks/usePagos';
 import type { Pedido } from '@/types/models';
 import type { EstadoPedido } from '@/features/orders/types';
 
-type TabKey = 'TODOS' | Extract<EstadoPedido, 'PENDIENTE' | 'APROBADO' | 'RECHAZADO'>;
+type TabKey = 'TODOS' | Extract<EstadoPedido, 'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'CANCELADO'>;
 
 const TABS: { key: TabKey; label: string }[] = [
     { key: 'PENDIENTE', label: 'Pendientes' },
     { key: 'APROBADO', label: 'Aprobados' },
     { key: 'RECHAZADO', label: 'Rechazados' },
+    { key: 'CANCELADO', label: 'Cancelados' },
     { key: 'TODOS', label: 'Todos' },
 ];
 
 export default function AdminPedidos() {
     const { pedidos, isLoading } = useTodosPedidos();
     const { aprobar, rechazar } = useAccionesPedido();
+    const { pagos } = usePagos();
 
     const [tab, setTab] = useState<TabKey>('PENDIENTE');
     const [detalle, setDetalle] = useState<Pedido | null>(null);
@@ -79,6 +82,7 @@ export default function AdminPedidos() {
 
                 <OrdersTable
                     pedidos={visibles}
+                    pagos={pagos}
                     loading={isLoading}
                     emptyText="No hay pedidos en este estado."
                     renderAcciones={(p) => (
